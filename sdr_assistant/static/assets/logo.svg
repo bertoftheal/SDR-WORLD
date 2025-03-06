@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 120 40" fill="none">
+  <path d="M20 5L5 20L20 35L35 20L20 5Z" fill="#6366F1"/>
+  <path d="M20 10L10 20L20 30L30 20L20 10Z" fill="#4F46E5"/>
+  <path d="M20 15L15 20L20 25L25 20L20 15Z" fill="#FFFFFF"/>
+  <text x="45" y="25" font-family="Arial" font-weight="bold" font-size="16" fill="#1E293B">SDR World</text>
+</svg>

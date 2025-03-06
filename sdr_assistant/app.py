@@ -377,22 +377,27 @@ def generate_research():
 
 **1. AI Adoption Trends:**
 - Current AI adoption trends in {account_name}'s specific industry sector (not general AI trends)
+
 - How companies in this sector are implementing AI in development workflows
 
 **2. Developer Tools:**
 - How {account_name} and similar companies are utilizing developer tools and AI code assistants
+
 - Popular development environments and frameworks in their sector
 
 **3. Development Challenges:**
 - Key challenges {account_name} likely faces with development velocity and code quality
+
 - Pain points that engineering teams in this industry typically experience
 
 **4. Market Opportunity:**
 - Market opportunities for AI coding assistants specifically in {account_name}'s sector
+
 - Potential efficiency gains they could realize with Codeium
 
 **5. Competitive Landscape:**
 - Competitive landscape for developer productivity tools that {account_name} might be evaluating
+
 - How Codeium differentiates in their specific market
 
 Research SPECIFIC facts about {account_name}'s industry position, tech stack, and development practices before responding.
@@ -403,31 +408,42 @@ Keep your response under 200 words, use bullet points and clear section headers 
 
 **1. Technology Stack:**
 - {account_name}'s current technology stack and development processes
+
 - Programming languages, frameworks, and tools they commonly use
+
 - Development environments or platforms they rely on
 
 **2. AI Strategy:**
 - Public information about {account_name}'s AI adoption or strategy
+
 - Recent AI-related announcements or initiatives
+
 - Key technology leaders driving their AI vision
 
 **3. Development Team:**
 - Software development team size at {account_name} and structure if available
+
 - Engineering leadership and organizational approach
+
 - Recent engineering hires or team growth patterns
 
 **4. Pain Points:**
 - Development challenges {account_name} might be experiencing
+
 - Technical debt or bottlenecks based on their stack and industry
+
 - Opportunities for improving developer productivity
 
 **5. Recent Initiatives:**
 - Technology initiatives or digital transformation efforts
+
 - Product launches requiring significant development resources
+
 - Strategic technical pivots or roadmap shifts
 
 **6. Budget Considerations:**
 - Potential budget cycle or purchasing timeline information
+
 - Financial reporting periods that might impact buying decisions
 
 IMPORTANT: Research actual facts about {account_name}, not general information. Include specific technologies, tools, or practices they use, and cite industry reports or company announcements where possible.
@@ -441,27 +457,37 @@ Frame this for a Codeium SDR preparing to contact {account_name}. Use bullet poi
 
 **1. AI Integration Strategy:**
 - How {account_name} might integrate AI into their development workflow
+
 - Potential implementation phases based on their current tech stack
+
 - Strategic areas where they'd likely prioritize AI assistance first
 
 **2. Efficiency Improvements:**
 - Quantifiable efficiency gains from adopting AI coding assistants
+
 - Potential reduction in development cycle times (estimate percentage)
+
 - How AI could transform their code review and QA processes
 
 **3. Codeium Implementation:**
 - Specific ways {account_name} could leverage Codeium for their unique needs
+
 - How Codeium aligns with their apparent development challenges
+
 - Team-specific benefits across their engineering organization
 
 **4. Return on Investment:**
 - The ROI {account_name} might expect from implementing AI tools
+
 - Cost savings calculations based on their industry and company size
+
 - Competitive advantages they would gain through earlier adoption
 
 **5. Risk Mitigation:**
 - Technical challenges they might face without AI assistance
+
 - How falling behind in AI adoption could impact their market position
+
 - Security and compliance benefits from standardized AI coding tools
 
 Make this forward-looking vision SPECIFIC to {account_name} - reference their industry position, current tools, and business objectives where possible.

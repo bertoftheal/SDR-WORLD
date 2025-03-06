@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windsurf SDR Research</title>
+    <link rel="stylesheet" href="styles.css?v=1.0.3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Force reload by adding meta tag -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+<body>
+    <div class="app-container">
+        <div class="top-nav">
+            <div class="logo-container">
+                <i class="fas fa-wind logo-icon"></i>
+                <span class="logo-text">Windsurf</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="active"><i class="fas fa-search"></i> Research</a>
+                <a href="#"><i class="fas fa-chart-line"></i> Analytics</a>
+                <a href="#"><i class="fas fa-briefcase"></i> Accounts</a>
+                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <h1>Account Research Assistant</h1>
+            </div>
+            
+            <div class="controls-section">
+                <div class="user-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="search-controls">
+                    <select id="accountSelect" class="select-input">
+                        <option value="">Select an account...</option>
+                    </select>
+                    <button id="generateBtn" class="primary-btn"><i class="fas fa-bolt"></i> Generate Research</button>
+                </div>
+            </div>
+            
+            <div class="loader-container" id="loader">
+                <p>Generating insights...</p>
+            </div>
+            
+            <div class="content-area">
+                <div class="windows-container">
+                    <div class="insight-window">
+                        <div class="window-header">
+                            <i class="fas fa-industry"></i> Industry Insights
+                        </div>
+                        <div class="window-content" id="industryInsights"></div>
+                    </div>
+                    
+                    <div class="insight-window">
+                        <div class="window-header">
+                            <i class="fas fa-building"></i> Company Insights
+                        </div>
+                        <div class="window-content" id="companyInsights"></div>
+                    </div>
+                    
+                    <div class="insight-window">
+                        <div class="window-header">
+                            <i class="fas fa-lightbulb"></i> Forward Thinking Vision
+                        </div>
+                        <div class="window-content" id="visionInsights"></div>
+                    </div>
+                </div>
+                
+                <div class="horizontal-window">
+                    <div class="window-header">
+                        <i class="fas fa-comment-dots"></i> Recommended Talk Track
+                    </div>
+                    <div class="window-content" id="recommendedTalkTrack"></div>
+                </div>
+                
+                <div class="action-footer">
+                    <button id="saveBtn" class="secondary-btn" disabled><i class="fas fa-save"></i> Save to Airtable</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js?v=1.0.3"></script>
+</body>
+</html>
