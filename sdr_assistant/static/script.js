@@ -29,7 +29,7 @@ function checkUserLogin() {
     const token = localStorage.getItem('auth_token');
     if (token) {
         // User is logged in
-        fetch('/api/user', {
+        fetch('/api/me', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -110,7 +110,7 @@ async function generateResearch() {
     setLoadingState(true);
     
     try {
-        const response = await fetch('/api/research', {
+        const response = await fetch('/api/generate-research', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -199,7 +199,7 @@ async function saveToAirtable() {
     };
     
     try {
-        const response = await fetch('/api/save', {
+        const response = await fetch('/api/save-to-airtable', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -507,7 +507,6 @@ saveBtn.addEventListener('click', saveToAirtable);
 
 // Initialize the application
 checkUserLogin();
-loadAccounts();
 
 document.addEventListener('DOMContentLoaded', function() {
     // Check for auth token
@@ -543,30 +542,9 @@ document.addEventListener('DOMContentLoaded', function() {
     generateBtn.addEventListener('click', generateResearch);
     saveToLibraryBtn.addEventListener('click', saveToLibrary);
     
-    // Functions
-    function loadAccounts() {
-        fetch('/api/accounts')
-            .then(response => response.json())
-            .then(data => {
-                // Sort accounts alphabetically
-                data.sort((a, b) => a.name.localeCompare(b.name));
-                
-                // Add accounts to dropdown
-                data.forEach(account => {
-                    const option = document.createElement('option');
-                    option.value = account.name;
-                    option.textContent = account.name;
-                    accountSelect.appendChild(option);
-                });
-                
-                // If account parameter is present, select it
-                if (accountParam) {
-                    selectAccountByName(accountParam);
-                }
-            })
-            .catch(error => {
-                console.error('Error loading accounts:', error);
-            });
+    // If account parameter is present, select it after accounts are loaded
+    if (accountParam) {
+        selectAccountByName(accountParam);
     }
     
     function selectAccountByName(name) {
@@ -595,7 +573,7 @@ document.addEventListener('DOMContentLoaded', function() {
         generateBtn.disabled = true;
         
         // Make API request
-        fetch('/api/research', {
+        fetch('/api/generate-research', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
