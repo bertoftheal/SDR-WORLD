@@ -21,6 +21,8 @@ const visionInsights = document.getElementById('visionInsights');
 const recommendedTalkTrack = document.getElementById('recommendedTalkTrack');
 const userName = document.getElementById('userName');
 const username = document.getElementById('username');
+const loadingBarContainer = document.getElementById('loadingBarContainer');
+const loadingBar = document.getElementById('loadingBar');
 
 // Check if user is logged in
 function checkUserLogin() {
@@ -62,13 +64,30 @@ async function loadAccounts() {
         // Clear existing options except the placeholder
         accountSelect.innerHTML = '<option value="">Select an account...</option>';
         
-        // Add new options
+        // Keep track of added account names to prevent duplicates
+        const addedAccounts = new Set();
+        
+        // Sort accounts alphabetically
+        accounts.sort((a, b) => a.name.localeCompare(b.name));
+        
+        // Add new options while filtering out duplicates
         accounts.forEach(account => {
+            // Skip if this account name has already been added
+            if (addedAccounts.has(account.name)) {
+                console.log(`Skipping duplicate account: ${account.name}`);
+                return;
+            }
+            
+            // Add the account name to the set and create the option
+            addedAccounts.add(account.name);
             const option = document.createElement('option');
             option.value = account.name;
             option.textContent = account.name;
+            option.dataset.id = account.id; // Store ID for reference
             accountSelect.appendChild(option);
         });
+        
+        console.log(`Loaded ${addedAccounts.size} unique accounts`);
     } catch (error) {
         console.error('Error loading accounts:', error);
     }
@@ -101,11 +120,54 @@ async function generateResearch() {
         
         const data = await response.json();
         
-        // Update insights
-        industryInsights.innerHTML = formatInsightsText(data.industryInsights) || 'Error generating industry insights';
-        companyInsights.innerHTML = formatInsightsText(data.companyInsights) || 'Error generating company insights';
-        visionInsights.innerHTML = formatInsightsText(data.visionInsights) || 'Error generating vision insights';
-        recommendedTalkTrack.innerHTML = formatInsightsText(data.recommendedTalkTrack) || 'Error generating talk track';
+        // Update insights with detailed error handling
+        console.log('Response data received:', data);
+        
+        // Check if we have valid data for each section
+        try {
+            // Industry Insights
+            if (data.industryInsights && data.industryInsights.length > 10) {
+                industryInsights.innerHTML = formatInsightsText(data.industryInsights);
+                console.log('Industry insights rendered successfully');
+            } else {
+                industryInsights.innerHTML = 'Error generating industry insights';
+                console.error('Industry insights missing or invalid:', data.industryInsights);
+            }
+            
+            // Company Insights
+            if (data.companyInsights && data.companyInsights.length > 10) {
+                companyInsights.innerHTML = formatInsightsText(data.companyInsights);
+                console.log('Company insights rendered successfully');
+            } else {
+                companyInsights.innerHTML = 'Error generating company insights';
+                console.error('Company insights missing or invalid:', data.companyInsights);
+            }
+            
+            // Vision Insights
+            if (data.visionInsights && data.visionInsights.length > 10) {
+                visionInsights.innerHTML = formatInsightsText(data.visionInsights);
+                console.log('Vision insights rendered successfully');
+            } else {
+                visionInsights.innerHTML = 'Error generating vision insights';
+                console.error('Vision insights missing or invalid:', data.visionInsights);
+            }
+            
+            // Recommended Talk Track
+            if (data.recommendedTalkTrack && data.recommendedTalkTrack.length > 10) {
+                recommendedTalkTrack.innerHTML = formatInsightsText(data.recommendedTalkTrack);
+                console.log('Talk track rendered successfully');
+            } else {
+                recommendedTalkTrack.innerHTML = 'Error generating talk track';
+                console.error('Talk track missing or invalid:', data.recommendedTalkTrack);
+            }
+        } catch (error) {
+            console.error('Error rendering insights:', error);
+            // Fallback for all sections if there's an error
+            industryInsights.innerHTML = 'Error rendering insights';
+            companyInsights.innerHTML = 'Error rendering insights';
+            visionInsights.innerHTML = 'Error rendering insights';
+            recommendedTalkTrack.innerHTML = 'Error rendering insights';
+        }
         
     } catch (error) {
         console.error('Error generating research:', error);
@@ -178,6 +240,13 @@ function setLoadingState(isLoading) {
         }
     });
     
+    // Toggle loading bar visibility
+    if (isLoading) {
+        loadingBarContainer.classList.add('active');
+    } else {
+        loadingBarContainer.classList.remove('active');
+    }
+    
     const contentAreas = [industryInsights, companyInsights, visionInsights, recommendedTalkTrack];
     
     if (isLoading) {
@@ -215,7 +284,7 @@ function setError(message) {
 }
 
 /**
- * Formats the insight text to properly display headers as bold and handle links
+ * Formats the insight text to properly display headers as bold (16pt) and body text (12pt) with proper spacing
  * 
  * @param {string} text - The text to format
  * @returns {string} - Formatted HTML string
@@ -223,13 +292,213 @@ function setError(message) {
 function formatInsightsText(text) {
     if (!text) return '';
     
-    // Replace **Header** patterns with bold text
-    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
-    // Replace bracket citations with nothing (remove them)
+    // Clean up the text, remove citations and extra spaces
     text = text.replace(/\[\d+\]/g, '');
     
-    return text;
+    let formattedHtml = '';
+    
+    // First try to process text with ### markdown headers
+    const regex = /(###\s*\d*\.?\s*.*?)(?=\n###|$)/gs;
+    const matches = Array.from(text.matchAll(regex));
+    
+    // If we found markdown headers, process them
+    if (matches && matches.length > 0) {
+        console.log('Found markdown headers, processing sections');
+        for (const match of matches) {
+            const section = match[1].trim();
+            
+            // Extract the header line and content
+            const lines = section.split('\n');
+            const headerLine = lines[0];
+            const contentLines = lines.slice(1);
+            
+            // Clean up the header (remove ### and numbering)
+            let headerText = headerLine.replace(/^###\s*/, '');
+            headerText = headerText.replace(/^\d+\.\s*/, '');
+            
+            // Process the content
+            let bodyText = '';
+            
+            // Process content while preserving bullet points and line breaks
+            contentLines.forEach(line => {
+                let cleanLine = line.trim();
+                
+                if (cleanLine) {
+                    // Preserve bullet points with proper HTML formatting
+                    if (cleanLine.startsWith('-') || cleanLine.startsWith('*')) {
+                        bodyText += '<li>' + cleanLine.substring(1).trim() + '</li>';
+                    } else {
+                        bodyText += cleanLine + '<br>';
+                    }
+                }
+            });
+            
+            // Wrap bullet points in unordered list if present
+            if (bodyText.includes('<li>')) {
+                bodyText = '<ul>' + bodyText + '</ul>';
+            }
+            
+            // Add the formatted section if we have both header and content
+            if (headerText && bodyText) {
+                formattedHtml += `<div class="insight-header-text">${headerText}</div>`;
+                formattedHtml += `<div class="insight-body-text">${bodyText.trim()}</div>`;
+            }
+        }
+    }
+    // If no markdown headers found, look for **bold** sections as potential headers
+    else if (text.includes('**')) {
+        console.log('No markdown headers found, looking for bold text as headers');
+        // Look for sections with bold text as headers
+        const boldSections = text.split('\n\n').filter(section => section.trim());
+        
+        boldSections.forEach(section => {
+            const lines = section.split('\n');
+            // Look for a line containing bold text (enclosed in **)  
+            const headerLineIndex = lines.findIndex(line => line.includes('**'));
+            
+            if (headerLineIndex >= 0) {
+                // Extract the bold text as header
+                const headerLine = lines[headerLineIndex];
+                const boldRegex = /\*\*(.*?)\*\*/;
+                const boldMatch = headerLine.match(boldRegex);
+                
+                if (boldMatch && boldMatch[1]) {
+                    const headerText = boldMatch[1].trim();
+                    // Join the remaining lines as content
+                    const contentLines = lines.filter((_, index) => index !== headerLineIndex);
+                    let bodyText = contentLines.join(' ').trim();
+                    
+                    formattedHtml += `<div class="insight-header-text">${headerText}</div>`;
+                    formattedHtml += `<div class="insight-body-text">${bodyText}</div>`;
+                }
+            }
+        });
+    }
+    
+    // If no structured format is detected, use a fallback formatting
+    if (!formattedHtml) {
+        console.log('No structured format detected, using fallback formatting');
+        // Split by paragraphs and create a nice layout
+        const paragraphs = text.split('\n\n').filter(p => p.trim());
+        
+        if (paragraphs.length > 0) {
+            // Try to use the first paragraph or line as a title
+            const firstPara = paragraphs[0].trim();
+            // If the first paragraph is short, use it as a header
+            if (firstPara.length < 100) {
+                formattedHtml += `<div class="insight-header-text">${firstPara}</div>`;
+                
+                // Process the remaining content, preserving bullet points
+                const remainingParagraphs = paragraphs.slice(1);
+                let bodyContent = '';
+                
+                remainingParagraphs.forEach(paragraph => {
+                    const lines = paragraph.split('\n');
+                    let paragraphHtml = '';
+                    let hasBullets = false;
+                    
+                    lines.forEach(line => {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine) {
+                            if (trimmedLine.startsWith('-') || trimmedLine.startsWith('*')) {
+                                hasBullets = true;
+                                paragraphHtml += '<li>' + trimmedLine.substring(1).trim() + '</li>';
+                            } else {
+                                if (hasBullets) {
+                                    // Close the list if we were in bullet points and now we're not
+                                    paragraphHtml += '</ul><p>' + trimmedLine + '</p>';
+                                    hasBullets = false;
+                                } else {
+                                    paragraphHtml += '<p>' + trimmedLine + '</p>';
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Handle bullet points formatting
+                    if (hasBullets) {
+                        // If the paragraph ended with bullets, wrap them
+                        paragraphHtml = '<ul>' + paragraphHtml + '</ul>';
+                    } else if (paragraphHtml.includes('<li>') && !paragraphHtml.includes('<ul>')) {
+                        // If we have unattached list items, wrap them
+                        paragraphHtml = paragraphHtml.replace(/(<li>.*?<\/li>)+/g, '<ul>$&</ul>');
+                    }
+                    
+                    bodyContent += paragraphHtml;
+                });
+                
+                formattedHtml += `<div class="insight-body-text">${bodyContent}</div>`;
+            } else {
+                // If no clear header, process the entire text preserving formatting
+                let bodyContent = '';
+                const lines = text.split('\n');
+                let inBulletList = false;
+                
+                lines.forEach(line => {
+                    const trimmedLine = line.trim();
+                    if (trimmedLine) {
+                        if (trimmedLine.startsWith('-') || trimmedLine.startsWith('*')) {
+                            if (!inBulletList) {
+                                bodyContent += '<ul>';
+                                inBulletList = true;
+                            }
+                            bodyContent += '<li>' + trimmedLine.substring(1).trim() + '</li>';
+                        } else {
+                            if (inBulletList) {
+                                bodyContent += '</ul>';
+                                inBulletList = false;
+                            }
+                            bodyContent += '<p>' + trimmedLine + '</p>';
+                        }
+                    } else if (inBulletList) {
+                        // Empty line after bullets closes the list
+                        bodyContent += '</ul>';
+                        inBulletList = false;
+                    }
+                });
+                
+                // Close any open list
+                if (inBulletList) {
+                    bodyContent += '</ul>';
+                }
+                
+                formattedHtml = `<div class="insight-body-text">${bodyContent}</div>`;
+            }
+        } else {
+            // If no paragraphs, just process the whole text line by line
+            let bodyContent = '';
+            const lines = text.split('\n');
+            let inBulletList = false;
+            
+            lines.forEach(line => {
+                const trimmedLine = line.trim();
+                if (trimmedLine) {
+                    if (trimmedLine.startsWith('-') || trimmedLine.startsWith('*')) {
+                        if (!inBulletList) {
+                            bodyContent += '<ul>';
+                            inBulletList = true;
+                        }
+                        bodyContent += '<li>' + trimmedLine.substring(1).trim() + '</li>';
+                    } else {
+                        if (inBulletList) {
+                            bodyContent += '</ul>';
+                            inBulletList = false;
+                        }
+                        bodyContent += '<p>' + trimmedLine + '</p>';
+                    }
+                }
+            });
+            
+            // Close any open list
+            if (inBulletList) {
+                bodyContent += '</ul>';
+            }
+            
+            formattedHtml = `<div class="insight-body-text">${bodyContent}</div>`;
+        }
+    }
+    
+    return formattedHtml;
 }
 
 // Event listeners
@@ -332,7 +601,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Content-Type': 'application/json',
                 'Authorization': token ? `Bearer ${token}` : ''
             },
-            body: JSON.stringify({ account: selectedAccount })
+            body: JSON.stringify({ accountName: selectedAccount })
         })
         .then(response => response.json())
         .then(data => {

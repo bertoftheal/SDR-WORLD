@@ -1188,6 +1188,21 @@ input:focus, select:focus, textarea:focus {
     line-height: 1.5;
 }
 
+/* Custom formatting for insights */
+.insight-header-text {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: var(--text-white);
+}
+
+.insight-body-text {
+    font-size: 12px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+
 .talk-track-box {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -1285,4 +1300,44 @@ input:focus, select:focus, textarea:focus {
 
 .generate-btn:hover {
     background-color: var(--primary-hover);
+}
+
+/* Loading Bar */
+.loading-bar-container {
+    width: 100%;
+    height: 6px;
+    background-color: var(--bg-card);
+    border-radius: 3px;
+    position: relative;
+    margin: 1rem 0;
+    overflow: hidden;
+    display: none;
+}
+
+.loading-bar-container.active {
+    display: block;
+}
+
+.loading-bar {
+    position: absolute;
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 3px;
+    animation: progress 2s infinite ease-in-out;
+    width: 0%;
+}
+
+@keyframes progress {
+    0% {
+        width: 0%;
+        left: 0;
+    }
+    50% {
+        width: 70%;
+        left: 0;
+    }
+    100% {
+        width: 10%;
+        left: 100%;
+    }
 }
