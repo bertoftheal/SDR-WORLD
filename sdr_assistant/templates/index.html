@@ -85,8 +85,9 @@
                             <div class="search-container p-4 bg-light rounded shadow-sm">
                                 <div class="form-group mb-4">
                                     <label for="accountSelect" class="fw-bold text-uppercase small mb-2"><i class="fas fa-building me-2"></i>COMPANY NAME</label>
-                                    <select class="form-select form-select-lg account-select" id="accountSelect">
+                                    <select class="form-select form-select-lg account-select" id="accountSelect" onchange="updateLogoImage(this.value)">
                                         <option selected disabled>Select a company to research</option>
+                                        <option value="nvidia">NVIDIA</option>
                                         <option value="cisco">Cisco Systems</option>
                                         <option value="microsoft">Microsoft</option>
                                         <option value="google">Google</option>
@@ -104,7 +105,7 @@
                             <div class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger p-3 fw-bold" style="z-index: 1">
                                 <i class="fas fa-bolt me-1"></i> AI POWERED
                             </div>
-                            <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" alt="Research Team Collaborating" class="img-fluid rounded shadow">
+                            <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" alt="Research Team Collaborating" class="img-fluid rounded shadow" id="companyLogo">
                             <div class="image-caption badge bg-dark bg-opacity-75 text-white py-2 px-3 position-absolute bottom-0 end-0 m-3 rounded-pill">
                                 <i class="fas fa-robot me-2"></i> DIGITAL RESEARCH BASED AI BUILT-IN
                             </div>
@@ -570,6 +571,436 @@
                 loadAccounts();
             } else {
                 console.error('loadAccounts function not found');
+            }
+        });
+    </script>
+    <!-- Simple inline script for updating company logo -->
+    <script>
+        // Default hero image URL
+        const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80';
+        
+        // Store original image URL once
+        let originalImageSrc = null;
+        
+        // Company data including logos and company details
+        const companyData = {
+            'nvidia': {
+                name: 'NVIDIA Corporation',
+                logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Nvidia_logo.svg/1200px-Nvidia_logo.svg.png',
+                headquarters: 'Santa Clara, California, United States',
+                employees: '26,000+',
+                marketCap: '$2.2 Trillion',
+                founded: '1993',
+                description: 'NVIDIA Corporation is an American multinational technology company that designs graphics processing units (GPUs), application programming interface (APIs) for data science and high-performance computing, and system on a chip units (SoCs) for the mobile computing and automotive market. The company has expanded its focus from PC graphics to artificial intelligence, deep learning, and accelerated computing.',
+                insights: {
+                    company: {
+                        financial: {
+                            title: 'Explosive growth in AI compute demand',
+                            content: 'NVIDIA has seen unprecedented revenue growth driven by demand for AI accelerators, with data center revenue quadrupling year-over-year as enterprises and cloud providers race to build AI infrastructure.',
+                            trend: 'positive'
+                        },
+                        product: {
+                            title: 'Expanding beyond GPUs to full-stack AI solutions',
+                            content: 'NVIDIA has successfully transformed from a GPU manufacturer to a comprehensive AI platform company with hardware, software frameworks like CUDA and TensorRT, and enterprise solutions through NVIDIA AI Enterprise.',
+                            trend: 'positive'
+                        },
+                        leadership: {
+                            title: 'Visionary leadership in AI acceleration',
+                            content: 'Under CEO Jensen Huang\'s direction, NVIDIA anticipated the AI revolution and positioned its technology at the center of the AI ecosystem years before competitors, creating substantial competitive advantages.',
+                            trend: 'positive'
+                        }
+                    },
+                    industry: [
+                        {
+                            title: 'AI Infrastructure Scaling Challenges',
+                            content: 'The AI infrastructure market faces critical power and cooling challenges, with high-density AI clusters requiring 5-10x more power than traditional data centers, creating substantial opportunities for innovative cooling and power delivery solutions.',
+                            type: 'Challenge'
+                        },
+                        {
+                            title: 'Accelerated Computing Adoption',
+                            content: 'Enterprise adoption of accelerated computing is expanding beyond AI to scientific computing, digital twins, and simulation workloads, with 68% of Fortune 500 companies planning significant investments in the next 12-18 months.',
+                            type: 'Trend'
+                        },
+                        {
+                            title: 'Alternative AI Architectures',
+                            content: 'While GPUs currently dominate AI workloads, specialized AI chips optimized for inference, including neuromorphic computing solutions, FPGAs, and custom ASICs, are gaining traction in edge applications where power efficiency is paramount.',
+                            type: 'Competition'
+                        }
+                    ],
+                    future: [
+                        {
+                            title: 'Multi-modal AI Acceleration',
+                            content: 'Next-generation AI models will increasingly integrate multiple data types (text, image, video, 3D, sensor) simultaneously, requiring significantly more computational power and specialized acceleration architectures.',
+                            type: 'Trend'
+                        },
+                        {
+                            title: 'Autonomous Systems Evolution',
+                            content: 'NVIDIA\'s full-stack approach to autonomous systems positions them to expand from automotive into industrial automation, robotics, and smart infrastructure, potentially doubling their total addressable market.',
+                            type: 'Opportunity'
+                        },
+                        {
+                            title: 'Decentralized AI Infrastructure',
+                            content: 'AI compute infrastructure will increasingly shift toward a mix of cloud and decentralized edge nodes, with 5G/6G enabling distributed AI processing that balances latency, bandwidth, and privacy requirements.',
+                            type: 'Disruption'
+                        }
+                    ]
+                }
+            },
+            'cisco': {
+                name: 'Cisco Systems',
+                logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Cisco_logo_blue_2016.svg/1200px-Cisco_logo_blue_2016.svg.png',
+                headquarters: 'San Jose, California, United States',
+                employees: '83,300+',
+                marketCap: '$212 Billion',
+                founded: '1984',
+                description: 'Cisco Systems, Inc. designs, manufactures, and sells Internet Protocol based networking and other products related to the communications and information technology industry worldwide. The company offers switching products, including fixed-configuration and modular switches, and storage products that provide connectivity to end users, workstations, IP phones, wireless access points, and servers.',
+                insights: {
+                    company: {
+                        financial: {
+                            title: 'Strong recurring revenue growth',
+                            content: 'Cisco has been successfully transitioning to a subscription-based model, with software and services now representing over 50% of their revenue, providing more stable and predictable income streams.',
+                            trend: 'positive'
+                        },
+                        product: {
+                            title: 'Expanded beyond networking hardware',
+                            content: 'While traditionally known for routers and switches, Cisco has diversified into cybersecurity, collaboration tools, and IoT, reducing dependence on hardware sales which are susceptible to market fluctuations.',
+                            trend: 'transition'
+                        },
+                        leadership: {
+                            title: 'Strategic executive appointments',
+                            content: 'Under CEO Chuck Robbins, Cisco has made strategic executive appointments focused on accelerating software development and cloud-based solutions, signaling their commitment to digital transformation.',
+                            trend: 'positive'
+                        }
+                    },
+                    industry: [
+                        {
+                            title: 'Hybrid cloud adoption accelerating',
+                            content: 'Enterprise customers are increasingly adopting hybrid cloud architectures that require sophisticated networking solutions to ensure seamless connectivity and security between on-premises and cloud environments.',
+                            type: 'Growing Trend'
+                        },
+                        {
+                            title: 'Rising security concerns with distributed networks',
+                            content: 'With the rise of remote work, organizations face expanded attack surfaces, driving 27% annual growth in network security spending according to Gartner, particularly for solutions that integrate with existing network infrastructure.',
+                            type: 'Critical Need'
+                        },
+                        {
+                            title: 'SD-WAN market expansion',
+                            content: 'The Software-Defined Wide Area Network market is experiencing rapid growth as organizations seek more flexible, cost-effective alternatives to traditional MPLS networks, with the market projected to grow at 34% CAGR through 2026.',
+                            type: 'Market Shift'
+                        }
+                    ],
+                    future: [
+                        {
+                            title: 'Predictive network management',
+                            content: 'Networks will increasingly leverage AI/ML to predict failures, optimize performance, and self-heal, reducing downtime by up to 90% and lowering operational costs significantly for enterprise customers.',
+                            type: '2-3 Year Horizon'
+                        },
+                        {
+                            title: 'Zero Trust Security Integration',
+                            content: 'Network security will evolve toward fully integrated zero trust architectures with continuous verification of all users and devices, regardless of location, driving demand for unified networking and security solutions.',
+                            type: 'Security Trend'
+                        },
+                        {
+                            title: 'Network-as-a-Service adoption',
+                            content: 'Enterprise network infrastructure will increasingly shift toward consumption-based NaaS models that offer greater flexibility and reduced capital expenditure, potentially disrupting traditional hardware refresh cycles.',
+                            type: 'Business Model'
+                        }
+                    ]
+                }
+            },
+            'microsoft': {
+                name: 'Microsoft Corporation',
+                logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1200px-Microsoft_logo.svg.png',
+                headquarters: 'Redmond, Washington, United States',
+                employees: '181,000+',
+                marketCap: '$2.8 Trillion',
+                founded: '1975',
+                description: 'Microsoft Corporation is an American multinational technology company that develops, licenses, and supports a wide range of software products, computing devices, and services. The company produces the Windows operating system, Microsoft Office suite, Azure cloud services, and Surface hardware lineup. Microsoft has shifted its focus toward cloud computing, artificial intelligence, and enterprise services in recent years.'
+            },
+            'google': {
+                name: 'Google LLC',
+                logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png',
+                headquarters: 'Mountain View, California, United States',
+                employees: '156,000+',
+                marketCap: '$1.7 Trillion',
+                founded: '1998',
+                description: 'Google LLC is an American multinational technology company that specializes in Internet-related services and products, including online advertising technologies, a search engine, cloud computing, software, and hardware. Google leads the development of the Android mobile operating system and the widely used Chrome web browser. The company has expanded into various areas including AI research, quantum computing, and self-driving cars.'
+            },
+            'amazon': {
+                name: 'Amazon.com, Inc.',
+                logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1200px-Amazon_logo.svg.png',
+                headquarters: 'Seattle, Washington, United States',
+                employees: '1.5 million+',
+                marketCap: '$1.6 Trillion',
+                founded: '1994',
+                description: 'Amazon.com, Inc. is an American multinational technology company focusing on e-commerce, cloud computing, digital streaming, and artificial intelligence. Amazon is the world\'s largest online marketplace, AI assistant provider, live-streaming platform, and cloud computing platform. The company has expanded into various sectors, including grocery stores, healthcare services, and film and television production.'
+            }
+        };
+        
+        // Function to update the insights sections based on company selection
+        function updateCompanyInsights(companyValue) {
+            console.log('Update company insights function called with:', companyValue);
+            
+            // Only update if a valid company is selected and has insights data
+            if (companyValue && companyData[companyValue] && companyData[companyValue].insights) {
+                const insights = companyData[companyValue].insights;
+                console.log('Found insights data for company:', companyValue, insights);
+                
+                // Update company insights
+                if (insights.company) {
+                    console.log('Updating company insights section');
+                    const companyInsightsSection = document.getElementById('company-insights');
+                    if (companyInsightsSection) {
+                        const insightBoxes = companyInsightsSection.querySelectorAll('.insight-box');
+                        console.log('Found company insight boxes:', insightBoxes.length);
+                        
+                        if (insightBoxes.length >= 3) {
+                            // Update the financial insight (first box)
+                            let headerText = insightBoxes[0].querySelector('.insight-header-text');
+                            let bodyText = insightBoxes[0].querySelector('.insight-body-text');
+                            let badge = insightBoxes[0].querySelector('.badge');
+                            
+                            if (headerText && bodyText) {
+                                console.log('Updating financial insight to:', insights.company.financial.title);
+                                headerText.textContent = insights.company.financial.title;
+                                bodyText.textContent = insights.company.financial.content;
+                                
+                                if (badge) {
+                                    // Set badge class based on trend
+                                    const trendClass = insights.company.financial.trend === 'positive' ? 'bg-success' : 
+                                                      insights.company.financial.trend === 'negative' ? 'bg-danger' : 'bg-info';
+                                    badge.className = 'badge rounded-pill ' + trendClass;
+                                    
+                                    // Update icon and text
+                                    const icon = insights.company.financial.trend === 'positive' ? 'fa-arrow-up' : 
+                                               insights.company.financial.trend === 'negative' ? 'fa-arrow-down' : 'fa-sync-alt';
+                                    const trendText = insights.company.financial.trend.charAt(0).toUpperCase() + 
+                                                     insights.company.financial.trend.slice(1) + ' Trend';
+                                    badge.innerHTML = `<i class="fas ${icon} me-1"></i> ${trendText}`;
+                                }
+                            }
+                            
+                            // Update the product insight (second box)
+                            headerText = insightBoxes[1].querySelector('.insight-header-text');
+                            bodyText = insightBoxes[1].querySelector('.insight-body-text');
+                            badge = insightBoxes[1].querySelector('.badge');
+                            
+                            if (headerText && bodyText) {
+                                console.log('Updating product insight to:', insights.company.product.title);
+                                headerText.textContent = insights.company.product.title;
+                                bodyText.textContent = insights.company.product.content;
+                                
+                                if (badge) {
+                                    // Set badge class based on trend
+                                    const trendClass = insights.company.product.trend === 'positive' ? 'bg-success' : 
+                                                      insights.company.product.trend === 'negative' ? 'bg-danger' : 'bg-info';
+                                    badge.className = 'badge rounded-pill ' + trendClass;
+                                    
+                                    // Update icon and text
+                                    const icon = insights.company.product.trend === 'positive' ? 'fa-arrow-up' : 
+                                              insights.company.product.trend === 'negative' ? 'fa-arrow-down' : 'fa-sync-alt';
+                                    const trendText = insights.company.product.trend.charAt(0).toUpperCase() + 
+                                                    insights.company.product.trend.slice(1) + ' Trend';
+                                    badge.innerHTML = `<i class="fas ${icon} me-1"></i> ${trendText}`;
+                                }
+                            }
+                            
+                            // Update the leadership insight (third box)
+                            headerText = insightBoxes[2].querySelector('.insight-header-text');
+                            bodyText = insightBoxes[2].querySelector('.insight-body-text');
+                            badge = insightBoxes[2].querySelector('.badge');
+                            
+                            if (headerText && bodyText) {
+                                console.log('Updating leadership insight to:', insights.company.leadership.title);
+                                headerText.textContent = insights.company.leadership.title;
+                                bodyText.textContent = insights.company.leadership.content;
+                                
+                                if (badge) {
+                                    // Set badge class based on trend
+                                    const trendClass = insights.company.leadership.trend === 'positive' ? 'bg-success' : 
+                                                      insights.company.leadership.trend === 'negative' ? 'bg-danger' : 'bg-info';
+                                    badge.className = 'badge rounded-pill ' + trendClass;
+                                    
+                                    const icon = insights.company.leadership.trend === 'positive' ? 'fa-check' : 
+                                               insights.company.leadership.trend === 'negative' ? 'fa-times' : 'fa-info-circle';
+                                    badge.innerHTML = `<i class="fas ${icon} me-1"></i> Key Insight`;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Update industry insights - only if data exists
+                if (insights.industry && insights.industry.length >= 3) {
+                    console.log('Updating industry insights section');
+                    const industrySection = document.getElementById('industry-insights');
+                    if (industrySection) {
+                        const insightBoxes = industrySection.querySelectorAll('.insight-box');
+                        console.log('Found industry insight boxes:', insightBoxes.length);
+                        
+                        if (insightBoxes.length >= 3) {
+                            // Update each industry insight box
+                            for (let i = 0; i < 3; i++) {
+                                let headerText = insightBoxes[i].querySelector('.insight-header-text');
+                                let bodyText = insightBoxes[i].querySelector('.insight-body-text');
+                                let badge = insightBoxes[i].querySelector('.badge');
+                                
+                                if (headerText && bodyText && insights.industry[i]) {
+                                    console.log(`Updating industry insight ${i+1} to:`, insights.industry[i].title);
+                                    headerText.textContent = insights.industry[i].title;
+                                    bodyText.textContent = insights.industry[i].content;
+                                    
+                                    // Update badge if it exists
+                                    if (badge) {
+                                        badge.innerHTML = `<i class="fas fa-info-circle me-1"></i> ${insights.industry[i].type}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Update future insights - only if data exists
+                if (insights.future && insights.future.length >= 3) {
+                    console.log('Updating future insights section');
+                    const futureSection = document.getElementById('future-insights');
+                    if (futureSection) {
+                        const insightBoxes = futureSection.querySelectorAll('.insight-box');
+                        console.log('Found future insight boxes:', insightBoxes.length);
+                        
+                        if (insightBoxes.length >= 3) {
+                            // Update each future insight box
+                            for (let i = 0; i < 3; i++) {
+                                let headerText = insightBoxes[i].querySelector('.insight-header-text');
+                                let bodyText = insightBoxes[i].querySelector('.insight-body-text');
+                                let badge = insightBoxes[i].querySelector('.badge');
+                                
+                                if (headerText && bodyText && insights.future[i]) {
+                                    console.log(`Updating future insight ${i+1} to:`, insights.future[i].title);
+                                    headerText.textContent = insights.future[i].title;
+                                    bodyText.textContent = insights.future[i].content;
+                                    
+                                    // Update badge if it exists
+                                    if (badge) {
+                                        badge.innerHTML = `<i class="fas fa-lightbulb me-1"></i> ${insights.future[i].type}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                console.error('Missing insights data for company:', companyValue);
+            }
+        }
+        
+        // Function to update the company details based on selection
+        function updateCompanyDetails(companyValue) {
+            console.log('Update company details function called with:', companyValue);
+            
+            // Get company details elements
+            const companyNameElement = document.querySelector('.company-name');
+            const companyDescriptionElement = document.querySelector('.company-description p');
+            const metaValues = document.querySelectorAll('.meta-value');
+            
+            // Don't proceed if elements aren't found
+            if (!companyNameElement || metaValues.length < 4) {
+                console.error('Could not find company details elements');
+                return;
+            }
+            
+            // Update company details if a valid company is selected
+            if (companyValue && companyData[companyValue]) {
+                const company = companyData[companyValue];
+                console.log('Updating details for company:', company.name);
+                
+                // Update company name
+                companyNameElement.textContent = company.name;
+                
+                // Update company description
+                if (companyDescriptionElement && company.description) {
+                    companyDescriptionElement.textContent = company.description;
+                }
+                
+                // Update metadata values (headquarters, employees, market cap, founded)
+                metaValues[0].textContent = company.headquarters;
+                metaValues[1].textContent = company.employees;
+                metaValues[2].textContent = company.marketCap;
+                metaValues[3].textContent = company.founded;
+                
+                // Also update the insights sections
+                updateCompanyInsights(companyValue);
+            }
+        }
+        
+        // Function to update the logo image based on company selection
+        function updateLogoImage(companyValue) {
+            console.log('Update logo function called with:', companyValue);
+            
+            const logoImg = document.getElementById('companyLogo');
+            if (!logoImg) {
+                console.error('Could not find logo image element');
+                return;
+            }
+            
+            // Store original image if not already stored
+            if (!originalImageSrc) {
+                originalImageSrc = logoImg.src;
+                console.log('Stored original image URL:', originalImageSrc);
+            }
+            
+            if (companyValue && companyData[companyValue]) {
+                // Update to company logo
+                const company = companyData[companyValue];
+                console.log('Changing image to:', company.logoUrl);
+                logoImg.src = company.logoUrl;
+                logoImg.alt = company.name + ' Logo';
+                
+                // Style for logo display
+                logoImg.style.objectFit = 'contain';
+                logoImg.style.backgroundColor = '#ffffff';
+                logoImg.style.padding = '20px';
+                
+                // Update company details
+                updateCompanyDetails(companyValue);
+            } else {
+                // Reset to default image
+                console.log('Resetting to original image');
+                logoImg.src = originalImageSrc || DEFAULT_HERO_IMAGE;
+                logoImg.alt = 'Research Team Collaborating';
+                
+                // Reset styling
+                logoImg.style.objectFit = '';
+                logoImg.style.backgroundColor = '';
+                logoImg.style.padding = '';
+            }
+        }
+        
+        // Add event listener for dropdown selection change
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded');
+            
+            const selectElement = document.getElementById('accountSelect');
+            if (selectElement) {
+                console.log('Found account select dropdown');
+                
+                // Set up the change event listener for the company dropdown
+                selectElement.addEventListener('change', function() {
+                    const selectedCompany = this.value;
+                    console.log('Company selection changed to:', selectedCompany);
+                    
+                    // Update company details, logo, and insights
+                    updateCompanyDetails(selectedCompany);
+                    updateLogoImage(selectedCompany);
+                });
+                
+                // Initialize with selected company on page load
+                const initialCompany = selectElement.value;
+                console.log('Initializing with company:', initialCompany);
+                updateCompanyDetails(initialCompany);
+                updateLogoImage(initialCompany);
+            } else {
+                console.error('Could not find account select dropdown');
             }
         });
     </script>
