@@ -7,26 +7,27 @@
     --font-size-xl: 1.25rem;
     --font-size-2xl: 1.5rem;
     
-    --bg-primary: #121212;
-    --bg-secondary: #1e1e1e;
-    --bg-card: #242424;
-    --bg-hover: rgba(255, 255, 255, 0.05);
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-card: #ffffff;
+    --bg-hover: rgba(0, 220, 130, 0.05);
     
-    --text-color: #a0a0a0;
-    --text-light: #676767;
-    --text-white: #e0e0e0;
-    --text-brand: #c0c0c0;
+    --text-color: #333333;
+    --text-light: #6c757d;
+    --text-white: #ffffff;
+    --text-dark: #222222;
+    --text-brand: #222222;
     
     --primary-color: #00DC82;
     --primary-hover: #00b56a;
     
-    --border-color: #2a2a2a;
+    --border-color: #e9ecef;
     
     --radius: 0.5rem;
     --radius-lg: 0.75rem;
     
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.1);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     
     --transition: all 0.2s ease;
@@ -70,7 +71,7 @@ button, .button {
     cursor: pointer;
     transition: var(--transition);
     background-color: var(--primary-color);
-    color: var(--text-color);
+    color: var(--text-white);
 }
 
 button:hover, .button:hover {
@@ -88,6 +89,7 @@ input, select, textarea {
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
     background-color: var(--bg-card);
+    color: var(--text-color);
     transition: var(--transition);
 }
 
@@ -109,6 +111,7 @@ input:focus, select:focus, textarea:focus {
     position: sticky;
     top: 0;
     z-index: 100;
+    background-color: var(--primary-color);
 }
 
 .navbar-container {
@@ -137,7 +140,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .navbar a {
-    color: var(--text-color);
+    color: var(--text-dark);
 }
 
 .navbar a:hover {
@@ -959,6 +962,7 @@ input:focus, select:focus, textarea:focus {
     border-radius: var(--radius);
     margin-bottom: 1.5rem;
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
 }
 
 .result-header {
@@ -1050,14 +1054,14 @@ input:focus, select:focus, textarea:focus {
 .result-content h4.list-header {
     font-size: var(--font-size-lg);
     font-weight: 600;
-    color: var(--text-white);
+    color: var(--text-color);
     margin-top: 1rem;
     margin-bottom: 0.75rem;
     padding-bottom: 0.5rem;
 }
 
 .result-content strong {
-    color: var(--text-white);
+    color: var(--text-color);
     font-weight: 600;
 }
 
@@ -1079,12 +1083,12 @@ input:focus, select:focus, textarea:focus {
 .result-content ol.numbered-list li {
     margin-bottom: 0.75rem;
     line-height: 1.6;
-    color: var(--text-white);
+    color: var(--text-color);
 }
 
 .result-content li.list-subheader {
     font-weight: 600;
-    color: var(--text-white);
+    color: var(--text-color);
     margin-top: 0.75rem;
     margin-bottom: 0.5rem;
     list-style-type: none;
@@ -1143,6 +1147,49 @@ input:focus, select:focus, textarea:focus {
     color: var(--text-brand);
 }
 
+/* Company Header */
+.company-header {
+    padding: 2rem 0;
+}
+
+.company-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.company-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.company-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.meta-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.meta-value {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.company-description {
+    font-size: var(--font-size-md);
+    line-height: 1.6;
+    color: var(--text-light);
+    max-width: 900px;
+}
+
 .globe-icon {
     color: var(--primary-color);
 }
@@ -1155,8 +1202,38 @@ input:focus, select:focus, textarea:focus {
 .insights-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.section-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-header h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+}
+
+.insights-section {
+    padding: 1.5rem 0;
+}
+
+.insights-section.company-insights {
+    background-color: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: var(--radius);
+    margin-bottom: 2rem;
+}
+
+.insights-section.industry-insights,
+.insights-section.future-insights {
+    margin-bottom: 2rem;
 }
 
 .insight-box {
@@ -1164,6 +1241,7 @@ input:focus, select:focus, textarea:focus {
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
 }
 
 .insight-header {
@@ -1173,6 +1251,7 @@ input:focus, select:focus, textarea:focus {
     padding: 1rem;
     border-bottom: 1px solid var(--border-color);
     font-weight: 600;
+    background-color: var(--bg-secondary);
 }
 
 .insight-header img,
@@ -1193,13 +1272,14 @@ input:focus, select:focus, textarea:focus {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 8px;
-    color: var(--text-white);
+    color: var(--text-color);
 }
 
 .insight-body-text {
-    font-size: 12px;
+    font-size: 14px;
     margin-bottom: 16px;
-    line-height: 1.5;
+    line-height: 1.6;
+    color: var(--text-light);
 }
 
 
@@ -1209,6 +1289,23 @@ input:focus, select:focus, textarea:focus {
     border-radius: var(--radius);
     margin-bottom: 1.5rem;
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.talk-track-section {
+    background-color: rgba(0, 220, 130, 0.1);
+    padding: 2rem;
+    border-radius: var(--radius);
+    margin-bottom: 2rem;
+}
+
+.talk-track-content {
+    font-size: var(--font-size-md);
+    line-height: 1.7;
+    color: var(--text-color);
+    min-height: auto;
+    max-height: none;
+    padding: 1.5rem;
 }
 
 .talk-track-box .insight-content {
@@ -1262,11 +1359,11 @@ input:focus, select:focus, textarea:focus {
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
-    background-color: var(--bg-primary);
+    background-color: var(--primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-white);
+    color: var(--text-dark);
 }
 
 .account-selector {
@@ -1277,7 +1374,7 @@ input:focus, select:focus, textarea:focus {
 .account-select {
     width: 100%;
     background-color: var(--bg-card);
-    color: var(--text-white);
+    color: var(--text-color);
     padding: 0.5rem 0.75rem;
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
@@ -1296,6 +1393,7 @@ input:focus, select:focus, textarea:focus {
     border-radius: var(--radius);
     cursor: pointer;
     transition: var(--transition);
+    box-shadow: var(--shadow-sm);
 }
 
 .generate-btn:hover {

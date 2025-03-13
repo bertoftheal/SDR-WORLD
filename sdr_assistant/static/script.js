@@ -14,15 +14,16 @@
 // DOM Elements
 const accountSelect = document.getElementById('accountSelect');
 const generateBtn = document.getElementById('generateBtn');
-const saveBtn = document.getElementById('saveToAirtable');
-const industryInsights = document.getElementById('industryInsights');
-const companyInsights = document.getElementById('companyInsights');
-const visionInsights = document.getElementById('visionInsights');
-const recommendedTalkTrack = document.getElementById('recommendedTalkTrack');
+const saveBtn = document.querySelector('.save-btn');
+const companyName = document.querySelector('.company-name');
+const companyDescription = document.querySelector('.company-description');
+const companyMetaItems = document.querySelectorAll('.meta-value');
+const companyInsightsGrid = document.querySelector('.company-insights .insights-grid');
+const industryInsightsGrid = document.querySelector('.industry-insights .insights-grid');
+const futureInsightsGrid = document.querySelector('.future-insights .insights-grid');
+const talkTrackContent = document.querySelector('.talk-track-content');
 const userName = document.getElementById('userName');
-const username = document.getElementById('username');
-const loadingBarContainer = document.getElementById('loadingBarContainer');
-const loadingBar = document.getElementById('loadingBar');
+const heroImage = document.querySelector('.hero-image img');
 
 // Check if user is logged in
 function checkUserLogin() {
@@ -38,7 +39,6 @@ function checkUserLogin() {
         .then(data => {
             if (data.name) {
                 userName.textContent = data.name;
-                username.textContent = data.name;
             }
         })
         .catch(error => {
@@ -47,14 +47,13 @@ function checkUserLogin() {
     } else {
         // No token found, user needs to log in
         userName.textContent = 'Albert Perez'; // Default for demo
-        username.textContent = 'Sign In';
     }
 }
 
 /**
  * Loads account data from the backend API
  * Populates the account selection dropdown with the results
- * If API call fails, logs error to console
+ * If API call fails, uses fallback static data
  */
 async function loadAccounts() {
     try {
@@ -89,7 +88,29 @@ async function loadAccounts() {
         
         console.log(`Loaded ${addedAccounts.size} unique accounts`);
     } catch (error) {
-        console.error('Error loading accounts:', error);
+        console.error('Error loading accounts from API, using static data:', error);
+        
+        // Use static fallback data when API is unavailable
+        // Clear existing options and add the placeholder
+        accountSelect.innerHTML = '<option value="">Select an account...</option>';
+        
+        // Add static company options
+        const staticCompanies = [
+            { id: 'cisco', name: 'Cisco Systems' },
+            { id: 'microsoft', name: 'Microsoft Corporation' },
+            { id: 'google', name: 'Google (Alphabet Inc.)' },
+            { id: 'amazon', name: 'Amazon.com, Inc.' }
+        ];
+        
+        staticCompanies.forEach(company => {
+            const option = document.createElement('option');
+            option.value = company.id;
+            option.textContent = company.name;
+            option.dataset.id = company.id;
+            accountSelect.appendChild(option);
+        });
+        
+        console.log('Populated dropdown with static company data');
     }
 }
 
@@ -281,6 +302,246 @@ function setError(message) {
     companyInsights.textContent = message;
     visionInsights.textContent = message;
     recommendedTalkTrack.textContent = message;
+}
+
+/**
+ * Updates the company info section with data from the API
+ * 
+ * @param {Object} companyInfo - Company information from the API
+ */
+function updateCompanyInfo(companyInfo) {
+    if (!companyInfo) return;
+    
+    // Update company name and description
+    companyName.textContent = companyInfo.name || 'Company Name';
+    companyDescription.textContent = companyInfo.description || 'No company description available.';
+    
+    // Update meta items if they exist
+    if (companyMetaItems.length >= 4) {
+        companyMetaItems[0].textContent = companyInfo.headquarters || 'Unknown';
+        companyMetaItems[1].textContent = companyInfo.employees || 'Unknown';
+        companyMetaItems[2].textContent = companyInfo.marketCap || 'Unknown';
+        companyMetaItems[3].textContent = companyInfo.founded || 'Unknown';
+    }
+}
+
+/**
+ * Updates the company details based on selected company
+ */
+function updateCompanyDetails() {
+    const selectedCompany = accountSelect.value;
+    
+    // This is just a placeholder function with static data
+    // In a real implementation, this would fetch data from an API
+    const companyData = {
+        'cisco': {
+            name: 'Cisco Systems',
+            headquarters: 'San Jose, California, United States',
+            employees: '83,300+',
+            marketCap: '$198.5 Billion',
+            founded: '1984',
+            description: 'Cisco Systems, Inc. designs, manufactures, and sells Internet Protocol based networking and other products related to the communications and information technology industry worldwide.',
+            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Cisco_logo_blue_2016.svg/1200px-Cisco_logo_blue_2016.svg.png'
+        },
+        'microsoft': {
+            name: 'Microsoft Corporation',
+            headquarters: 'Redmond, Washington, United States',
+            employees: '221,000+',
+            marketCap: '$2.8 Trillion',
+            founded: '1975',
+            description: 'Microsoft Corporation develops, licenses, and supports software, services, devices, and solutions worldwide. The company operates through three segments: Productivity and Business Processes, Intelligent Cloud, and More Personal Computing.',
+            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1200px-Microsoft_logo.svg.png'
+        },
+        'google': {
+            name: 'Google (Alphabet Inc.)',
+            headquarters: 'Mountain View, California, United States',
+            employees: '156,500+',
+            marketCap: '$1.7 Trillion',
+            founded: '1998',
+            description: 'Google LLC is an American multinational technology company that specializes in Internet-related services and products, which include online advertising technologies, a search engine, cloud computing, software, and hardware.',
+            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png'
+        },
+        'amazon': {
+            name: 'Amazon.com, Inc.',
+            headquarters: 'Seattle, Washington, United States',
+            employees: '1.5 Million+',
+            marketCap: '$1.6 Trillion',
+            founded: '1994',
+            description: 'Amazon.com, Inc. engages in the retail sale of consumer products and subscriptions through online and physical stores in North America and internationally. It operates through e-commerce, AWS, and physical stores segments.',
+            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1200px-Amazon_logo.svg.png'
+        }
+    };
+    
+    if (selectedCompany && companyData[selectedCompany]) {
+        updateCompanyInfo(companyData[selectedCompany]);
+        
+        // Update the hero image with the company logo
+        if (heroImage && companyData[selectedCompany].logoUrl) {
+            // Store the original image URL if we haven't already
+            if (!heroImage.dataset.originalSrc) {
+                heroImage.dataset.originalSrc = heroImage.src;
+            }
+            
+            // Change the image to the company logo
+            heroImage.src = companyData[selectedCompany].logoUrl;
+            heroImage.alt = companyData[selectedCompany].name + ' Logo';
+        }
+    } else if (heroImage && heroImage.dataset.originalSrc) {
+        // If no company is selected, restore the original image
+        heroImage.src = heroImage.dataset.originalSrc;
+        heroImage.alt = 'Research Team Collaborating';
+    }
+}
+
+/**
+ * Updates an insights section with the provided insights data
+ * 
+ * @param {HTMLElement} container - The container element for the insights
+ * @param {Array} insights - Array of insight objects
+ */
+function updateInsightsSection(container, insights) {
+    if (!container || !insights || !Array.isArray(insights)) return;
+    
+    // Clear existing content
+    container.innerHTML = '';
+    
+    // Add each insight
+    insights.forEach(insight => {
+        const insightBox = document.createElement('div');
+        insightBox.className = 'insight-box';
+        
+        insightBox.innerHTML = `
+            <div class="insight-header">
+                <i class="${insight.icon || 'fas fa-lightbulb'}"></i>
+                <span>${insight.title || 'Insight'}</span>
+            </div>
+            <div class="insight-content">
+                <div class="insight-header-text">${insight.header || 'Insight Header'}</div>
+                <div class="insight-body-text">${insight.content || 'No content available.'}</div>
+            </div>
+        `;
+        
+        container.appendChild(insightBox);
+    });
+}
+
+/**
+ * Shows a notification toast
+ * 
+ * @param {string} message - Message to display
+ * @param {string} type - Type of notification (success, error, warning)
+ */
+function showNotification(message, type = 'info') {
+    // Create notification element if it doesn't exist
+    let notification = document.getElementById('notification');
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'notification';
+        document.body.appendChild(notification);
+        
+        // Add styles if not already in CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            #notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                border-radius: var(--radius);
+                color: white;
+                font-weight: 500;
+                z-index: 1000;
+                box-shadow: var(--shadow-md);
+                transition: transform 0.3s ease, opacity 0.3s ease;
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            #notification.show {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            #notification.success { background-color: var(--success-color); }
+            #notification.error { background-color: var(--danger-color); }
+            #notification.warning { background-color: var(--warning-color); }
+            #notification.info { background-color: var(--info-color); }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Set content and type
+    notification.textContent = message;
+    notification.className = type;
+    
+    // Show notification
+    setTimeout(() => notification.classList.add('show'), 10);
+    
+    // Hide after delay
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+/**
+ * Shows or hides loading overlay
+ * 
+ * @param {boolean} show - Whether to show or hide the loading overlay
+ */
+function showLoadingOverlay(show) {
+    // Create loading overlay if it doesn't exist
+    let loadingOverlay = document.getElementById('loadingOverlay');
+    if (!loadingOverlay && show) {
+        loadingOverlay = document.createElement('div');
+        loadingOverlay.id = 'loadingOverlay';
+        loadingOverlay.innerHTML = `
+            <div class="loading-spinner">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                <span>Generating research...</span>
+            </div>
+        `;
+        document.body.appendChild(loadingOverlay);
+        
+        // Add styles if not already in CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            #loadingOverlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(255, 255, 255, 0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+            .loading-spinner {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            .loading-spinner i {
+                font-size: 3rem;
+                color: var(--primary-color);
+            }
+            .loading-spinner span {
+                font-size: var(--font-size-lg);
+                font-weight: 500;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    if (loadingOverlay) {
+        if (show) {
+            loadingOverlay.style.display = 'flex';
+        } else {
+            loadingOverlay.style.display = 'none';
+            setTimeout(() => loadingOverlay.remove(), 300);
+        }
+    }
 }
 
 /**
@@ -503,7 +764,11 @@ function formatInsightsText(text) {
 
 // Event listeners
 generateBtn.addEventListener('click', generateResearch);
-saveBtn.addEventListener('click', saveToAirtable);
+saveBtn.addEventListener('click', saveToLibrary);
+accountSelect.addEventListener('change', updateCompanyDetails);
+
+// Load accounts immediately when page loads
+document.addEventListener('DOMContentLoaded', loadAccounts);
 
 // Initialize the application
 checkUserLogin();
