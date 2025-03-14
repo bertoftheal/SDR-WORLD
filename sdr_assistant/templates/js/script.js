@@ -11,22 +11,61 @@
  * - Updating the UI based on application state
  */
 
-// DOM Elements
-const accountSelect = document.getElementById('accountSelect');
-const generateBtn = document.getElementById('generateBtn');
-const saveBtn = document.querySelector('.save-btn');
-const companyName = document.querySelector('.company-name');
-const companyDescription = document.querySelector('.company-description');
-const companyMetaItems = document.querySelectorAll('.meta-value');
-const companyInsightsGrid = document.querySelector('.company-insights .insights-grid');
-const industryInsightsGrid = document.querySelector('.industry-insights .insights-grid');
-const futureInsightsGrid = document.querySelector('.future-insights .insights-grid');
-const talkTrackContent = document.querySelector('.talk-track-content');
-const userName = document.getElementById('userName');
-const heroImage = document.querySelector('.hero-image img');
+// DOM Elements - will be initialized when document is fully loaded
+let accountSelect;
+let generateBtn;
+let saveBtn;
+let companyName;
+let companyDescription;
+let companyMetaItems;
+let companyInsightsGrid;
+let industryInsightsGrid;
+let futureInsightsGrid;
+let talkTrackContent;
+let userName;
+let heroImage;
+
+// Default hero image URL to restore when no company is selected
+const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80';
+
+// Initialize DOM elements when document is fully loaded
+function initDOMElements() {
+    accountSelect = document.getElementById('accountSelect');
+    generateBtn = document.getElementById('generateBtn');
+    saveBtn = document.querySelector('.save-btn');
+    companyName = document.querySelector('.company-name');
+    companyDescription = document.querySelector('.company-description');
+    companyMetaItems = document.querySelectorAll('.meta-value');
+    companyInsightsGrid = document.querySelector('.company-insights .insights-grid');
+    industryInsightsGrid = document.querySelector('.industry-insights .insights-grid');
+    futureInsightsGrid = document.querySelector('.future-insights .insights-grid');
+    talkTrackContent = document.querySelector('.talk-track-content');
+    userName = document.getElementById('userName');
+    heroImage = document.querySelector('.hero-image img');
+    console.log("Hero image element initialized:", heroImage);
+}
 
 // DEMO MODE - For static HTML preview
 const DEMO_MODE = true;
+
+/**
+ * Initialize DOM elements when document is fully loaded
+ */
+function initDOMElements() {
+    accountSelect = document.getElementById('accountSelect');
+    generateBtn = document.getElementById('generateBtn');
+    saveBtn = document.querySelector('.save-btn');
+    companyName = document.querySelector('.company-name');
+    companyDescription = document.querySelector('.company-description');
+    companyMetaItems = document.querySelectorAll('.meta-value');
+    companyInsightsGrid = document.querySelector('.company-insights .insights-grid');
+    industryInsightsGrid = document.querySelector('.industry-insights .insights-grid');
+    futureInsightsGrid = document.querySelector('.future-insights .insights-grid');
+    talkTrackContent = document.querySelector('.talk-track-content');
+    userName = document.getElementById('userName');
+    heroImage = document.querySelector('.hero-image img');
+    console.log("DOM elements initialized, hero image:", heroImage);
+}
 
 // Check if user is logged in
 function checkUserLogin() {
@@ -71,6 +110,7 @@ function loadAccounts() {
         
         // Add static company options
         const staticCompanies = [
+            { id: 'nvidia', name: 'NVIDIA Corporation' },
             { id: 'cisco', name: 'Cisco Systems' },
             { id: 'microsoft', name: 'Microsoft Corporation' },
             { id: 'google', name: 'Google (Alphabet Inc.)' },
@@ -132,10 +172,62 @@ function loadAccounts() {
 function updateCompanyDetails() {
     const selectedCompany = accountSelect.value;
     console.log("Selected company:", selectedCompany);
+    console.log("DOM fully loaded when updating company details");
     
     // This is just a placeholder function with static data
     // In a real implementation, this would fetch data from an API
     const companyData = {
+        'nvidia': {
+            name: 'NVIDIA Corporation',
+            headquarters: 'Santa Clara, California, United States',
+            employees: '26,000+',
+            marketCap: '$2.2 Trillion',
+            founded: '1993',
+            description: 'NVIDIA Corporation is an American multinational technology company that designs graphics processing units (GPUs), application programming interface (APIs) for data science and high-performance computing, and system on a chip units (SoCs) for the mobile computing and automotive market.',
+            logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Nvidia_logo.svg/1200px-Nvidia_logo.svg.png',
+            insights: {
+                financial: {
+                    title: 'Explosive growth in AI compute demand',
+                    content: 'NVIDIA has seen unprecedented revenue growth driven by demand for AI accelerators, with data center revenue quadrupling year-over-year as enterprises and cloud providers race to build AI infrastructure.',
+                    trend: 'positive'
+                },
+                product: {
+                    title: 'Expanding beyond GPUs to full-stack AI solutions',
+                    content: 'NVIDIA has successfully transformed from a GPU manufacturer to a comprehensive AI platform company with hardware, software frameworks like CUDA and TensorRT, and enterprise solutions through NVIDIA AI Enterprise.',
+                    trend: 'positive'
+                },
+                leadership: {
+                    title: 'Visionary leadership in AI acceleration',
+                    content: 'Under CEO Jensen Huang's direction, NVIDIA anticipated the AI revolution and positioned its technology at the center of the AI ecosystem years before competitors, creating substantial competitive advantages.',
+                    trend: 'positive'
+                }
+            },
+            industryInsights: [
+                {
+                    title: 'Generative AI Infrastructure Boom',
+                    content: 'The market for specialized AI infrastructure is experiencing exponential growth, with enterprises expected to increase AI infrastructure spending by over 35% annually through 2027.',
+                    type: 'Market Shift'
+                },
+                {
+                    title: 'AI Sovereignty Investments',
+                    content: 'Countries and large enterprises are investing in sovereign AI capabilities, driving demand for on-premises AI infrastructure that can deliver cloud-like capabilities with greater control and security.',
+                    type: 'Trend'
+                }
+            ],
+            futureInsights: [
+                {
+                    title: 'AI PC Revolution',
+                    content: 'The emergence of AI PCs with dedicated neural processing units will create a new computing paradigm, with NVIDIA positioned to provide both consumer and workstation solutions for this transition.',
+                    type: 'Innovation'
+                },
+                {
+                    title: 'Autonomous Systems Integration',
+                    content: 'NVIDIA's end-to-end autonomous vehicle and robotics platforms are positioned to accelerate the adoption of autonomous systems across multiple industries beyond automotive, including logistics, manufacturing, and healthcare.',
+                    type: 'Opportunity'
+                }
+            ],
+            talkTrack: "I've been following NVIDIA's remarkable growth as the AI revolution accelerates, and I'm impressed by how you've positioned yourselves at the center of the AI ecosystem. Many of our clients are implementing NVIDIA-powered AI infrastructure but facing challenges in optimizing these investments while ensuring proper governance and security controls.\n\nWe've developed solutions that complement NVIDIA's technology stack by providing enhanced visibility, cost optimization, and security for AI workloads. Our platform helps enterprises maximize their GPU utilization while ensuring that sensitive data used in AI model training remains protected.\n\nWould it make sense to connect with your enterprise AI team to explore how we might help you accelerate AI adoption among your customers while addressing their governance and operational challenges?"
+        },
         'cisco': {
             name: 'Cisco Systems',
             headquarters: 'San Jose, California, United States',
@@ -346,23 +438,47 @@ function updateCompanyDetails() {
         const company = companyData[selectedCompany];
         updateCompanyInfo(company);
         updateCompanyInsights(company);
+        updateTalkTrackById(company); // Use the new function with ID-based selection
         
         // Update the hero image with the company logo
-        if (heroImage && company.logoUrl) {
-            // Store the original image URL if we haven't already
-            if (!heroImage.dataset.originalSrc) {
-                heroImage.dataset.originalSrc = heroImage.src;
+        // Get reference to the hero image element - directly in the DOM
+        // This approach bypasses potential stale references
+        const heroImageElement = document.querySelector('.hero-image img');
+        console.log("Found hero image element:", heroImageElement);
+        
+        if (heroImageElement && company.logoUrl) {
+            // Store the original image source for later if needed
+            if (!heroImageElement.dataset.originalSrc) {
+                heroImageElement.dataset.originalSrc = heroImageElement.src;
+                console.log("Stored original hero image in dataset:", heroImageElement.dataset.originalSrc);
             }
             
-            // Change the image to the company logo
-            heroImage.src = company.logoUrl;
-            heroImage.alt = company.name + ' Logo';
+            // Apply styling to make logo look better
+            heroImageElement.style.objectFit = 'contain';
+            heroImageElement.style.backgroundColor = '#ffffff';
+            heroImageElement.style.padding = '20px';
+            
+            // Directly change the img src to the company logo
+            heroImageElement.src = company.logoUrl;
+            heroImageElement.alt = company.name + ' Logo';
             console.log("Updated hero image to:", company.logoUrl);
+        } else {
+            console.error("Could not update hero image - Element:", !!heroImageElement, "Logo URL:", !!company.logoUrl);
         }
-    } else if (heroImage && heroImage.dataset.originalSrc) {
+    } else if (document.querySelector('.hero-image img')) {
         // If no company is selected, restore the original image
-        heroImage.src = heroImage.dataset.originalSrc;
-        heroImage.alt = 'Research Team Collaborating';
+        const heroImg = document.querySelector('.hero-image img');
+        if (heroImg.dataset.originalSrc) {
+            heroImg.src = heroImg.dataset.originalSrc;
+        } else {
+            heroImg.src = DEFAULT_HERO_IMAGE;
+        }
+        heroImg.alt = 'Research Team Collaborating';
+        
+        // Reset styling
+        heroImg.style.objectFit = '';
+        heroImg.style.backgroundColor = '';
+        heroImg.style.padding = '';
     }
 }
 
@@ -384,6 +500,61 @@ function updateCompanyInfo(companyInfo) {
         companyMetaItems[1].textContent = companyInfo.employees;
         companyMetaItems[2].textContent = companyInfo.marketCap;
         companyMetaItems[3].textContent = companyInfo.founded;
+    }
+}
+
+/**
+ * Updates the talk track content based on the selected company
+ */
+function updateTalkTrack(company) {
+    console.log('Updating talk track for:', company.name);
+    
+    // Update company name in the talk track header badge
+    const companyBadge = document.querySelector('.talk-track-section .card-header .badge');
+    if (companyBadge) {
+        console.log('Updating company badge to:', company.name);
+        companyBadge.textContent = company.name;
+    } else {
+        console.error('Company badge element not found');
+    }
+    
+    // Find all the paragraph elements within the talk track content
+    const paragraphs = document.querySelectorAll('.talk-track-content div p');
+    console.log('Found talk track paragraphs:', paragraphs.length);
+    
+    if (paragraphs.length >= 3 && company.talkTrack) {
+        // Split the talk track into sections
+        const talkTrackParts = company.talkTrack.split('\n\n');
+        console.log('Talk track parts:', talkTrackParts.length);
+        
+        // Update the paragraphs with the new content
+        if (talkTrackParts.length >= 1) {
+            paragraphs[0].textContent = talkTrackParts[0];
+        }
+        
+        if (talkTrackParts.length >= 2) {
+            paragraphs[1].textContent = talkTrackParts[1];
+        }
+        
+        if (talkTrackParts.length >= 3) {
+            paragraphs[2].textContent = talkTrackParts[2];
+        }
+        
+        // Update generation date
+        const dateElement = document.querySelector('.talk-track-box .text-muted.small');
+        if (dateElement) {
+            const today = new Date();
+            const formattedDate = today.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            dateElement.textContent = `Generated on ${formattedDate} • Based on latest company research`;
+        }
+        
+        console.log('Talk track updated successfully for:', company.name);
+    } else {
+        console.error('Talk track paragraphs not found or talk track is missing');
     }
 }
 
@@ -442,10 +613,7 @@ function updateCompanyInsights(company) {
         });
     }
     
-    // Update talk track
-    if (talkTrackContent && company.talkTrack) {
-        talkTrackContent.innerHTML = company.talkTrack.split('\n\n').map(p => `<p class="mb-3">${p}</p>`).join('');
-    }
+    // Talk track is now updated in the separate updateTalkTrack function
 }
 
 /**
@@ -502,15 +670,276 @@ if (saveBtn) {
     });
 }
 
+// Add direct event listener to the select element in the DOM
+document.addEventListener('DOMContentLoaded', function() {
+    // Add direct event listener to account select
+    const accountSelectElement = document.getElementById('accountSelect');
+    if (accountSelectElement) {
+        accountSelectElement.addEventListener('change', function() {
+            console.log('Account selection changed - direct event handler');
+            const selectedCompany = this.value;
+            console.log('Selected company:', selectedCompany);
+            
+            // Get company data and update the UI
+            updateCompanyDetails();
+            
+            // Force an explicit talk track update with the selected company
+            if (selectedCompany && companyData && companyData[selectedCompany]) {
+                console.log('Forcing talk track update for company:', selectedCompany);
+                updateTalkTrackById(companyData[selectedCompany]);
+            }
+            
+            // Update the hero image with the company logo
+            const companyLogos = {
+                'nvidia': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Nvidia_logo.svg/1200px-Nvidia_logo.svg.png',
+                'cisco': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Cisco_logo_blue_2016.svg/1200px-Cisco_logo_blue_2016.svg.png',
+                'microsoft': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/1200px-Microsoft_logo.svg.png',
+                'google': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png',
+                'amazon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1200px-Amazon_logo.svg.png'
+            };
+            
+            const heroImg = document.querySelector('.hero-image img');
+            if (heroImg) {
+                // Store the original image URL if we haven't already
+                if (!heroImg.dataset.originalSrc) {
+                    heroImg.dataset.originalSrc = DEFAULT_HERO_IMAGE;
+                    console.log('Stored original hero image URL:', heroImg.dataset.originalSrc);
+                }
+                
+                if (selectedCompany && companyLogos[selectedCompany]) {
+                    console.log('Updating hero image to company logo:', companyLogos[selectedCompany]);
+                    heroImg.src = companyLogos[selectedCompany];
+                    heroImg.alt = selectedCompany + ' Logo';
+                    
+                    // Add styling to make the logo look better
+                    heroImg.style.objectFit = 'contain';
+                    heroImg.style.backgroundColor = '#ffffff';
+                    heroImg.style.padding = '20px';
+                } else {
+                    // Reset to default image if no company is selected
+                    console.log('Resetting hero image to default');
+                    heroImg.src = heroImg.dataset.originalSrc || DEFAULT_HERO_IMAGE;
+                    heroImg.alt = 'Research Team Collaborating';
+                    
+                    // Reset styling
+                    heroImg.style.objectFit = '';
+                    heroImg.style.backgroundColor = '';
+                    heroImg.style.padding = '';
+                }
+            }
+        });
+    }
+});
+
+// Keep the original handler for backwards compatibility
 if (accountSelect) {
-    accountSelect.addEventListener('change', updateCompanyDetails);
+    accountSelect.addEventListener('change', function() {
+        console.log('Account selection changed - original handler');
+        updateCompanyDetails();
+    });
 }
+
+// Initialize smooth scrolling for sidebar navigation
+function initSmoothScrolling() {
+    const insightsNavLinks = document.querySelectorAll('.insights-nav a');
+    
+    insightsNavLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all links
+            insightsNavLinks.forEach(l => l.classList.remove('active'));
+            
+            // Add active class to the clicked link
+            this.classList.add('active');
+            
+            // Get the target section id from the href attribute
+            const targetId = this.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            
+            if (targetSection) {
+                // Scroll to the target section with smooth behavior
+                window.scrollTo({
+                    top: targetSection.offsetTop - 80, // Reduced offset for better visibility
+                    behavior: 'smooth'
+                });
+                
+                console.log(`Scrolling to section: ${targetId}`);
+            }
+        });
+    });
+    
+    // Also initialize scroll behavior for section detection
+    window.addEventListener('scroll', highlightCurrentSection);
+    
+    console.log("Smooth scrolling initialized");
+}
+
+// Highlight the correct navigation link based on scroll position
+function highlightCurrentSection() {
+    const sections = [
+        document.querySelector('#company-insights'),
+        document.querySelector('#industry-insights'),
+        document.querySelector('#future-insights')
+    ];
+    
+    const navLinks = document.querySelectorAll('.insights-nav a');
+    
+    let currentSectionIndex = 0;
+    const scrollPosition = window.scrollY + 150; // Add offset to improve detection
+    
+    sections.forEach((section, index) => {
+        if (section && scrollPosition >= section.offsetTop) {
+            currentSectionIndex = index;
+        }
+    });
+    
+    // Remove active class from all links
+    navLinks.forEach(link => link.classList.remove('active'));
+    
+    // Add active class to the current section's link
+    navLinks[currentSectionIndex].classList.add('active');
+}
+
+/**
+ * Get the appropriate badge HTML based on the trend type.
+ * Dynamically assigns color and icon based on trend type.
+ */
+function getTrendBadgeHTML(trend) {
+    let icon, text, bgClass;
+    
+    switch(trend) {
+        case 'positive':
+            icon = 'fa-arrow-up';
+            text = 'Positive Trend';
+            bgClass = 'bg-success';
+            break;
+        case 'neutral':
+            icon = 'fa-arrow-right';
+            text = 'Neutral';
+            bgClass = 'bg-secondary';
+            break;
+        case 'negative':
+            icon = 'fa-arrow-down';
+            text = 'Negative Trend';
+            bgClass = 'bg-danger';
+            break;
+        case 'key':
+            icon = 'fa-check';
+            text = 'Key Insight';
+            bgClass = 'bg-info';
+            break;
+        case 'market':
+            icon = 'fa-chart-line';
+            text = 'Market Shift';
+            bgClass = 'bg-primary';
+            break;
+        case 'growing':
+            icon = 'fa-arrow-up';
+            text = 'Growing Trend';
+            bgClass = 'bg-success';
+            break;
+        default:
+            icon = 'fa-info-circle';
+            text = 'Insight';
+            bgClass = 'bg-secondary';
+    }
+    
+    return `<span class="badge rounded-pill ${bgClass}"><i class="fas ${icon} me-1"></i> ${text}</span>`;
+}
+
+/**
+ * Generate insights using OpenAI API via our backend.
+ * In a production environment, this would use the OpenAIService class.
+ */
+function generateInsightsFromOpenAI(companyName) {
+    // Show loading indicators
+    const insightBoxes = document.querySelectorAll('.insight-box .card-body');
+    insightBoxes.forEach(box => {
+        const loadingHTML = '<div class="text-center py-4"><div class="spinner-border" style="color: #40dfaf;" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">Generating insights...</p></div>';
+        box.innerHTML = loadingHTML;
+    });
+    
+    // In a real implementation, we would call our backend API which uses OpenAIService
+    console.log(`Generating insights for ${companyName} using OpenAI API...`);
+    
+    // Simulate API call with timeout
+    setTimeout(() => {
+        // Generate random trend types for demonstration
+        const trendTypes = ['positive', 'neutral', 'negative', 'key', 'market', 'growing'];
+        const tags = document.querySelectorAll('.insight-box .card-footer .badge');
+        
+        // Update trend tags with randomly selected, dynamically generated badges
+        tags.forEach(tag => {
+            const randomTrend = trendTypes[Math.floor(Math.random() * trendTypes.length)];
+            tag.outerHTML = getTrendBadgeHTML(randomTrend);
+        });
+        
+        // Show notification that insights were generated
+        showNotification('Insights refreshed with OpenAI!', 'success');
+    }, 1500);
+}
+
+/**
+ * Show a notification message to the user
+ */
+function showNotification(message, type = 'info') {
+    // Remove any existing notifications
+    const existingNotifications = document.querySelectorAll('.custom-notification');
+    existingNotifications.forEach(notification => notification.remove());
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `custom-notification alert alert-${type} alert-dismissible fade show position-fixed`;
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.zIndex = '9999';
+    notification.style.maxWidth = '300px';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto dismiss after 3 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Add button for generating insights with OpenAI
+// Removed the OpenAI button function to maintain original UI
 
 // Initialize the application when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM fully loaded");
+    
+    // Initialize DOM elements first
+    initDOMElements();
+    
+    // Store the original hero image URL for later use
+    if (heroImage && !heroImage.dataset.originalSrc) {
+        heroImage.dataset.originalSrc = heroImage.src || DEFAULT_HERO_IMAGE;
+        console.log('Stored original hero image URL:', heroImage.dataset.originalSrc);
+    }
+    
     checkUserLogin();
     loadAccounts();
+    initSmoothScrolling();
+    
+    // Set a slight delay to ensure accounts are loaded before selecting NVIDIA
+    setTimeout(() => {
+        // Set NVIDIA as the default selected company
+        if (accountSelect) {
+            accountSelect.value = 'nvidia';
+            // Trigger the change event to update UI
+            updateCompanyDetails();
+            // Dispatch a change event to ensure event listeners are triggered
+            accountSelect.dispatchEvent(new Event('change'));
+        }
+    }, 500);
 });
 
 // Manually initialize for browsers that might have already fired DOMContentLoaded
@@ -520,4 +949,79 @@ if (document.readyState === 'loading') {
     console.log("Document already loaded, initializing immediately");
     checkUserLogin();
     loadAccounts();
+    initSmoothScrolling();
+    
+    // Set a slight delay to ensure accounts are loaded before selecting NVIDIA
+    setTimeout(() => {
+        // Set NVIDIA as the default selected company
+        if (accountSelect) {
+            accountSelect.value = 'nvidia';
+            // Trigger the change event to update UI
+            updateCompanyDetails();
+        }
+    }, 500);
+}
+
+/**
+ * Updates talk track content by directly targeting elements by their IDs
+ * This is an alternative approach that should be more reliable
+ */
+function updateTalkTrackById(company) {
+    console.log('Updating talk track by ID for company:', company.name);
+    
+    // Update company name in the talk track header badge
+    const companyBadge = document.querySelector('.talk-track-section .card-header .badge');
+    if (companyBadge) {
+        console.log('Updating company badge to:', company.name);
+        companyBadge.textContent = company.name;
+    } else {
+        console.error('Company badge element not found');
+    }
+    
+    // Get direct references to the talk track paragraphs by their IDs
+    const openingParagraph = document.getElementById('talk-track-opening');
+    const valueParagraph = document.getElementById('talk-track-value');
+    const engagementParagraph = document.getElementById('talk-track-engagement');
+    
+    console.log('Opening paragraph found:', !!openingParagraph);
+    console.log('Value paragraph found:', !!valueParagraph);
+    console.log('Engagement paragraph found:', !!engagementParagraph);
+    
+    if (company.talkTrack) {
+        // Split the talk track into sections
+        const talkTrackParts = company.talkTrack.split('\n\n');
+        console.log('Talk track parts count:', talkTrackParts.length);
+        
+        // Update each paragraph with the corresponding talk track section
+        if (openingParagraph && talkTrackParts.length >= 1) {
+            openingParagraph.textContent = talkTrackParts[0];
+            console.log('Updated opening paragraph');
+        }
+        
+        if (valueParagraph && talkTrackParts.length >= 2) {
+            valueParagraph.textContent = talkTrackParts[1];
+            console.log('Updated value proposition paragraph');
+        }
+        
+        if (engagementParagraph && talkTrackParts.length >= 3) {
+            engagementParagraph.textContent = talkTrackParts[2];
+            console.log('Updated engagement paragraph');
+        }
+        
+        // Update generation date
+        const dateElement = document.querySelector('.talk-track-box .text-muted.small');
+        if (dateElement) {
+            const today = new Date();
+            const formattedDate = today.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            dateElement.textContent = `Generated on ${formattedDate} \u2022 Based on latest company research`;
+        }
+        
+        console.log('Talk track updated successfully for:', company.name);
+    } else {
+        console.error('Talk track data is missing for company:', company.name);
+    }
 }

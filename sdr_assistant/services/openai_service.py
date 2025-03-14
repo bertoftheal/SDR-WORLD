@@ -73,8 +73,14 @@ Make every aspect of this talk track SPECIFIC to {account_name} - avoid generic 
 Structure your response with clear sections, bullet points for key talking points, and bolded headers for better readability. Keep it under 250 words and ensure it flows naturally for a conversation."""
 
         if not self.api_key:
-            print("OpenAI API key not configured")
-            return None
+            print("⚠️ WARNING: OpenAI API key is not configured or is empty")
+            return self._get_fallback_talk_track(account_name)
+            
+        if self.api_key == "your_openai_api_key_here" or self.api_key == "placeholder_key" or self.api_key == "sk-...": 
+            print("⚠️ WARNING: Using placeholder OpenAI API key. Please update with a real key.")
+            return self._get_fallback_talk_track(account_name)
+
+        print(f"📤 Making OpenAI API request for talk track generation for {account_name}...")
 
         headers = {
             'Content-Type': 'application/json',
@@ -92,6 +98,7 @@ Structure your response with clear sections, bullet points for key talking point
         }
         
         try:
+            print(f"📡 Connecting to OpenAI API...")
             response = requests.post(
                 'https://api.openai.com/v1/chat/completions',
                 headers=headers,
@@ -101,13 +108,21 @@ Structure your response with clear sections, bullet points for key talking point
             if response.status_code == 200:
                 response_data = response.json()
                 talk_track = response_data['choices'][0]['message']['content']
+                print(f"✅ OpenAI API request successful: received {len(talk_track)} characters")
                 return talk_track
             else:
-                print(f"OpenAI API Error: {response.status_code}, {response.text}")
+                print(f"❌ OpenAI API Error: Status {response.status_code}")
+                print(f"Error details: {response.text}")
                 return self._get_fallback_talk_track(account_name)
                 
+        except requests.exceptions.ConnectionError as e:
+            print(f"❌ Connection Error: Could not connect to OpenAI API: {str(e)}")
+            return self._get_fallback_talk_track(account_name)
+        except requests.exceptions.Timeout as e:
+            print(f"❌ Timeout Error: OpenAI API request timed out: {str(e)}")
+            return self._get_fallback_talk_track(account_name)
         except Exception as e:
-            print(f"Error generating talk track: {str(e)}")
+            print(f"❌ Unexpected error making OpenAI API request: {str(e)}")
             return self._get_fallback_talk_track(account_name)
             
     def _get_fallback_talk_track(self, account_name: str) -> str:

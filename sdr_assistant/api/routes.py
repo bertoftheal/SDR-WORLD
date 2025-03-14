@@ -44,23 +44,29 @@ def register_routes(app):
     app.register_blueprint(library_bp, url_prefix='/api')
     app.register_blueprint(api_bp, url_prefix='/api')
     
-    # Serve static files and HTML pages directly from static directory
+    # Serve HTML templates and static files
     @app.route('/')
     def serve_index():
-        return send_from_directory('static', 'index.html')
+        return send_from_directory('templates', 'index.html')
     
     @app.route('/accounts.html')
     def serve_accounts():
-        return send_from_directory('static', 'accounts.html')
+        return send_from_directory('templates', 'accounts.html')
         
     @app.route('/library.html')
     def serve_library():
-        return send_from_directory('static', 'library.html')
+        return send_from_directory('templates', 'library.html')
         
     @app.route('/login.html')
     def serve_login():
-        return send_from_directory('static', 'login.html')
+        return send_from_directory('templates', 'login.html')
     
-    @app.route('/<path:path>')
+    # Serve static files
+    @app.route('/static/<path:path>')
     def serve_static(path):
         return send_from_directory('static', path)
+        
+    # Serve template js files
+    @app.route('/js/<path:path>')
+    def serve_js(path):
+        return send_from_directory('templates/js', path)

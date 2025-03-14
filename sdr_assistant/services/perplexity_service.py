@@ -155,6 +155,16 @@ class PerplexityService:
     
     def _make_perplexity_request(self, prompt: str) -> Optional[str]:
         """Make a request to the Perplexity API."""
+        if not self.api_key:
+            print("⚠️ WARNING: Perplexity API key is not configured or is empty")
+            return None
+            
+        if self.api_key == "your_perplexity_api_key_here" or self.api_key == "placeholder_key":
+            print("⚠️ WARNING: Using placeholder Perplexity API key. Please update with a real key.")
+            return None
+            
+        print(f"📤 Making Perplexity API request with prompt: {prompt[:50]}...")
+        
         headers = {
             'Authorization': f'Bearer {self.api_key}',
             'Content-Type': 'application/json'
@@ -169,6 +179,7 @@ class PerplexityService:
         }
         
         try:
+            print(f"📡 Connecting to Perplexity API...")
             response = requests.post(
                 'https://api.perplexity.ai/chat/completions',
                 headers=headers,
@@ -178,13 +189,21 @@ class PerplexityService:
             if response.status_code == 200:
                 response_data = response.json()
                 insight_text = response_data['choices'][0]['message']['content']
+                print(f"✅ Perplexity API request successful: received {len(insight_text)} characters")
                 return insight_text
             else:
-                print(f"Perplexity API Error: {response.status_code}, {response.text}")
+                print(f"❌ Perplexity API Error: Status {response.status_code}")
+                print(f"Error details: {response.text}")
                 return None
                 
+        except requests.exceptions.ConnectionError as e:
+            print(f"❌ Connection Error: Could not connect to Perplexity API: {str(e)}")
+            return None
+        except requests.exceptions.Timeout as e:
+            print(f"❌ Timeout Error: Perplexity API request timed out: {str(e)}")
+            return None
         except Exception as e:
-            print(f"Error generating insights: {str(e)}")
+            print(f"❌ Unexpected error making Perplexity API request: {str(e)}")
             return None
             
     def _get_placeholder_insights(self, account_name: str) -> Tuple[str, str, str]:
