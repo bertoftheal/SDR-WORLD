@@ -57,6 +57,10 @@ def register_routes(app):
     def serve_library():
         return send_from_directory('templates', 'library.html')
         
+    @app.route('/dashboard.html')
+    def serve_dashboard():
+        return send_from_directory('templates', 'dashboard.html')
+        
     @app.route('/login.html')
     def serve_login():
         return send_from_directory('templates', 'login.html')
