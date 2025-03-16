@@ -45,8 +45,8 @@ function initDOMElements() {
     console.log("Hero image element initialized:", heroImage);
 }
 
-// DEMO MODE - For static HTML preview
-const DEMO_MODE = true;
+// DEMO MODE - Configurable for demonstration purposes
+const DEMO_MODE = false; // Set to false to use real API calls
 
 /**
  * Initialize DOM elements when document is fully loaded
@@ -660,13 +660,58 @@ function updateInsightBox(box, insight) {
 // Event listeners
 if (generateBtn) {
     generateBtn.addEventListener('click', function() {
-        alert('Research generation would be triggered here in the full application.');
+        // Get the selected account from the dropdown
+        const accountSelect = document.getElementById('accountSelect');
+        if (!accountSelect || !accountSelect.value || accountSelect.value === '') {
+            showNotification('Please select a company first', 'warning');
+            return;
+        }
+        
+        const accountName = accountSelect.options[accountSelect.selectedIndex].text;
+        const companyValue = accountSelect.value;
+        
+        // Show loading state
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+        
+        // Clear existing content and show loading indicators
+        showLoadingIndicators();
+        
+        if (DEMO_MODE) {
+            // Use demo data in demo mode
+            console.log('Using demo data for', accountName);
+            setTimeout(() => {
+                updateCompanyDetails();
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-search me-2"></i>GENERATE RESEARCH';
+                showNotification('Research generated successfully!', 'success');
+            }, 1500);
+        } else {
+            // Make the actual API call
+            console.log('Generating research for', accountName);
+            generateResearchFromAPI(accountName, companyValue);
+        }
     });
 }
 
 if (saveBtn) {
     saveBtn.addEventListener('click', function() {
-        alert('Research would be saved to library here in the full application.');
+        // Get the selected account name
+        const accountSelect = document.getElementById('accountSelect');
+        if (!accountSelect || !accountSelect.value || accountSelect.value === '') {
+            showNotification('No research data to save', 'warning');
+            return;
+        }
+        
+        const accountName = accountSelect.options[accountSelect.selectedIndex].text;
+        
+        if (DEMO_MODE) {
+            // Demo mode - just show a notification
+            showNotification('Demo mode: Research would be saved to Airtable', 'info');
+        } else {
+            // Actually save to Airtable
+            saveResearchToAirtable(accountName);
+        }
     });
 }
 
@@ -849,35 +894,228 @@ function getTrendBadgeHTML(trend) {
 }
 
 /**
- * Generate insights using OpenAI API via our backend.
- * In a production environment, this would use the OpenAIService class.
+ * Generate research using backend API services (Perplexity and OpenAI).
+ * Makes a call to the /api/generate-research endpoint.
  */
-function generateInsightsFromOpenAI(companyName) {
+function generateResearchFromAPI(accountName, companyValue) {
     // Show loading indicators
-    const insightBoxes = document.querySelectorAll('.insight-box .card-body');
-    insightBoxes.forEach(box => {
-        const loadingHTML = '<div class="text-center py-4"><div class="spinner-border" style="color: #40dfaf;" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">Generating insights...</p></div>';
-        box.innerHTML = loadingHTML;
+    showLoadingIndicators();
+    
+    console.log(`Generating research for ${accountName} using API...`);
+    
+    // Make API call to generate research
+    fetch('/api/generate-research', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Add authentication headers if needed
+            // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+            accountName: accountName
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            // If response is not ok, attempt to get the error message from the JSON response
+            return response.json().then(data => {
+                throw new Error(data.message || 'Error generating research');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (!data.success) {
+            throw new Error(data.message || 'Failed to generate research');
+        }
+        
+        // Update the UI with the research data
+        updateUIWithResearchData(data, companyValue);
+        
+        // Enable the generate button again
+        const generateBtn = document.getElementById('generateBtn');
+        if (generateBtn) {
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = '<i class="fas fa-search me-2"></i>GENERATE RESEARCH';
+        }
+        
+        // Show success notification
+        showNotification('Research generated successfully!', 'success');
+    })
+    .catch(error => {
+        console.error('Error generating research:', error);
+        
+        // Handle error - revert to demo data if needed
+        if (DEMO_MODE) {
+            console.log('Falling back to demo data');
+            updateCompanyDetails();
+        }
+        
+        // Enable the generate button again
+        const generateBtn = document.getElementById('generateBtn');
+        if (generateBtn) {
+            generateBtn.disabled = false;
+            generateBtn.innerHTML = '<i class="fas fa-search me-2"></i>GENERATE RESEARCH';
+        }
+        
+        // Show error notification
+        showNotification(`Error: ${error.message}`, 'error');
     });
+}
+
+/**
+ * Show loading indicators in the insights and talk track sections
+ */
+function showLoadingIndicators() {
+    // Show loading indicators for industry insights
+    const industryInsightsSection = document.getElementById('industry-insights-content');
+    if (industryInsightsSection) {
+        industryInsightsSection.innerHTML = getLoadingHTML('Loading industry insights...');
+    }
     
-    // In a real implementation, we would call our backend API which uses OpenAIService
-    console.log(`Generating insights for ${companyName} using OpenAI API...`);
+    // Show loading indicators for company insights
+    const companyInsightsSection = document.getElementById('company-insights-content');
+    if (companyInsightsSection) {
+        companyInsightsSection.innerHTML = getLoadingHTML('Loading company insights...');
+    }
     
-    // Simulate API call with timeout
-    setTimeout(() => {
-        // Generate random trend types for demonstration
-        const trendTypes = ['positive', 'neutral', 'negative', 'key', 'market', 'growing'];
-        const tags = document.querySelectorAll('.insight-box .card-footer .badge');
+    // Show loading indicators for vision insights
+    const visionInsightsSection = document.getElementById('vision-insights-content');
+    if (visionInsightsSection) {
+        visionInsightsSection.innerHTML = getLoadingHTML('Loading vision insights...');
+    }
+    
+    // Show loading indicators for talk track
+    const talkTrackSection = document.getElementById('recommended-talk-track');
+    if (talkTrackSection) {
+        talkTrackSection.innerHTML = getLoadingHTML('Generating talk track...');
+    }
+}
+
+/**
+ * Get HTML for loading indicator with custom message
+ */
+function getLoadingHTML(message) {
+    return `<div class="text-center py-4">
+        <div class="spinner-border" style="color: #40dfaf;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">${message}</p>
+    </div>`;
+}
+
+/**
+ * Update the UI with the research data from the API
+ */
+function updateUIWithResearchData(data, companyValue) {
+    // Update industry insights
+    const industryInsightsSection = document.getElementById('industry-insights-content');
+    if (industryInsightsSection) {
+        industryInsightsSection.innerHTML = `<div class="markdown-content">${marked.parse(data.industryInsights)}</div>`;
+    }
+    
+    // Update company insights
+    const companyInsightsSection = document.getElementById('company-insights-content');
+    if (companyInsightsSection) {
+        companyInsightsSection.innerHTML = `<div class="markdown-content">${marked.parse(data.companyInsights)}</div>`;
+    }
+    
+    // Update vision insights
+    const visionInsightsSection = document.getElementById('vision-insights-content');
+    if (visionInsightsSection) {
+        visionInsightsSection.innerHTML = `<div class="markdown-content">${marked.parse(data.visionInsights)}</div>`;
+    }
+    
+    // Update talk track
+    const talkTrackSection = document.getElementById('recommended-talk-track');
+    if (talkTrackSection) {
+        talkTrackSection.innerHTML = `<div class="markdown-content">${marked.parse(data.recommendedTalkTrack)}</div>`;
+    }
+    
+    // Update company details and UI from static data (logo, etc)
+    if (companyValue && companyData && companyData[companyValue]) {
+        updateCompanyDetails();
+    }
+    
+    // Enable the save button
+    const saveBtn = document.getElementById('saveBtn');
+    if (saveBtn) {
+        saveBtn.disabled = false;
+    }
+}
+
+/**
+ * Save the generated research to Airtable
+ */
+function saveResearchToAirtable(accountName) {
+    // Get the current research data from the UI
+    const industryInsights = document.getElementById('industry-insights-content').innerHTML;
+    const companyInsights = document.getElementById('company-insights-content').innerHTML;
+    const visionInsights = document.getElementById('vision-insights-content').innerHTML;
+    const recommendedTalkTrack = document.getElementById('recommended-talk-track').innerHTML;
+    
+    // Get account ID (in a real implementation, we would get this from the account data)
+    // For now, we'll use a placeholder
+    const accountId = accountName.toLowerCase().replace(/\s+/g, '-');
+    
+    // Show loading state on save button
+    const saveBtn = document.getElementById('saveBtn');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+    }
+    
+    // Make API call to save research
+    fetch('/api/save-to-airtable', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Add authentication headers if needed
+            // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+            accountId: accountId,
+            accountName: accountName,
+            industryInsights: industryInsights,
+            companyInsights: companyInsights,
+            visionInsights: visionInsights,
+            recommendedTalkTrack: recommendedTalkTrack
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Error saving research');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (!data.success) {
+            throw new Error(data.message || 'Failed to save research');
+        }
         
-        // Update trend tags with randomly selected, dynamically generated badges
-        tags.forEach(tag => {
-            const randomTrend = trendTypes[Math.floor(Math.random() * trendTypes.length)];
-            tag.outerHTML = getTrendBadgeHTML(randomTrend);
-        });
+        // Restore save button
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save me-2"></i>SAVE TO LIBRARY';
+        }
         
-        // Show notification that insights were generated
-        showNotification('Insights refreshed with OpenAI!', 'success');
-    }, 1500);
+        // Show success notification
+        showNotification('Research saved to library!', 'success');
+    })
+    .catch(error => {
+        console.error('Error saving research:', error);
+        
+        // Restore save button
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save me-2"></i>SAVE TO LIBRARY';
+        }
+        
+        // Show error notification
+        showNotification(`Error: ${error.message}`, 'error');
+    });
 }
 
 /**
