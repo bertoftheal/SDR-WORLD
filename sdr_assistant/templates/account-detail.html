@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Details | SDR Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        .navbar-brand {
+            font-weight: 700;
+        }
+        .account-header {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .account-logo {
+            height: 80px;
+            width: 80px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        .score-badge {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 50%;
+            color: white;
+        }
+        .heat-score-high {
+            background-color: #dc3545;
+        }
+        .heat-score-medium {
+            background-color: #fd7e14;
+        }
+        .heat-score-low {
+            background-color: #20c997;
+        }
+        .section-card {
+            border-radius: 8px;
+            overflow: hidden;
+            border: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .section-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .section-header {
+            background-color: #f8f9fa;
+            border-left: 4px solid #40dfaf;
+            padding: 12px 15px;
+            font-weight: 600;
+        }
+        .tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .contact-item {
+            border-left: 3px solid #40dfaf;
+            padding-left: 10px;
+            margin-bottom: 10px;
+        }
+        .sentiment-positive {
+            color: #20c997;
+        }
+        .sentiment-neutral {
+            color: #6c757d;
+        }
+        .sentiment-negative {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <span style="color: #40dfaf;">SDR</span> Assistant
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item mx-2">
+                        <a class="nav-link fw-medium" href="index.html#research">
+                            <i class="fas fa-search me-1"></i> RESEARCH
+                        </a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link fw-medium active" href="accounts.html">
+                            <i class="fas fa-users me-1"></i> ACCOUNTS
+                        </a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link fw-medium" href="library.html">
+                            <i class="fas fa-book me-1"></i> LIBRARY
+                        </a>
+                    </li>
+                    <li class="nav-item mx-2">
+                        <a class="nav-link fw-medium" href="dashboard.html">
+                            <i class="fas fa-chart-line me-1"></i> DASHBOARD
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <button id="loginButton" class="btn rounded-pill px-4" style="background-color: #40dfaf; color: white;" onclick="showLoginModal()">
+                        <i class="fas fa-user-circle me-2"></i>Sign In
+                    </button>
+                    <div id="userInfo" class="d-none">
+                        <div class="d-flex align-items-center">
+                            <div class="user-avatar text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background-color: #40dfaf;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span id="userName" class="me-3">User Name</span>
+                            <a href="#" onclick="logout()" class="text-secondary text-decoration-none">
+                                <i class="fas fa-sign-out-alt me-1"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Back to Accounts Button -->
+        <div class="mb-3">
+            <a href="accounts.html" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Accounts
+            </a>
+        </div>
+
+        <!-- Account Header -->
+        <div class="account-header p-4 mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-6 d-flex align-items-center">
+                    <div class="account-logo me-3">
+                        <i class="fas fa-building fa-2x text-muted"></i>
+                    </div>
+                    <div>
+                        <h1 class="mb-1" id="accountName">Company Name</h1>
+                        <p class="text-muted mb-0" id="accountIndustry">Technology</p>
+                        <div class="mt-2">
+                            <span class="tag" id="accountSize">501-1000 employees</span>
+                            <span class="tag" id="accountLocation">San Francisco, CA</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 d-flex justify-content-md-center align-items-center mt-3 mt-md-0">
+                    <div>
+                        <div class="text-center mb-2">Heat Score</div>
+                        <div class="score-badge heat-score-high mx-auto" id="heatScore">85</div>
+                    </div>
+                </div>
+                <div class="col-md-3 d-flex justify-content-md-end justify-content-start align-items-center mt-3 mt-md-0">
+                    <button class="btn me-2" style="background-color: #40dfaf; color: white;">
+                        <i class="fas fa-edit me-1"></i>Edit
+                    </button>
+                    <button class="btn btn-outline-primary">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Sections -->
+    <div class="container py-3">
+        <div class="row gy-4">
+            <!-- Left Column -->
+            <div class="col-lg-8">
+                <!-- Tactical Strategy Section -->
+                <div class="card section-card mb-4">
+                    <h5 class="section-header"><i class="fas fa-chess me-2"></i>Suggested Tactical Strategy</h5>
+                    <div class="card-body">
+                        <div class="alert alert-light border" id="tacticalStrategy">
+                            <p><strong>Champions-Based Approach:</strong> With the recent layoffs at the company, focus on identifying and engaging new decision-makers who have taken over responsibilities.</p>
+                            <p><strong>Value Proposition:</strong> Emphasize how our solution can help the company do more with fewer resources, highlighting ROI and time-saving benefits.</p>
+                            <p><strong>Key Actions:</strong></p>
+                            <ul>
+                                <li>Connect with Jane Smith (VP of Engineering) who is now overseeing developer productivity initiatives</li>
+                                <li>Reference their recent blog post about improving developer efficiency</li>
+                                <li>Mention specific metrics from similar clients who improved productivity by 32% after implementation</li>
+                            </ul>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-sm btn-outline-secondary me-2">
+                                <i class="fas fa-download me-1"></i>Export
+                            </button>
+                            <button class="btn btn-sm" style="background-color: #40dfaf; color: white;">
+                                <i class="fas fa-sync-alt me-1"></i>Regenerate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Research Section -->
+                <div class="card section-card mb-4">
+                    <h5 class="section-header"><i class="fas fa-microscope me-2"></i>Research</h5>
+                    <div class="card-body p-0">
+                        <!-- Research Tabs -->
+                        <ul class="nav nav-tabs nav-fill" id="researchTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="perplexity-tab" data-bs-toggle="tab" data-bs-target="#perplexity" type="button" role="tab">Perplexity</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="openai-tab" data-bs-toggle="tab" data-bs-target="#openai" type="button" role="tab">OpenAI</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content p-3" id="researchTabContent">
+                            <div class="tab-pane fade show active" id="perplexity" role="tabpanel">
+                                <div class="research-item mb-3 p-3 border rounded">
+                                    <h6 class="mb-2">Company Insights</h6>
+                                    <p>Codeium is an AI-powered coding assistant founded in 2022 that offers code completion, AI chat, and code transformation features. The company has raised $16.5M in funding and competes with GitHub Copilot. Their technology is built on a custom language model optimized for code.</p>
+                                    <div class="text-muted small">Source: Perplexity AI - Last updated: March 15, 2025</div>
+                                </div>
+                                <div class="research-item mb-3 p-3 border rounded">
+                                    <h6 class="mb-2">Industry Trends</h6>
+                                    <p>The AI code assistant market is projected to grow to $15B by 2027. Key trends include integration with existing developer workflows, increasing support for multiple languages, and shift from code completion to full code generation capabilities.</p>
+                                    <div class="text-muted small">Source: Perplexity AI - Last updated: March 10, 2025</div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="openai" role="tabpanel">
+                                <div class="research-item mb-3 p-3 border rounded">
+                                    <h6 class="mb-2">Competitive Analysis</h6>
+                                    <p>Codeium differentiates from competitors through its focus on enterprise-grade security, offline capabilities, and integration with existing IDEs. Their pricing model is also more favorable for larger teams compared to GitHub Copilot.</p>
+                                    <div class="text-muted small">Source: OpenAI GPT-4 - Last updated: March 16, 2025</div>
+                                </div>
+                                <div class="research-item mb-3 p-3 border rounded">
+                                    <h6 class="mb-2">Potential Pain Points</h6>
+                                    <p>Based on public information, potential pain points include developer productivity gaps, concerns about code quality, and security/compliance considerations with existing tools.</p>
+                                    <div class="text-muted small">Source: OpenAI GPT-4 - Last updated: March 16, 2025</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Intel Section -->
+                <div class="card section-card mb-4">
+                    <h5 class="section-header"><i class="fas fa-lightbulb me-2"></i>Intel (Gong / Nooks / Outreach)</h5>
+                    <div class="card-body">
+                        <div class="intel-item mb-3 p-3 border rounded">
+                            <div class="d-flex justify-content-between mb-2">
+                                <h6 class="mb-0"><i class="fas fa-phone me-2 text-primary"></i>Call with John Doe (CTO)</h6>
+                                <span class="text-muted small">March 10, 2025</span>
+                            </div>
+                            <p>"We're struggling with the onboarding time for new developers. It takes them weeks to get up to speed with our codebase, and our current tools aren't helping much."</p>
+                            <div class="d-flex justify-content-between">
+                                <span class="badge bg-secondary">Gong Recording</span>
+                                <a href="#" class="small">Listen to full call</a>
+                            </div>
+                        </div>
+                        <div class="intel-item mb-3 p-3 border rounded">
+                            <div class="d-flex justify-content-between mb-2">
+                                <h6 class="mb-0"><i class="fas fa-envelope me-2 text-success"></i>Email Exchange</h6>
+                                <span class="text-muted small">March 12, 2025</span>
+                            </div>
+                            <p>"Thanks for the information on Codeium. I've shared it with our engineering team. They're particularly interested in the security aspects and how it integrates with our existing workflow."</p>
+                            <div class="d-flex justify-content-between">
+                                <span class="badge bg-secondary">Outreach</span>
+                                <a href="#" class="small">View full thread</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div class="col-lg-4">
+                <!-- Heat Score Details -->
+                <div class="card section-card mb-4">
+                    <h5 class="section-header"><i class="fas fa-fire-alt me-2"></i>Heat Score Components</h5>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="progress flex-grow-1 me-3" style="height: 8px;">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <span><strong>85/100</strong></span>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span>Engagement Level</span>
+                                <span class="badge bg-primary rounded-pill">90/100</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span>Tech Stack Fit</span>
+                                <span class="badge bg-primary rounded-pill">85/100</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span>Pain Point Match</span>
+                                <span class="badge bg-primary rounded-pill">80/100</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span>Decision Timeline</span>
+                                <span class="badge bg-primary rounded-pill">85/100</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Account Notes -->
+                <div class="card section-card mb-4">
+                    <h5 class="section-header"><i class="fas fa-sticky-note me-2"></i>Account Notes</h5>
+                    <div class="card-body">
+                        <div class="note-item mb-3 p-2 border-bottom">
+                            <div class="d-flex justify-content-between mb-1">
+                                <strong>Budget Discussion</strong>
+                                <small class="text-muted">Mar 15, 2025</small>
+                            </div>
+                            <p class="mb-1">John mentioned they have budget allocated for developer tools in Q2 2025.</p>
+                            <small class="text-muted">Added by: Albert Perez</small>
+                        </div>
+                        <div class="note-item mb-3 p-2 border-bottom">
+                            <div class="d-flex justify-content-between mb-1">
+                                <strong>Key Contact Change</strong>
+                                <small class="text-muted">Mar 10, 2025</small>
+                            </div>
+                            <p class="mb-1">Sarah Johnson has left the company. Jane Smith is now our main contact.</p>
+                            <small class="text-muted">Added by: Albert Perez</small>
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-plus me-1"></i>Add Note
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sentiment Analysis -->
+                <div class="card section-card mb-4">
+                    <h5 class="section-header"><i class="fas fa-chart-line me-2"></i>Sentiment Analysis</h5>
+                    <div class="card-body">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-smile fa-3x sentiment-positive"></i>
+                            <h4 class="mt-2">Positive</h4>
+                            <p class="text-muted">Based on 15 interactions</p>
+                        </div>
+                        <div class="progress mb-3" style="height: 24px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">Positive 65%</div>
+                            <div class="progress-bar bg-secondary" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Neutral 25%</div>
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">Neg 10%</div>
+                        </div>
+                        <div class="sentiment-trend small">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Trend (30 days)</span>
+                                <i class="fas fa-arrow-up sentiment-positive"></i>
+                            </div>
+                            <div class="chart-placeholder bg-light" style="height: 60px; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Meetings Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card section-card">
+                    <h5 class="section-header"><i class="fas fa-calendar-alt me-2"></i>Meetings</h5>
+                    <div class="card-body p-0">
+                        <ul class="nav nav-tabs nav-fill" id="meetingsTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="booked-tab" data-bs-toggle="tab" data-bs-target="#booked" type="button" role="tab">Meetings Booked</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab">Meetings Completed</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content p-3" id="meetingsTabContent">
+                            <!-- Meetings Booked Tab -->
+                            <div class="tab-pane fade show active" id="booked" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Contact</th>
+                                                <th>Title</th>
+                                                <th>Date & Time</th>
+                                                <th>Meeting Type</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="user-avatar text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; background-color: #6610f2;">
+                                                            <span>JD</span>
+                                                        </div>
+                                                        <div>
+                                                            <div>John Doe</div>
+                                                            <div class="small text-muted">john.doe@company.com</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>CTO</td>
+                                                <td>Mar 20, 2025 - 2:00 PM</td>
+                                                <td><span class="badge bg-primary">Product Demo</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-secondary me-1"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-sm btn-outline-secondary me-1"><i class="fas fa-calendar-alt"></i></button>
+                                                    <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-ellipsis-v"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="user-avatar text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; background-color: #fd7e14;">
+                                                            <span>JS</span>
+                                                        </div>
+                                                        <div>
+                                                            <div>Jane Smith</div>
+                                                            <div class="small text-muted">jane.smith@company.com</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>VP of Engineering</td>
+                                                <td>Mar 25, 2025 - 10:30 AM</td>
+                                                <td><span class="badge bg-info">Discovery Call</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-secondary me-1"><i class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-sm btn-outline-secondary me-1"><i class="fas fa-calendar-alt"></i></button>
+                                                    <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-ellipsis-v"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Meetings Completed Tab -->
+                            <div class="tab-pane fade" id="completed" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Contact</th>
+                                                <th>Title</th>
+                                                <th>Date & Time</th>
+                                                <th>Outcome</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="user-avatar text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; background-color: #20c997;">
+                                                            <span>MJ</span>
+                                                        </div>
+                                                        <div>
+                                                            <div>Mike Johnson</div>
+                                                            <div class="small text-muted">mike.j@company.com</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>Dev Team Lead</td>
+                                                <td>Mar 5, 2025 - 11:00 AM</td>
+                                                <td><span class="badge bg-success">Positive</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-secondary me-1"><i class="fas fa-file-alt"></i></button>
+                                                    <button class="btn btn-sm btn-outline-secondary me-1"><i class="fas fa-video"></i></button>
+                                                    <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-ellipsis-v"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="user-avatar text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; background-color: #dc3545;">
+                                                            <span>SJ</span>
+                                                        </div>
+                                                        <div>
+                                                            <div>Sarah Johnson</div>
+                                                            <div class="small text-muted">s.johnson@company.com</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>Former Engineering Manager</td>
+                                                <td>Feb 28, 2025 - 3:30 PM</td>
+                                                <td><span class="badge bg-warning">Neutral</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-secondary me-1"><i class="fas fa-file-alt"></i></button>
+                                                    <button class="btn btn-sm btn-outline-secondary me-1"><i class="fas fa-video"></i></button>
+                                                    <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-ellipsis-v"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3">SDR ASSISTANT</h5>
+                    <p class="text-muted">Empowering sales development with AI-driven research and insights.</p>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3">LINKS</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="index.html" class="text-decoration-none text-primary">Home</a></li>
+                        <li class="mb-2"><a href="accounts.html" class="text-decoration-none text-primary">Accounts</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-primary">Help Center</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="mb-3">CONTACT</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-primary">Support</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-primary">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-primary">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-top pt-3 mt-3 text-center">
+                <p class="text-muted mb-0">© 2025 SDR Assistant. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/account-detail.js"></script>
+</body>
+</html>

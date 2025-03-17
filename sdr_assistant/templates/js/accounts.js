@@ -235,16 +235,8 @@ function displayAccounts(accounts) {
 
 // Show account details
 function showAccountDetails(accountId) {
-    if (!accountDetailsContainer || !accountsContainer) return;
-    
-    currentAccountId = accountId;
-    
-    // Hide accounts list and show details
-    accountsContainer.parentElement.style.display = 'none';
-    accountDetailsContainer.classList.add('active');
-    
-    // Load account details
-    loadAccountDetails(accountId);
+    // Instead of showing inline details, redirect to the dedicated account detail page
+    window.location.href = `account-detail.html?id=${accountId}`;
 }
 
 // Show accounts list
