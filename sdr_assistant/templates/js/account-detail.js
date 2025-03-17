@@ -13,6 +13,7 @@ let accountSize;
 let accountLocation;
 let heatScore;
 let tacticalStrategy;
+let companyResearchTitle;
 
 // Configurable settings
 const DEMO_MODE = true; // Set to false to use real API calls
@@ -31,6 +32,7 @@ function initDOMElements() {
     
     // Main sections
     tacticalStrategy = document.getElementById('tacticalStrategy');
+    companyResearchTitle = document.getElementById('companyResearchTitle');
     
     console.log("DOM elements initialized for account detail page");
 }
@@ -148,6 +150,11 @@ function updateAccountUI(account) {
     // Update tactical strategy content
     if (account.tacticalStrategy) {
         tacticalStrategy.innerHTML = account.tacticalStrategy;
+    }
+    
+    // Update research title with company name and Codeium format
+    if (companyResearchTitle && account.name) {
+        companyResearchTitle.textContent = `${account.name} <> Codeium`;
     }
     
     // Update research tabs (would implement for real API)

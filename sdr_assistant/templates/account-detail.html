@@ -218,40 +218,55 @@
 
                 <!-- Research Section -->
                 <div class="card section-card mb-4">
-                    <h5 class="section-header"><i class="fas fa-microscope me-2"></i>Research</h5>
+                    <h5 class="section-header"><i class="fas fa-microscope me-2"></i><span id="companyResearchTitle">Acme Corporation <> Codeium</span></h5>
                     <div class="card-body p-0">
                         <!-- Research Tabs -->
                         <ul class="nav nav-tabs nav-fill" id="researchTabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="perplexity-tab" data-bs-toggle="tab" data-bs-target="#perplexity" type="button" role="tab">Perplexity</button>
+                                <button class="nav-link active" id="current-state-tab" data-bs-toggle="tab" data-bs-target="#current-state" type="button" role="tab">Current State</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="openai-tab" data-bs-toggle="tab" data-bs-target="#openai" type="button" role="tab">OpenAI</button>
+                                <button class="nav-link" id="future-state-tab" data-bs-toggle="tab" data-bs-target="#future-state" type="button" role="tab">Future State</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="requirements-tab" data-bs-toggle="tab" data-bs-target="#requirements" type="button" role="tab">Requirements</button>
                             </li>
                         </ul>
                         <div class="tab-content p-3" id="researchTabContent">
-                            <div class="tab-pane fade show active" id="perplexity" role="tabpanel">
+                            <div class="tab-pane fade show active" id="current-state" role="tabpanel">
                                 <div class="research-item mb-3 p-3 border rounded">
                                     <h6 class="mb-2">Company Insights</h6>
-                                    <p>Codeium is an AI-powered coding assistant founded in 2022 that offers code completion, AI chat, and code transformation features. The company has raised $16.5M in funding and competes with GitHub Copilot. Their technology is built on a custom language model optimized for code.</p>
-                                    <div class="text-muted small">Source: Perplexity AI - Last updated: March 15, 2025</div>
+                                    <p>Acme Corporation currently utilizes a combination of manual coding processes and legacy code assistance tools. Their engineering team of 120 developers spends approximately 35% of their time on repetitive coding tasks and debugging. Code review cycles typically take 3-5 days, and their onboarding time for new developers averages 45 days to reach full productivity.</p>
+                                    <div class="text-muted small">Source: Company Research - Last updated: March 15, 2025</div>
                                 </div>
                                 <div class="research-item mb-3 p-3 border rounded">
-                                    <h6 class="mb-2">Industry Trends</h6>
-                                    <p>The AI code assistant market is projected to grow to $15B by 2027. Key trends include integration with existing developer workflows, increasing support for multiple languages, and shift from code completion to full code generation capabilities.</p>
-                                    <div class="text-muted small">Source: Perplexity AI - Last updated: March 10, 2025</div>
+                                    <h6 class="mb-2">Pain Points</h6>
+                                    <p>Current technical challenges include inconsistent coding standards, slow development cycles, and high error rates requiring extensive QA cycles. Their engineering leadership has expressed frustration with the lack of modern tooling to accelerate development and reduce technical debt.</p>
+                                    <div class="text-muted small">Source: CTO Interview - Last updated: March 10, 2025</div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="openai" role="tabpanel">
+                            <div class="tab-pane fade" id="future-state" role="tabpanel">
                                 <div class="research-item mb-3 p-3 border rounded">
-                                    <h6 class="mb-2">Competitive Analysis</h6>
-                                    <p>Codeium differentiates from competitors through its focus on enterprise-grade security, offline capabilities, and integration with existing IDEs. Their pricing model is also more favorable for larger teams compared to GitHub Copilot.</p>
-                                    <div class="text-muted small">Source: OpenAI GPT-4 - Last updated: March 16, 2025</div>
+                                    <h6 class="mb-2">Expected Outcomes</h6>
+                                    <p>With Codeium implementation, Acme Corporation could expect a 30-40% reduction in time spent on repetitive coding tasks, improved code quality with fewer bugs, and reduced code review cycles by up to 50%. New developer onboarding time could be reduced to less than 20 days to achieve full productivity.</p>
+                                    <div class="text-muted small">Source: Benchmark Analysis - Last updated: March 16, 2025</div>
                                 </div>
                                 <div class="research-item mb-3 p-3 border rounded">
-                                    <h6 class="mb-2">Potential Pain Points</h6>
-                                    <p>Based on public information, potential pain points include developer productivity gaps, concerns about code quality, and security/compliance considerations with existing tools.</p>
-                                    <div class="text-muted small">Source: OpenAI GPT-4 - Last updated: March 16, 2025</div>
+                                    <h6 class="mb-2">Projected ROI</h6>
+                                    <p>Based on current engineering costs and projected efficiency gains, the estimated first-year ROI is approximately 320%, with annual savings of $1.2M through improved developer productivity and reduced QA costs. Additional value through faster time-to-market is expected but not quantified.</p>
+                                    <div class="text-muted small">Source: ROI Calculator - Last updated: March 16, 2025</div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="requirements" role="tabpanel">
+                                <div class="research-item mb-3 p-3 border rounded">
+                                    <h6 class="mb-2">Technical Requirements</h6>
+                                    <p>Acme Corporation requires support for Python, Java, and JavaScript development environments. Their systems use GitHub Enterprise for source control and Jenkins for CI/CD. Security requirements include SOC 2 compliance and on-premise deployment options for certain sensitive projects.</p>
+                                    <div class="text-muted small">Source: Technical Discovery - Last updated: March 14, 2025</div>
+                                </div>
+                                <div class="research-item mb-3 p-3 border rounded">
+                                    <h6 class="mb-2">Success Criteria</h6>
+                                    <p>Key success metrics include: reducing average PR review time by 40%, decreasing bug rates by 25%, improving developer satisfaction scores by 30%, and achieving full adoption across the engineering organization within 90 days of implementation.</p>
+                                    <div class="text-muted small">Source: VP Engineering - Last updated: March 12, 2025</div>
                                 </div>
                             </div>
                         </div>
