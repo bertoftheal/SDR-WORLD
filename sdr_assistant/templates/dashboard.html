@@ -1,6 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+        /* Enhanced 3D card styling */
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1), 0 6px 6px rgba(0,0,0,0.05);
+            border-radius: 15px !important;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.05);
+        }
+        
+        .card-header {
+            border-radius: 15px 15px 0 0 !important;
+        }
+        
+        /* 3D button styling */
+        .btn {
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        /* Enhanced progress bars */
+        .progress {
+            height: 10px !important;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            border-radius: 10px;
+            background-image: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        /* 3D icon containers */
+        .rounded-circle {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .rounded-circle:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Activity metrics 3D effect */
+        .metric-value {
+            position: relative;
+            z-index: 1;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .metric-value:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 40%;
+            bottom: -10%;
+            left: 0;
+            background: linear-gradient(transparent, rgba(64, 223, 175, 0.1));
+            z-index: -1;
+            border-radius: 50%;
+            filter: blur(5px);
+        }
+        
+        /* Chart container 3D effect */
+        .chart-container {
+            border-radius: 15px;
+            padding: 15px;
+            background: linear-gradient(145deg, #ffffff, #f5f5f5);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1), inset 0 -5px 10px rgba(0,0,0,0.03);
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .chart-container:before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, rgba(64, 223, 175, 0.05), transparent, rgba(111, 66, 193, 0.05));
+            z-index: -1;
+            transform: scale(1.05);
+            filter: blur(20px);
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+        
+        .chart-container:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15), inset 0 -5px 10px rgba(0,0,0,0.05);
+        }
+        
+        .chart-container:hover:before {
+            opacity: 1;
+        }
+        body {
+            background: linear-gradient(to bottom right, #f8f9fa, #e9ecef);
+            min-height: 100vh;
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activities Dashboard | SDR World</title>
@@ -80,7 +203,7 @@
         <div class="container px-4 py-5">
             <!-- Dashboard Header -->
             <div class="mb-5">
-                <div class="section-label badge mb-3 px-3 py-2" style="background-color: #40dfaf;">SALES ACTIVITY</div>
+                <div class="section-label badge mb-3 px-3 py-2" style="background-color: #40dfaf; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transform: translateY(-5px);">SALES ACTIVITY</div>
                 <h1 class="display-4 fw-bold mb-3">Activities Dashboard</h1>
                 <p class="lead text-muted">Track and monitor all your sales activities and performance metrics.</p>
             </div>
@@ -96,7 +219,7 @@
                                 </div>
                                 <h6 class="card-subtitle text-muted mb-0">Points</h6>
                             </div>
-                            <h2 class="display-6 fw-bold mb-0">257</h2>
+                            <h2 class="display-6 fw-bold mb-0">27</h2>
                             <div class="small text-success mt-2">
                                 <i class="fas fa-arrow-up me-1"></i>12% vs last week
                             </div>
@@ -107,7 +230,7 @@
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
-                                <div class="rounded-circle p-2 me-3" style="background-color: rgba(13, 110, 253, 0.2);">
+                                <div class="rounded-circle p-2 me-3" style="background-color: rgba(13, 110, 253, 0.2); transform: translateZ(10px);">
                                     <i class="fas fa-calendar-check text-primary"></i>
                                 </div>
                                 <h6 class="card-subtitle text-muted mb-0">Meetings Completed</h6>
@@ -144,7 +267,7 @@
                                 </div>
                                 <h6 class="card-subtitle text-muted mb-0">Dials</h6>
                             </div>
-                            <h2 class="display-6 fw-bold mb-0">142</h2>
+                            <h2 class="display-6 fw-bold mb-0">763</h2>
                             <div class="small text-danger mt-2">
                                 <i class="fas fa-arrow-down me-1"></i>3% vs last week
                             </div>
@@ -176,7 +299,7 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border-0 h-100">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
                             <h5 class="card-title mb-0">Activity Distribution</h5>
                         </div>
@@ -190,7 +313,7 @@
             <!-- Additional Metrics Section -->
             <div class="row g-4 mb-5">
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border-0 h-100">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
                             <h5 class="card-title mb-0">Communication Channels</h5>
                         </div>
@@ -202,52 +325,41 @@
                                     </div>
                                     <span>Emails</span>
                                 </div>
-                                <span class="fw-bold">87</span>
+                                <span class="fw-bold metric-value">202</span>
                                 <div class="progress" style="width: 40%; height: 8px;">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 68%;" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div class="d-flex align-items-center">
-                                    <div class="rounded-circle p-2 me-2" style="background-color: rgba(220, 53, 69, 0.2);">
-                                        <i class="fas fa-phone-alt text-danger"></i>
+                                    <div class="rounded-circle p-2 me-2" style="background-color: rgba(64, 223, 175, 0.2);">
+                                        <i class="fas fa-phone-alt" style="color: #40dfaf;"></i>
                                     </div>
                                     <span>Calls</span>
                                 </div>
-                                <span class="fw-bold">142</span>
+                                <span class="fw-bold metric-value">763</span>
                                 <div class="progress" style="width: 40%; height: 8px;">
-                                    <div class="progress-bar bg-danger" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar" role="progressbar" style="width: 95%; background-color: #40dfaf;" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div class="d-flex align-items-center">
-                                    <div class="rounded-circle p-2 me-2" style="background-color: rgba(25, 135, 84, 0.2);">
-                                        <i class="fab fa-linkedin text-success"></i>
+                                    <div class="rounded-circle p-2 me-2" style="background-color: rgba(111, 66, 193, 0.2);">
+                                        <i class="fab fa-linkedin" style="color: #6f42c1;"></i>
                                     </div>
                                     <span>LinkedIn</span>
                                 </div>
-                                <span class="fw-bold">35</span>
+                                <span class="fw-bold metric-value">95</span>
                                 <div class="progress" style="width: 40%; height: 8px;">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar" role="progressbar" style="width: 60%; background-color: #6f42c1;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-circle p-2 me-2" style="background-color: rgba(253, 126, 20, 0.2);">
-                                        <i class="fas fa-comment-alt text-warning"></i>
-                                    </div>
-                                    <span>Other</span>
-                                </div>
-                                <span class="fw-bold">23</span>
-                                <div class="progress" style="width: 40%; height: 8px;">
-                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border-0 h-100">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
                             <h5 class="card-title mb-0">Prospect Breakdown</h5>
                         </div>
@@ -262,21 +374,21 @@
                                 </div>
                                 <div class="col-6 mb-4">
                                     <h6 class="text-muted">Personas</h6>
-                                    <h3 class="fw-bold">12</h3>
+                                    <h3 class="fw-bold metric-value">12</h3>
                                     <div class="small text-success">
                                         <i class="fas fa-arrow-up me-1"></i>5%
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <h6 class="text-muted">New Prospects</h6>
-                                    <h3 class="fw-bold">93</h3>
+                                    <h3 class="fw-bold metric-value">93</h3>
                                     <div class="small text-success">
                                         <i class="fas fa-arrow-up me-1"></i>27%
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <h6 class="text-muted">Conversion Rate</h6>
-                                    <h3 class="fw-bold">19.7%</h3>
+                                    <h3 class="fw-bold metric-value">19.7%</h3>
                                     <div class="small text-success">
                                         <i class="fas fa-arrow-up me-1"></i>2.3%
                                     </div>
@@ -286,7 +398,7 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card border-0 h-100">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
                             <h5 class="card-title mb-0">Activity Timeline</h5>
                         </div>
@@ -294,7 +406,7 @@
                             <div class="list-group list-group-flush">
                                 <div class="list-group-item border-0 py-3">
                                     <div class="d-flex">
-                                        <div class="rounded-circle p-2 me-3" style="background-color: rgba(13, 110, 253, 0.2);">
+                                        <div class="rounded-circle p-2 me-3" style="background-color: rgba(13, 110, 253, 0.2); transform: translateZ(10px);">
                                             <i class="fas fa-calendar-check text-primary"></i>
                                         </div>
                                         <div>
@@ -447,31 +559,33 @@
                     datasets: [
                         {
                             label: 'Calls',
-                            data: [28, 35, 24, 32, 23],
-                            backgroundColor: 'rgba(220, 53, 69, 0.7)',
-                            borderColor: 'rgba(220, 53, 69, 1)',
-                            borderWidth: 1
+                            data: [150, 198, 135, 180, 100],
+                            backgroundColor: 'rgba(64, 223, 175, 0.7)',
+                            borderColor: 'rgba(64, 223, 175, 1)',
+                            borderWidth: 2,
+                            borderRadius: 8,
+                            hoverOffset: 10,
+                            hoverBorderWidth: 3
                         },
                         {
                             label: 'Emails',
-                            data: [19, 22, 15, 18, 13],
+                            data: [45, 52, 32, 43, 30],
                             backgroundColor: 'rgba(13, 110, 253, 0.7)',
                             borderColor: 'rgba(13, 110, 253, 1)',
-                            borderWidth: 1
+                            borderWidth: 2,
+                            borderRadius: 8,
+                            hoverOffset: 10,
+                            hoverBorderWidth: 3
                         },
                         {
                             label: 'LinkedIn',
-                            data: [7, 9, 6, 8, 5],
-                            backgroundColor: 'rgba(25, 135, 84, 0.7)',
-                            borderColor: 'rgba(25, 135, 84, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Meetings',
-                            data: [4, 6, 3, 5, 5],
-                            backgroundColor: 'rgba(253, 126, 20, 0.7)',
-                            borderColor: 'rgba(253, 126, 20, 1)',
-                            borderWidth: 1
+                            data: [20, 25, 15, 22, 13],
+                            backgroundColor: 'rgba(111, 66, 193, 0.7)',
+                            borderColor: 'rgba(111, 66, 193, 1)',
+                            borderWidth: 2,
+                            borderRadius: 8,
+                            hoverOffset: 10,
+                            hoverBorderWidth: 3
                         }
                     ]
                 },
@@ -496,7 +610,12 @@
                     plugins: {
                         legend: {
                             position: 'top',
-                            align: 'end'
+                            align: 'end',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                padding: 15
+                            }
                         }
                     }
                 }
@@ -507,33 +626,72 @@
             const activityDistributionChart = new Chart(activityDistributionCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Calls', 'Emails', 'LinkedIn', 'Meetings'],
+                    labels: ['Calls', 'Emails', 'LinkedIn'],
                     datasets: [{
-                        data: [142, 87, 35, 23],
+                        data: [763, 202, 95],
                         backgroundColor: [
-                            'rgba(220, 53, 69, 0.7)',
+                            'rgba(64, 223, 175, 0.7)',
                             'rgba(13, 110, 253, 0.7)',
-                            'rgba(25, 135, 84, 0.7)',
-                            'rgba(253, 126, 20, 0.7)'
+                            'rgba(111, 66, 193, 0.7)'
                         ],
                         borderColor: [
-                            'rgba(220, 53, 69, 1)',
+                            'rgba(64, 223, 175, 1)',
                             'rgba(13, 110, 253, 1)',
-                            'rgba(25, 135, 84, 1)',
-                            'rgba(253, 126, 20, 1)'
+                            'rgba(111, 66, 193, 1)'
                         ],
-                        borderWidth: 1
+                        borderWidth: 2,
+                        hoverOffset: 15,
+                        hoverBorderWidth: 3,
+                        borderRadius: 4,
+                        offset: 5
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    cutout: '70%',
+                    radius: '90%',
                     plugins: {
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            displayColors: true,
+                            boxWidth: 10,
+                            boxHeight: 10,
+                            boxPadding: 5,
+                            usePointStyle: true,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    let value = context.raw || 0;
+                                    let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    let percentage = Math.round((value / total) * 100) + '%';
+                                    return `${label}: ${value} (${percentage})`;
+                                }
+                            }
+                        },
                         legend: {
-                            position: 'bottom'
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                padding: 15,
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
                         }
                     },
-                    cutout: '65%'
+
                 }
             });
         });
