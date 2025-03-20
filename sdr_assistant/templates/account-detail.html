@@ -61,7 +61,7 @@
         }
         .section-header {
             background-color: #f8f9fa;
-            border-left: 4px solid #40dfaf;
+            border-left: 4px solid #06b6a2;
             padding: 12px 15px;
             font-weight: 600;
         }
@@ -75,7 +75,7 @@
             margin-bottom: 5px;
         }
         .contact-item {
-            border-left: 3px solid #40dfaf;
+            border-left: 3px solid #06b6a2;
             padding-left: 10px;
             margin-bottom: 10px;
         }
@@ -92,10 +92,13 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
         <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <span style="color: #40dfaf;">SDR</span> Assistant
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <div class="brand-icon rounded-circle p-2 me-2" style="background-color: #06b6a2; color: white;">
+                    <i class="fas fa-globe-americas"></i>
+                </div>
+                <span class="fw-bold">SDR World</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -103,7 +106,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item mx-2">
-                        <a class="nav-link fw-medium" href="index.html#research">
+                        <a class="nav-link fw-medium" href="index.html">
                             <i class="fas fa-search me-1"></i> RESEARCH
                         </a>
                     </li>
@@ -124,18 +127,29 @@
                     </li>
                 </ul>
                 <div class="d-flex align-items-center">
-                    <button id="loginButton" class="btn rounded-pill px-4" style="background-color: #40dfaf; color: white;" onclick="showLoginModal()">
+                    <button id="loginButton" class="btn rounded-pill px-4" style="background-color: #06b6a2; color: white;">
                         <i class="fas fa-user-circle me-2"></i>Sign In
                     </button>
-                    <div id="userInfo" class="d-none">
+                    <div id="userInfo">
                         <div class="d-flex align-items-center">
-                            <div class="user-avatar text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background-color: #40dfaf;">
+                            <div class="user-avatar text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background-color: #06b6a2;">
                                 <i class="fas fa-user"></i>
                             </div>
-                            <span id="userName" class="me-3">User Name</span>
-                            <a href="#" onclick="logout()" class="text-secondary text-decoration-none">
-                                <i class="fas fa-sign-out-alt me-1"></i> Logout
-                            </a>
+                            <div class="me-3">
+                                <div class="fw-bold" id="userName">Albert Perez</div>
+                                <div class="text-muted small">Pro Member</div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" href="#profile"><i class="fas fa-user-cog me-2"></i>Profile</a></li>
+                                    <li><a class="dropdown-item" href="#settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -175,7 +189,7 @@
                     </div>
                 </div>
                 <div class="col-md-3 d-flex justify-content-md-end justify-content-start align-items-center mt-3 mt-md-0">
-                    <button class="btn me-2" style="background-color: #40dfaf; color: white;">
+                    <button class="btn me-2" style="background-color: #06b6a2; color: white;">
                         <i class="fas fa-edit me-1"></i>Edit
                     </button>
                     <button class="btn btn-outline-primary">
@@ -191,6 +205,16 @@
         <div class="row gy-4">
             <!-- Left Column -->
             <div class="col-lg-8">
+                <!-- Company Overview Section -->
+                <div class="card section-card mb-4">
+                    <h5 class="section-header"><i class="fas fa-building me-2"></i>Company Overview</h5>
+                    <div class="card-body">
+                        <div class="alert alert-light border" id="companyOverview">
+                            <p>Loading company overview...</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Tactical Strategy Section -->
                 <div class="card section-card mb-4">
                     <h5 class="section-header"><i class="fas fa-chess me-2"></i>Suggested Tactical Strategy</h5>
@@ -209,7 +233,7 @@
                             <button class="btn btn-sm btn-outline-secondary me-2">
                                 <i class="fas fa-download me-1"></i>Export
                             </button>
-                            <button class="btn btn-sm" style="background-color: #40dfaf; color: white;">
+                            <button class="btn btn-sm" style="background-color: #06b6a2; color: white;">
                                 <i class="fas fa-sync-alt me-1"></i>Regenerate
                             </button>
                         </div>

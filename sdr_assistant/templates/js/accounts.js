@@ -112,66 +112,36 @@ function setupEventListeners() {
     });
 }
 
-// Load accounts from API or demo data
+// Load accounts from our data service
 function loadAccounts() {
-    console.log("Loading accounts...");
+    console.log("Loading accounts from data service...");
     if (!accountsContainer) return;
     
-    // In demo mode, use static data
-    const accounts = [
-        {
-            id: "nvidia",
-            name: "NVIDIA",
-            industry: "Technology",
-            location: "Santa Clara, CA",
-            logo: "https://logo.clearbit.com/nvidia.com",
-            status: "researched",
-            lastResearch: "2025-03-10",
-            description: "NVIDIA is a technology company known for designing graphics processing units (GPUs) for gaming and professional markets, as well as system on a chip units (SoCs) for the mobile computing and automotive market."
-        },
-        {
-            id: "google",
-            name: "Google",
-            industry: "Technology",
-            location: "Mountain View, CA",
-            logo: "https://logo.clearbit.com/google.com",
-            status: "researched",
-            lastResearch: "2025-03-05",
-            description: "Google LLC is an American multinational technology company that specializes in Internet-related services and products, which include online advertising technologies, a search engine, cloud computing, software, and hardware."
-        },
-        {
-            id: "microsoft",
-            name: "Microsoft",
-            industry: "Technology",
-            location: "Redmond, WA",
-            logo: "https://logo.clearbit.com/microsoft.com",
-            status: "researched",
-            lastResearch: "2025-03-01",
-            description: "Microsoft Corporation is an American multinational technology company that develops, manufactures, licenses, supports, and sells computer software, consumer electronics, personal computers, and related services."
-        },
-        {
-            id: "amazon",
-            name: "Amazon",
-            industry: "Retail",
-            location: "Seattle, WA",
-            logo: "https://logo.clearbit.com/amazon.com",
-            status: "pending",
-            lastResearch: null,
-            description: "Amazon.com, Inc. is an American multinational technology company which focuses on e-commerce, cloud computing, digital streaming, and artificial intelligence."
-        },
-        {
-            id: "jpmorgan",
-            name: "JP Morgan Chase",
-            industry: "Finance",
-            location: "New York, NY",
-            logo: "https://logo.clearbit.com/jpmorganchase.com",
-            status: "pending",
-            lastResearch: null,
-            description: "JPMorgan Chase & Co. is an American multinational investment bank and financial services holding company headquartered in New York City."
-        }
-    ];
+    // Show loading state
+    accountsContainer.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Loading accounts...</p></div>';
     
-    displayAccounts(accounts);
+    // Use our data service to get accounts
+    dataService.getAccounts()
+        .then(accounts => {
+            // Convert account data format for display
+            const formattedAccounts = accounts.map(account => ({
+                id: account.id,
+                name: account.name,
+                industry: account.industry || 'Unknown',
+                location: account.headquarters || 'Unknown',
+                logo: account.logoUrl || `https://logo.clearbit.com/${account.name.toLowerCase().replace(/[^a-zA-Z0-9]/g, '')}.com`,
+                status: (account.status || '').toLowerCase(),
+                lastResearch: account.updatedAt || null,
+                description: account.description || `${account.name} is a company in the ${account.industry || 'technology'} industry.`,
+                researchStatus: account.researchStatus
+            }));
+            
+            displayAccounts(formattedAccounts);
+        })
+        .catch(error => {
+            console.error('Error loading accounts:', error);
+            accountsContainer.innerHTML = '<div class="col-12 text-center py-5"><div class="alert alert-danger">Error loading accounts. Please try again later.</div></div>';
+        });
 }
 
 // Display accounts in the UI

@@ -1,0 +1,99 @@
+<!-- Standardized Header Component -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <div class="brand-icon rounded-circle p-2 me-2" style="background-color: #06b6a2; color: white;">
+                <i class="fas fa-globe-americas"></i>
+            </div>
+            <span class="fw-bold">SDR World</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item mx-2">
+                    <a class="nav-link fw-medium research-nav" href="index.html">
+                        <i class="fas fa-search me-1"></i> RESEARCH
+                    </a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link fw-medium accounts-nav" href="accounts.html">
+                        <i class="fas fa-users me-1"></i> ACCOUNTS
+                    </a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link fw-medium library-nav" href="library.html">
+                        <i class="fas fa-book me-1"></i> LIBRARY
+                    </a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link fw-medium dashboard-nav" href="dashboard.html">
+                        <i class="fas fa-chart-line me-1"></i> DASHBOARD
+                    </a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <div id="userInfo" class="d-none">
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background-color: #06b6a2;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="me-3">
+                            <div class="fw-bold" id="userName">Albert Perez</div>
+                            <div class="text-muted small">Pro Member</div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-link dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="#profile"><i class="fas fa-user-cog me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <button id="loginButton" class="btn rounded-pill px-4" style="background-color: #06b6a2; color: white;">
+                    <i class="fas fa-user-circle me-2"></i>Sign In
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // Set active nav link based on current page
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        
+        // Remove 'active' class from all nav links
+        document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        // Set appropriate active link
+        if (currentPath.includes('accounts.html')) {
+            document.querySelector('.accounts-nav').classList.add('active');
+        } else if (currentPath.includes('library.html')) {
+            document.querySelector('.library-nav').classList.add('active');
+        } else if (currentPath.includes('dashboard.html')) {
+            document.querySelector('.dashboard-nav').classList.add('active');
+        } else if (currentPath.includes('account-detail.html')) {
+            document.querySelector('.accounts-nav').classList.add('active');
+        } else {
+            document.querySelector('.research-nav').classList.add('active');
+        }
+        
+        // Show user info by default for demo
+        const userInfo = document.getElementById('userInfo');
+        const loginButton = document.getElementById('loginButton');
+        
+        if (userInfo && loginButton) {
+            userInfo.classList.remove('d-none');
+            loginButton.classList.add('d-none');
+        }
+    });
+</script>

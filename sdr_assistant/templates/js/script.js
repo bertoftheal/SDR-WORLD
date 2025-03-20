@@ -45,8 +45,8 @@ function initDOMElements() {
     console.log("Hero image element initialized:", heroImage);
 }
 
-// DEMO MODE - Configurable for demonstration purposes
-const DEMO_MODE = false; // Set to false to use real API calls
+// Use our data service instead of direct API calls
+const dataService = window.dataService || new DataService();
 
 /**
  * Initialize DOM elements when document is fully loaded
@@ -98,72 +98,62 @@ function checkUserLogin() {
 }
 
 /**
- * Loads account data from the backend API or uses static data in demo mode
+ * Loads account data using our data service
  */
 function loadAccounts() {
-    console.log("Loading accounts...");
+    console.log("Loading accounts from data service...");
     
-    if (DEMO_MODE) {
-        // Use static fallback data in demo mode
-        // Clear existing options and add the placeholder
+    // Clear existing options and add the placeholder
+    if (accountSelect) {
         accountSelect.innerHTML = '<option value="">Select an account...</option>';
         
-        // Add static company options
-        const staticCompanies = [
-            { id: 'nvidia', name: 'NVIDIA Corporation' },
-            { id: 'cisco', name: 'Cisco Systems' },
-            { id: 'microsoft', name: 'Microsoft Corporation' },
-            { id: 'google', name: 'Google (Alphabet Inc.)' },
-            { id: 'amazon', name: 'Amazon.com, Inc.' }
-        ];
-        
-        staticCompanies.forEach(company => {
-            const option = document.createElement('option');
-            option.value = company.id;
-            option.textContent = company.name;
-            option.dataset.id = company.id;
-            accountSelect.appendChild(option);
-        });
-        
-        console.log('Populated dropdown with static company data');
-        return;
-    }
-    
-    // Not in demo mode, fetch from API
-    fetch('/api/accounts')
-        .then(response => response.json())
-        .then(accounts => {
-            // Clear existing options except the placeholder
-            accountSelect.innerHTML = '<option value="">Select an account...</option>';
-            
-            // Keep track of added account names to prevent duplicates
-            const addedAccounts = new Set();
-            
-            // Sort accounts alphabetically
-            accounts.sort((a, b) => a.name.localeCompare(b.name));
-            
-            // Add new options while filtering out duplicates
-            accounts.forEach(account => {
-                // Skip if this account name has already been added
-                if (addedAccounts.has(account.name)) {
-                    console.log(`Skipping duplicate account: ${account.name}`);
-                    return;
+        // Use our data service to fetch accounts
+        dataService.getAccounts()
+            .then(accounts => {
+                // Keep track of added account names to prevent duplicates
+                const addedAccounts = new Set();
+                
+                // Sort accounts alphabetically
+                accounts.sort((a, b) => a.name.localeCompare(b.name));
+                
+                // Add new options while filtering out duplicates
+                accounts.forEach(account => {
+                    // Skip if this account name has already been added
+                    if (addedAccounts.has(account.name)) {
+                        console.log(`Skipping duplicate account: ${account.name}`);
+                        return;
+                    }
+                    
+                    // Add the account name to the set and create the option
+                    addedAccounts.add(account.name);
+                    const option = document.createElement('option');
+                    option.value = account.name;
+                    option.textContent = account.name;
+                    option.dataset.id = account.id; // Store ID for reference
+                    accountSelect.appendChild(option);
+                });
+                
+                // Check if we should pre-select a company from previous research
+                const currentCompany = dataService.getCurrentResearchCompany();
+                if (currentCompany) {
+                    const options = Array.from(accountSelect.options);
+                    const matchingOption = options.find(option => option.textContent === currentCompany);
+                    if (matchingOption) {
+                        matchingOption.selected = true;
+                        // Trigger the change event to update UI
+                        const event = new Event('change');
+                        accountSelect.dispatchEvent(event);
+                    }
                 }
                 
-                // Add the account name to the set and create the option
-                addedAccounts.add(account.name);
-                const option = document.createElement('option');
-                option.value = account.name;
-                option.textContent = account.name;
-                option.dataset.id = account.id; // Store ID for reference
-                accountSelect.appendChild(option);
+                console.log(`Loaded ${addedAccounts.size} unique accounts from data service`);
+            })
+            .catch(error => {
+                console.error('Error loading accounts from data service:', error);
             });
-            
-            console.log(`Loaded ${addedAccounts.size} unique accounts from API`);
-        })
-        .catch(error => {
-            console.error('Error loading accounts from API:', error);
-        });
+    } else {
+        console.warn('Account select element not found');
+    }
 }
 
 /**
@@ -677,20 +667,42 @@ if (generateBtn) {
         // Clear existing content and show loading indicators
         showLoadingIndicators();
         
-        if (DEMO_MODE) {
-            // Use demo data in demo mode
-            console.log('Using demo data for', accountName);
-            setTimeout(() => {
-                updateCompanyDetails();
+        // Store the selected company in our data service
+        dataService.setCurrentResearchCompany(accountName);
+        
+        // Get the account from our data service
+        dataService.getAccountByName(accountName)
+            .then(account => {
+                if (!account) {
+                    throw new Error(`Account not found: ${accountName}`);
+                }
+                
+                // Check if research already exists
+                return dataService.getResearch(account.id)
+                    .then(research => {
+                        if (research) {
+                            // Research exists, use it
+                            console.log('Using existing research for', accountName);
+                            return research;
+                        } else {
+                            // Research doesn't exist, generate it
+                            console.log('Generating new research for', accountName);
+                            return generateResearchFromAPI(accountName, companyValue);
+                        }
+                    });
+            })
+            .then(researchData => {
+                updateUIWithResearchData(researchData, accountName);
                 generateBtn.disabled = false;
                 generateBtn.innerHTML = '<i class="fas fa-search me-2"></i>GENERATE RESEARCH';
-                showNotification('Research generated successfully!', 'success');
-            }, 1500);
-        } else {
-            // Make the actual API call
-            console.log('Generating research for', accountName);
-            generateResearchFromAPI(accountName, companyValue);
-        }
+                showNotification('Research loaded successfully!', 'success');
+            })
+            .catch(error => {
+                console.error('Error processing research:', error);
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-search me-2"></i>GENERATE RESEARCH';
+                showNotification('Error generating research. Please try again.', 'error');
+            });
     });
 }
 
@@ -705,13 +717,27 @@ if (saveBtn) {
         
         const accountName = accountSelect.options[accountSelect.selectedIndex].text;
         
-        if (DEMO_MODE) {
-            // Demo mode - just show a notification
-            showNotification('Demo mode: Research would be saved to Airtable', 'info');
-        } else {
-            // Actually save to Airtable
-            saveResearchToAirtable(accountName);
-        }
+        // Get account by name
+        dataService.getAccountByName(accountName)
+            .then(account => {
+                if (!account) {
+                    throw new Error(`Account not found: ${accountName}`);
+                }
+                
+                // Update account status
+                return dataService.updateAccount(account.id, {
+                    status: 'Researched',
+                    researchStatus: 'Active Research',
+                    updatedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                });
+            })
+            .then(() => {
+                showNotification('Research saved successfully!', 'success');
+            })
+            .catch(error => {
+                console.error('Error saving research:', error);
+                showNotification('Error saving research. Please try again.', 'error');
+            });
     });
 }
 
@@ -810,12 +836,20 @@ function initSmoothScrolling() {
                 });
                 
                 console.log(`Scrolling to section: ${targetId}`);
+                
+                // Force the update of active section
+                setTimeout(() => {
+                    highlightCurrentSection();
+                }, 100);
             }
         });
     });
     
     // Also initialize scroll behavior for section detection
     window.addEventListener('scroll', highlightCurrentSection);
+    
+    // Run once on page load to set the initial active section
+    setTimeout(highlightCurrentSection, 200);
     
     console.log("Smooth scrolling initialized");
 }
@@ -830,20 +864,32 @@ function highlightCurrentSection() {
     
     const navLinks = document.querySelectorAll('.insights-nav a');
     
-    let currentSectionIndex = 0;
+    if (!sections[0] || !navLinks.length) {
+        return; // Exit if sections or navLinks aren't found
+    }
+    
+    // Get current scroll position
     const scrollPosition = window.scrollY + 150; // Add offset to improve detection
     
-    sections.forEach((section, index) => {
-        if (section && scrollPosition >= section.offsetTop) {
-            currentSectionIndex = index;
+    // Find the current section based on scroll position
+    let currentSectionIndex = 0;
+    
+    for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i];
+        if (section && scrollPosition >= section.offsetTop - 100) {
+            currentSectionIndex = i;
+            break;
         }
-    });
+    }
     
     // Remove active class from all links
     navLinks.forEach(link => link.classList.remove('active'));
     
     // Add active class to the current section's link
-    navLinks[currentSectionIndex].classList.add('active');
+    if (navLinks[currentSectionIndex]) {
+        navLinks[currentSectionIndex].classList.add('active');
+        console.log('Set active section to:', currentSectionIndex);
+    }
 }
 
 /**
@@ -1166,6 +1212,29 @@ document.addEventListener('DOMContentLoaded', function() {
     checkUserLogin();
     loadAccounts();
     initSmoothScrolling();
+    
+    // Handle hash in URL if present
+    if (window.location.hash) {
+        const hash = window.location.hash;
+        const targetSection = document.querySelector(hash);
+        const targetLink = document.querySelector(`.insights-nav a[href="${hash}"]`);
+        
+        if (targetSection && targetLink) {
+            // Remove active class from all links
+            document.querySelectorAll('.insights-nav a').forEach(l => l.classList.remove('active'));
+            
+            // Add active class to the target link
+            targetLink.classList.add('active');
+            
+            // Scroll to section after a slight delay to ensure page is loaded
+            setTimeout(() => {
+                window.scrollTo({
+                    top: targetSection.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+            }, 300);
+        }
+    }
     
     // Set a slight delay to ensure accounts are loaded before selecting NVIDIA
     setTimeout(() => {

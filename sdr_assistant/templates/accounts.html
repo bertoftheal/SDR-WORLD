@@ -34,7 +34,7 @@
             border-radius: 8px;
         }
         .badge-research {
-            background-color: #40dfaf;
+            background-color: #06b6a2;
             color: white;
         }
         .badge-pending {
@@ -42,7 +42,7 @@
             color: #212529;
         }
         .section-header {
-            border-color: #40dfaf !important;
+            border-color: #06b6a2 !important;
         }
         .account-details {
             display: none;
@@ -54,10 +54,13 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
         <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <span style="color: #40dfaf;">SDR</span> Assistant
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <div class="brand-icon rounded-circle p-2 me-2" style="background-color: #06b6a2; color: white;">
+                    <i class="fas fa-globe-americas"></i>
+                </div>
+                <span class="fw-bold">SDR World</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -65,7 +68,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item mx-2">
-                        <a class="nav-link fw-medium" href="index.html#research">
+                        <a class="nav-link fw-medium" href="index.html">
                             <i class="fas fa-search me-1"></i> RESEARCH
                         </a>
                     </li>
@@ -86,18 +89,29 @@
                     </li>
                 </ul>
                 <div class="d-flex align-items-center">
-                    <button id="loginButton" class="btn rounded-pill px-4" style="background-color: #40dfaf; color: white;" onclick="showLoginModal()">
+                    <button id="loginButton" class="btn rounded-pill px-4" style="background-color: #06b6a2; color: white;">
                         <i class="fas fa-user-circle me-2"></i>Sign In
                     </button>
-                    <div id="userInfo" class="d-none">
+                    <div id="userInfo">
                         <div class="d-flex align-items-center">
-                            <div class="user-avatar text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background-color: #40dfaf;">
+                            <div class="user-avatar text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; background-color: #06b6a2;">
                                 <i class="fas fa-user"></i>
                             </div>
-                            <span id="userName" class="me-3">User Name</span>
-                            <a href="#" onclick="logout()" class="text-secondary text-decoration-none">
-                                <i class="fas fa-sign-out-alt me-1"></i> Logout
-                            </a>
+                            <div class="me-3">
+                                <div class="fw-bold" id="userName">Albert Perez</div>
+                                <div class="text-muted small">Pro Member</div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" href="#profile"><i class="fas fa-user-cog me-2"></i>Profile</a></li>
+                                    <li><a class="dropdown-item" href="#settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -120,7 +134,7 @@
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
-                <button class="btn ms-2" style="background-color: #40dfaf; color: white;" id="addAccountBtn">
+                <button class="btn ms-2" style="background-color: #06b6a2; color: white;" id="addAccountBtn">
                     <i class="fas fa-plus me-2"></i>New Account
                 </button>
             </div>
@@ -194,7 +208,7 @@
                                     <div class="text-muted" id="accountDetailIndustry">Industry</div>
                                 </div>
                                 <div class="ms-auto">
-                                    <button class="btn" style="background-color: #40dfaf; color: white;" id="generateResearchBtn">
+                                    <button class="btn" style="background-color: #06b6a2; color: white;" id="generateResearchBtn">
                                         <i class="fas fa-sync-alt me-2"></i>Generate Research
                                     </button>
                                 </div>
@@ -203,7 +217,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="card h-100 border-0 bg-light">
                                         <div class="card-body">
-                                            <h5 class="mb-3"><i class="fas fa-info-circle me-2" style="color: #40dfaf;"></i>Company Info</h5>
+                                            <h5 class="mb-3"><i class="fas fa-info-circle me-2" style="color: #06b6a2;"></i>Company Info</h5>
                                             <div id="accountDetailInfo">Loading company information...</div>
                                         </div>
                                     </div>
@@ -211,7 +225,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="card h-100 border-0 bg-light">
                                         <div class="card-body">
-                                            <h5 class="mb-3"><i class="fas fa-map-marker-alt me-2" style="color: #40dfaf;"></i>Location & Contact</h5>
+                                            <h5 class="mb-3"><i class="fas fa-map-marker-alt me-2" style="color: #06b6a2;"></i>Location & Contact</h5>
                                             <div id="accountDetailContact">Loading contact information...</div>
                                         </div>
                                     </div>
@@ -251,7 +265,7 @@
                         <!-- Company Insights Tab -->
                         <div class="tab-pane fade show active" id="company-tab-pane" role="tabpanel" tabindex="0">
                             <div class="section-header d-flex align-items-center bg-light p-3 rounded-top border-start border-5">
-                                <div class="header-icon me-3 text-white p-2 rounded" style="background-color: #40dfaf;">
+                                <div class="header-icon me-3 text-white p-2 rounded" style="background-color: #06b6a2;">
                                     <i class="fas fa-building fa-lg"></i>
                                 </div>
                                 <div>
@@ -271,7 +285,7 @@
                         <!-- Industry Insights Tab -->
                         <div class="tab-pane fade" id="industry-tab-pane" role="tabpanel" tabindex="0">
                             <div class="section-header d-flex align-items-center bg-light p-3 rounded-top border-start border-5">
-                                <div class="header-icon me-3 text-white p-2 rounded" style="background-color: #40dfaf;">
+                                <div class="header-icon me-3 text-white p-2 rounded" style="background-color: #06b6a2;">
                                     <i class="fas fa-industry fa-lg"></i>
                                 </div>
                                 <div>
@@ -291,7 +305,7 @@
                         <!-- Talk Track Tab -->
                         <div class="tab-pane fade" id="talk-track-tab-pane" role="tabpanel" tabindex="0">
                             <div class="section-header d-flex align-items-center bg-light p-3 rounded-top border-start border-5">
-                                <div class="header-icon me-3 text-white p-2 rounded" style="background-color: #40dfaf;">
+                                <div class="header-icon me-3 text-white p-2 rounded" style="background-color: #06b6a2;">
                                     <i class="fas fa-comment fa-lg"></i>
                                 </div>
                                 <div>
@@ -319,7 +333,7 @@
                         <!-- Research History Tab -->
                         <div class="tab-pane fade" id="history-tab-pane" role="tabpanel" tabindex="0">
                             <div class="section-header d-flex align-items-center bg-light p-3 rounded-top border-start border-5">
-                                <div class="header-icon me-3 text-white p-2 rounded" style="background-color: #40dfaf;">
+                                <div class="header-icon me-3 text-white p-2 rounded" style="background-color: #06b6a2;">
                                     <i class="fas fa-history fa-lg"></i>
                                 </div>
                                 <div>
@@ -386,6 +400,8 @@
 
     <!-- Bootstrap & JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Data Service for consistent data management -->
+    <script src="js/data-service.js"></script>
     <script src="js/script.js"></script>
     <script src="js/accounts.js"></script>
 </body>

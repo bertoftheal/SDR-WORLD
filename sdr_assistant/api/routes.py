@@ -65,6 +65,10 @@ def register_routes(app):
     def serve_account_detail():
         return send_from_directory('templates', 'account-detail.html')
         
+    @app.route('/research.html')
+    def serve_research():
+        return send_from_directory('templates', 'research.html')
+        
     @app.route('/login.html')
     def serve_login():
         return send_from_directory('templates', 'login.html')

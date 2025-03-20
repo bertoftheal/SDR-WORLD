@@ -12,6 +12,7 @@ let accountIndustry;
 let accountSize;
 let accountLocation;
 let heatScore;
+let companyOverview;
 let tacticalStrategy;
 let companyResearchTitle;
 
@@ -31,6 +32,7 @@ function initDOMElements() {
     heatScore = document.getElementById('heatScore');
     
     // Main sections
+    companyOverview = document.getElementById('companyOverview');
     tacticalStrategy = document.getElementById('tacticalStrategy');
     companyResearchTitle = document.getElementById('companyResearchTitle');
     
@@ -147,6 +149,11 @@ function updateAccountUI(account) {
         heatScore.classList.add('heat-score-low');
     }
     
+    // Update company overview
+    if (account.companyOverview) {
+        companyOverview.innerHTML = account.companyOverview;
+    }
+    
     // Update tactical strategy content
     if (account.tacticalStrategy) {
         tacticalStrategy.innerHTML = account.tacticalStrategy;
@@ -170,13 +177,18 @@ function updateAccountUI(account) {
 function getMockAccountData(accountId) {
     // Mock data for demo purposes
     const mockAccounts = {
-        '1': {
-            id: '1',
-            name: 'Acme Corporation',
+        'nvidia': {
+            id: 'nvidia',
+            name: 'NVIDIA Corporation',
             industry: 'Technology',
-            size: '1000-5000 employees',
-            location: 'San Francisco, CA',
-            heatScore: 85,
+            size: '26,000+ employees',
+            location: 'Santa Clara, CA',
+            heatScore: 92,
+            companyOverview: `
+                <p>NVIDIA Corporation is an American multinational technology company that designs graphics processing units (GPUs), application programming interface (APIs) for data science and high-performance computing, and system on a chip units (SoCs) for the mobile computing and automotive market. The company has expanded its focus from PC graphics to artificial intelligence, deep learning, and accelerated computing.</p>
+                <p>Founded in 1993, NVIDIA has become a leader in AI hardware and software, with their GPUs being widely used for training neural networks and other machine learning applications. Their CUDA platform has become an industry standard for parallel computing.</p>
+                <p>The company's latest initiatives include expanding their data center business, advancing autonomous vehicle technology, and developing tools for AI researchers and developers.</p>
+            `,
             tacticalStrategy: `
                 <p><strong>Champions-Based Approach:</strong> With the recent layoffs at the company, focus on identifying and engaging new decision-makers who have taken over responsibilities.</p>
                 <p><strong>Value Proposition:</strong> Emphasize how our solution can help the company do more with fewer resources, highlighting ROI and time-saving benefits.</p>
@@ -188,13 +200,18 @@ function getMockAccountData(accountId) {
                 </ul>
             `
         },
-        '2': {
-            id: '2',
-            name: 'TechX Solutions',
-            industry: 'Information Technology',
-            size: '501-1000 employees',
-            location: 'Austin, TX',
-            heatScore: 72,
+        'microsoft': {
+            id: 'microsoft',
+            name: 'Microsoft Corporation',
+            industry: 'Technology',
+            size: '180,000+ employees',
+            location: 'Redmond, WA',
+            heatScore: 88,
+            companyOverview: `
+                <p>Microsoft Corporation is an American multinational technology company that develops, manufactures, licenses, supports, and sells computer software, consumer electronics, personal computers, and related services. Microsoft is known for its Windows operating system, Microsoft Office suite, and cloud platform Azure.</p>
+                <p>Founded in 1975 by Bill Gates and Paul Allen, Microsoft has evolved from a software company to a diversified technology corporation with significant investments in cloud computing, artificial intelligence, and developer tools. Under CEO Satya Nadella's leadership, the company has embraced open source and prioritized its cloud and AI services.</p>
+                <p>Microsoft's developer ecosystem is one of the largest in the world, with millions of developers using their tools and platforms to build applications across various domains.</p>
+            `,
             tacticalStrategy: `
                 <p><strong>Land and Expand Strategy:</strong> Focus on securing a small initial implementation with their R&D team.</p>
                 <p><strong>Value Proposition:</strong> Position our solution as enhancing their existing tech stack, not replacing it. Emphasize seamless integration capabilities.</p>
@@ -206,13 +223,18 @@ function getMockAccountData(accountId) {
                 </ul>
             `
         },
-        '3': {
-            id: '3',
-            name: 'MediHealth Systems',
-            industry: 'Healthcare',
-            size: '5000+ employees',
-            location: 'Boston, MA',
-            heatScore: 93,
+        'google': {
+            id: 'google',
+            name: 'Google LLC',
+            industry: 'Technology',
+            size: '150,000+ employees',
+            location: 'Mountain View, CA',
+            heatScore: 85,
+            companyOverview: `
+                <p>Google LLC is an American multinational technology company focusing on search engine technology, online advertising, cloud computing, computer software, quantum computing, e-commerce, artificial intelligence, and consumer electronics. It is a subsidiary of Alphabet Inc.</p>
+                <p>Founded in 1998 by Larry Page and Sergey Brin, Google has grown from a search engine into one of the world's most valuable companies. The company's mission is to organize the world's information and make it universally accessible and useful.</p>
+                <p>Google develops numerous developer tools and platforms, including Android, Firebase, TensorFlow, and Google Cloud Platform. Their developer ecosystem spans mobile, web, cloud, and AI development.</p>
+            `,
             tacticalStrategy: `
                 <p><strong>Compliance-First Approach:</strong> Their industry requires strict adherence to regulatory standards.</p>
                 <p><strong>Value Proposition:</strong> Emphasize how our solution maintains HIPAA compliance while improving developer productivity.</p>
@@ -226,8 +248,8 @@ function getMockAccountData(accountId) {
         }
     };
     
-    // Return requested account or first account as fallback
-    return mockAccounts[accountId] || mockAccounts['1'];
+    // Return requested account or nvidia as fallback
+    return mockAccounts[accountId] || mockAccounts['nvidia'];
 }
 
 /**
