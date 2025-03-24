@@ -10,7 +10,7 @@
     --bg-primary: #ffffff;
     --bg-secondary: #f8f9fa;
     --bg-card: #ffffff;
-    --bg-hover: rgba(6, 182, 162, 0.05);
+    --bg-hover: rgba(9, 182, 162, 0.05);
     
     --text-color: #333333;
     --text-light: #6c757d;
@@ -18,8 +18,8 @@
     --text-dark: #222222;
     --text-brand: #222222;
     
-    --primary-color: #06b6a2;
-    --primary-hover: #059486;
+    --primary-color: #09b6a2;
+    --primary-hover: #71e9d8;
     
     --border-color: #e9ecef;
     
