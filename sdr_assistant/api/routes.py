@@ -47,6 +47,10 @@ def register_routes(app):
     # Serve HTML templates and static files
     @app.route('/')
     def serve_index():
+        return send_from_directory('templates', 'home.html')
+        
+    @app.route('/index.html')
+    def serve_research_page():
         return send_from_directory('templates', 'index.html')
     
     @app.route('/accounts.html')

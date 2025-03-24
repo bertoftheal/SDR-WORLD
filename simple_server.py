@@ -7,6 +7,14 @@ CORS(app)
 
 @app.route('/')
 def serve_index():
+    return send_from_directory('sdr_assistant/templates', 'home.html')
+
+@app.route('/home.html')
+def serve_home():
+    return send_from_directory('sdr_assistant/templates', 'home.html')
+
+@app.route('/index.html')
+def serve_research_page():
     return send_from_directory('sdr_assistant/templates', 'index.html')
 
 @app.route('/accounts.html')
