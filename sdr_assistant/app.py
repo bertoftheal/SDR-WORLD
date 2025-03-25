@@ -3,17 +3,19 @@ SDR Research Assistant Application
 -----------------------------------
 This application serves as a research tool for sales development representatives at Codeium.
 It uses the Perplexity API to generate insights about companies and industries, and the OpenAI API 
-to create a recommended talk track. The data can be stored in and retrieved from Airtable.
+to create a recommended talk track. The data is stored in and retrieved from Supabase, with Airtable
+as a fallback option.
 
 APIs Used:
 - Perplexity API: For generating industry, company, and forward-thinking insights
 - OpenAI API: For generating the recommended talk track
-- Airtable API: For storing and retrieving account data and research
+- Supabase: Primary database for storing and retrieving account data and research
+- Airtable API: Legacy support for storing and retrieving account data and research
 
 Main Functionality:
-1. Retrieve accounts from Airtable (or use mock data if not configured)
+1. Retrieve accounts from Supabase (or Airtable as fallback, or use mock data if neither is configured)
 2. Generate insights for selected accounts using AI
-3. Save generated insights back to Airtable
+3. Save generated insights back to the database
 """
 
 from flask import Flask, send_from_directory
@@ -59,6 +61,7 @@ def create_app():
     app.config['VERSION'] = '1.0.3'
     
     # Log configuration status
+    logger.info(f"Supabase configured: {settings.is_supabase_configured()}")
     logger.info(f"Airtable configured: {settings.is_airtable_configured()}")
     logger.info(f"Perplexity API configured: {'Yes' if settings.PERPLEXITY_API_KEY else 'No'}")
     logger.info(f"OpenAI API configured: {'Yes' if settings.OPENAI_API_KEY else 'No'}")
@@ -71,4 +74,4 @@ app = create_app()
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5005)
+    app.run(debug=True, host='0.0.0.0', port=5009)

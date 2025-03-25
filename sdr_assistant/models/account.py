@@ -34,6 +34,20 @@ class Account:
             website=fields.get('Website'),
             description=fields.get('Description')
         )
+        
+    @classmethod
+    def from_supabase(cls, supabase_record):
+        """Create an Account instance from a Supabase record."""
+        return cls(
+            id=supabase_record.get('id', ''),
+            name=supabase_record.get('name', ''),
+            industry=supabase_record.get('industry'),
+            location=supabase_record.get('location') or supabase_record.get('headquarters'),
+            employees=supabase_record.get('employee_count') or supabase_record.get('employees'),
+            revenue=supabase_record.get('revenue'),
+            website=supabase_record.get('website'),
+            description=supabase_record.get('description')
+        )
     
     @classmethod
     def create_mock_accounts(cls):

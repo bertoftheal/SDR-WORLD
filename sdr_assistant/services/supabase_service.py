@@ -5,10 +5,14 @@ This service handles all interactions with Supabase database,
 providing a consistent data layer for accounts and research data.
 """
 
-import os
 from typing import Dict, List, Any, Optional
 import json
+from datetime import datetime
 from supabase import create_client, Client
+
+from ..config.settings import settings
+from ..models.account import Account
+from ..models.research import Research
 
 class SupabaseService:
     """
@@ -25,17 +29,21 @@ class SupabaseService:
     
     def _initialize(self):
         """Initialize the Supabase client"""
-        # In production, use real credentials from environment variables
-        # For demo purposes, we'll use placeholder values
-        self.supabase_url = os.getenv("SUPABASE_URL", "https://example.supabase.co")
-        self.supabase_key = os.getenv("SUPABASE_KEY", "your-supabase-key")
+        self.supabase_url = settings.SUPABASE_URL
+        self.supabase_key = settings.SUPABASE_KEY
+        self.is_configured = settings.is_supabase_configured()
         
-        try:
-            self.client = create_client(self.supabase_url, self.supabase_key)
-            self.initialized = True
-        except Exception as e:
-            print(f"Error initializing Supabase client: {e}")
-            # For demo purposes, we'll fall back to mock data
+        if self.is_configured:
+            try:
+                self.client = create_client(self.supabase_url, self.supabase_key)
+                self.initialized = True
+                print("Supabase client initialized successfully")
+            except Exception as e:
+                print(f"Error initializing Supabase client: {e}")
+                self.initialized = False
+                self._init_mock_data()
+        else:
+            print("Supabase not configured, using mock data")
             self.initialized = False
             self._init_mock_data()
     
@@ -117,12 +125,19 @@ class SupabaseService:
             }
         ]
     
-    def get_accounts(self) -> List[Dict[str, Any]]:
-        """Get all accounts"""
-        if self.initialized:
+    def get_accounts(self) -> List[Account]:
+        """Retrieve accounts from Supabase."""
+        if not self.initialized:
+            return Account.create_mock_accounts()
+        
+        try:
             response = self.client.from_('accounts').select('*').execute()
-            return response.data
-        return self.mock_accounts
+            if response.data:
+                return [Account.from_supabase(record) for record in response.data]
+            return Account.create_mock_accounts()
+        except Exception as e:
+            print(f"Error fetching accounts from Supabase: {str(e)}")
+            return Account.create_mock_accounts()
     
     def get_account(self, account_id: str) -> Optional[Dict[str, Any]]:
         """Get a specific account by ID"""
@@ -191,8 +206,57 @@ class SupabaseService:
                 return research
         return None
     
+    def save_research(self, research: Research) -> Dict[str, Any]:
+        """Save research to Supabase."""
+        if not self.initialized:
+            return {
+                "success": False,
+                "message": "Supabase is not configured. Research data would be saved here."
+            }
+        
+        try:
+            # Prepare data for Supabase
+            research_data = {
+                "account_id": research.account_id,
+                "account_name": research.account_name,
+                "industry_insights": research.industry_insights,
+                "company_insights": research.company_insights,
+                "vision_insights": research.vision_insights,
+                "talk_track": research.talk_track,
+                "created_by": research.created_by,
+                "created_at": datetime.now().isoformat(),
+                "updated_at": datetime.now().isoformat()
+            }
+            
+            # Check if research already exists for this account
+            existing = self.client.from_('research').select('*').eq('account_id', research.account_id).execute()
+            
+            if existing.data:
+                # Update existing research
+                response = self.client.from_('research').update(research_data).eq('account_id', research.account_id).execute()
+                return {
+                    "success": True,
+                    "message": "Research updated successfully",
+                    "data": response.data[0] if response.data else None
+                }
+            else:
+                # Create new research entry
+                response = self.client.from_('research').insert(research_data).execute()
+                return {
+                    "success": True,
+                    "message": "Research created successfully",
+                    "data": response.data[0] if response.data else None
+                }
+                
+        except Exception as e:
+            print(f"Error saving research to Supabase: {str(e)}")
+            return {
+                "success": False,
+                "message": f"Error saving research: {str(e)}"
+            }
+            
     def create_research(self, research_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Create new research"""
+        """Create new research (mock implementation)"""
         if self.initialized:
             response = self.client.from_('research').insert(research_data).execute()
             return response.data[0] if response.data else None

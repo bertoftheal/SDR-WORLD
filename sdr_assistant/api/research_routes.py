@@ -39,12 +39,13 @@ def generate_research():
     return jsonify(result)
 
 
-@research_bp.route("/save-to-airtable", methods=["POST"])
+@research_bp.route("/save-research", methods=["POST"])
 def save_research():
     """
-    API Route: Save research to Airtable
+    API Route: Save research to database
     
     Saves the generated insights and talk track for a specific account.
+    The data is stored in Supabase, with Airtable as a fallback.
     
     Returns:
         JSON with success status and message

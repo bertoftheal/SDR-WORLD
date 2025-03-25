@@ -7,7 +7,7 @@
  * Main Functions:
  * - Loading accounts from the backend
  * - Generating research for selected accounts
- * - Saving research to Airtable
+ * - Saving research to the database (Supabase)
  * - Updating the UI based on application state
  */
 
@@ -15,7 +15,8 @@
 const accountSelect = document.getElementById('accountSelect');
 const generateBtn = document.getElementById('generateBtn');
 const saveBtn = document.querySelector('.save-btn');
-const companyName = document.querySelector('.company-name');
+// Use ID-based selector for company name with fallback
+const companyName = document.getElementById('accountName') || document.querySelector('.company-name');
 const companyDescription = document.querySelector('.company-description');
 const companyMetaItems = document.querySelectorAll('.meta-value');
 const companyInsightsGrid = document.querySelector('.company-insights .insights-grid');
@@ -199,11 +200,11 @@ async function generateResearch() {
 }
 
 /**
- * Saves the current research to Airtable
+ * Saves the current research to the database
  * Collects insights from the DOM and sends to backend
  * Displays alert upon success or failure
  */
-async function saveToAirtable() {
+async function saveResearch() {
     const accountName = accountSelect.value;
     if (!accountName) {
         alert('Please select an account');
@@ -220,7 +221,7 @@ async function saveToAirtable() {
     };
     
     try {
-        const response = await fetch('/api/save-to-airtable', {
+        const response = await fetch('/api/save-research', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -231,13 +232,13 @@ async function saveToAirtable() {
         const result = await response.json();
         
         if (result.success) {
-            alert('Research saved successfully to Airtable!');
+            alert('Research saved successfully to the database!');
         } else {
             alert(`Error saving research: ${result.message}`);
         }
     } catch (error) {
-        console.error('Error saving to Airtable:', error);
-        alert('An error occurred while saving to Airtable');
+        console.error('Error saving research:', error);
+        alert('An error occurred while saving the research');
     }
 }
 
@@ -765,7 +766,31 @@ function formatInsightsText(text) {
 // Event listeners
 generateBtn.addEventListener('click', generateResearch);
 saveBtn.addEventListener('click', saveToLibrary);
-accountSelect.addEventListener('change', updateCompanyDetails);
+
+// Handle input field for dynamic company lookup
+accountSelect.addEventListener('keypress', async function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const companyName = accountSelect.value.trim();
+        if (companyName) {
+            // Search for the company when Enter is pressed
+            const result = await searchCompanyByName(companyName);
+            // Note: generateResearch is now automatically called by searchCompanyByName when a company is found
+        }
+    }
+});
+
+// Add a button click handler to trigger search when the search icon is clicked
+const searchIcon = document.querySelector('.input-group-text .fa-search');
+if (searchIcon) {
+    searchIcon.parentElement.addEventListener('click', async function() {
+        const companyName = accountSelect.value.trim();
+        if (companyName) {
+            const result = await searchCompanyByName(companyName);
+            // Note: generateResearch is now automatically called by searchCompanyByName when a company is found
+        }
+    });
+}
 
 // Load accounts immediately when page loads
 document.addEventListener('DOMContentLoaded', loadAccounts);
@@ -807,11 +832,565 @@ document.addEventListener('DOMContentLoaded', function() {
     generateBtn.addEventListener('click', generateResearch);
     saveToLibraryBtn.addEventListener('click', saveToLibrary);
     
+    // Add event listener to the search field for real-time company lookup
+    const searchField = document.querySelector('input[placeholder="Company name"]');
+    if (searchField) {
+        // Clear any existing event listeners
+        searchField.removeEventListener('keydown', handleSearchKeydown);
+        
+        // Add keydown event listener for search
+        searchField.addEventListener('keydown', handleSearchKeydown);
+        
+        // Add an explicit search button click event next to the search field
+        const searchButton = document.querySelector('.btn-search, .search-btn');
+        if (searchButton) {
+            searchButton.addEventListener('click', () => {
+                performSearch(searchField.value);
+            });
+        }
+    }
+    
+    // Function to handle search field keydown events
+    function handleSearchKeydown(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            performSearch(event.target.value);
+        }
+    }
+    
+    // Function to perform the actual search
+    async function performSearch(query) {
+        if (query && query.trim()) {
+            console.log('Performing search for:', query.trim());
+            // Clear current account to force a fresh search
+            currentAccount = null;
+            // Search for the company and update UI
+            await searchCompanyByName(query.trim());
+        }
+    }
+    
     // If account parameter is present, select it after accounts are loaded
     if (accountParam) {
         selectAccountByName(accountParam);
     }
     
+    // Add event handlers for direct search field and button on account-detail.html
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM fully loaded - setting up event handlers');
+        const directSearchField = document.getElementById('directSearchField');
+        const directSearchButton = document.getElementById('directSearchButton');
+        const generateResearchBtn = document.getElementById('generateResearchBtn');
+        
+        // Initialize the lastSearchedCompany global if not set
+        if (!window.lastSearchedCompany) {
+            // Try to get the current company name from the UI
+            const accountNameEl = document.getElementById('accountName');
+            if (accountNameEl && accountNameEl.textContent.trim() && accountNameEl.textContent !== 'Company Name') {
+                window.lastSearchedCompany = accountNameEl.textContent.trim();
+                console.log('Initialized lastSearchedCompany from UI:', window.lastSearchedCompany);
+            }
+        }
+        
+        // Log all important elements to ensure they exist
+        console.log('directSearchField:', directSearchField);
+        console.log('directSearchButton:', directSearchButton);
+        console.log('generateResearchBtn:', generateResearchBtn);
+        console.log('accountName element:', document.getElementById('accountName'));
+        
+        if (directSearchField && directSearchButton) {
+            console.log('Found direct search field and button, adding event handlers');
+            
+            // Add keypress event for search field
+            directSearchField.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const companyName = directSearchField.value.trim();
+                    if (companyName) {
+                        console.log('Search field Enter pressed for company:', companyName);
+                        // Store the search term globally
+                        window.lastSearchedCompany = companyName;
+                        // Force clear current account to ensure fresh search
+                        currentAccount = null;
+                        // Update all UI elements immediately
+                        forceUpdateCompanyName(companyName);
+                        // Then search for company details
+                        searchCompanyByName(companyName);
+                    }
+                }
+            });
+            
+            // Add click event for search button
+            directSearchButton.addEventListener('click', function() {
+                const companyName = directSearchField.value.trim();
+                if (companyName) {
+                    console.log('Search button clicked for company:', companyName);
+                    // Store the search term globally
+                    window.lastSearchedCompany = companyName;
+                    // Force clear current account to ensure fresh search
+                    currentAccount = null;
+                    // Update all UI elements immediately
+                    forceUpdateCompanyName(companyName);
+                    // Then search for company details
+                    searchCompanyByName(companyName);
+                }
+            });
+        }
+        
+        // Add click event for Generate Research button
+        if (generateResearchBtn) {
+            console.log('Found Generate Research button, adding event handler');
+            generateResearchBtn.addEventListener('click', function() {
+                // Get company name from multiple sources in priority order:
+                // 1. Search field (highest priority)
+                // 2. Last searched company (from global state)
+                // 3. Company name in the UI (header)
+                // This ensures we always use the most up-to-date company name
+                
+                const searchInput = document.getElementById('directSearchField');
+                const companyNameH1 = document.getElementById('accountName');
+                
+                let companyName = '';
+                
+                // Priority 1: Search input field
+                if (searchInput && searchInput.value.trim()) {
+                    companyName = searchInput.value.trim();
+                    console.log('Using company name from search field:', companyName);
+                }
+                // Priority 2: Last searched company from global state
+                else if (window.lastSearchedCompany) {
+                    companyName = window.lastSearchedCompany;
+                    console.log('Using last searched company name:', companyName);
+                }
+                // Priority 3: Company name displayed in the UI
+                else if (companyNameH1 && companyNameH1.textContent.trim()) {
+                    companyName = companyNameH1.textContent.trim();
+                    console.log('Using company name from UI header:', companyName);
+                }
+                // Priority 4: Fallback to class selector
+                else {
+                    const companyNameByClass = document.querySelector('h1.company-name');
+                    if (companyNameByClass && companyNameByClass.textContent.trim()) {
+                        companyName = companyNameByClass.textContent.trim();
+                        console.log('Fallback: Using company name from class selector:', companyName);
+                    }
+                }
+                
+                if (companyName) {
+                    console.log('Generate Research clicked for:', companyName);
+                    // Set this as the last searched company
+                    window.lastSearchedCompany = companyName;
+                    // Show loading indicators in research sections
+                    forceUpdateCompanyName(companyName);
+                    // Force new company search and research generation
+                    currentAccount = null;
+                    // Update the search field if empty
+                    if (searchInput && !searchInput.value.trim()) {
+                        searchInput.value = companyName;
+                    }
+                    // Generate research using the company name
+                    generateResearch(companyName);
+                } else {
+                    alert('Please enter a company name in the search field');
+                }
+            });
+        }
+    });
+    
+    // Function to force update all company name elements in the UI
+    function forceUpdateCompanyName(name) {
+        console.log('Force updating all UI elements with company name:', name);
+        
+        // Update document title
+        document.title = `SDR World - ${name} Research`;
+        
+        // Update h1 element - try ID first, then fallback to class
+        const companyNameH1 = document.getElementById('accountName');
+        if (companyNameH1) {
+            console.log('Updating company name by ID:', name);
+            companyNameH1.textContent = name;
+            companyNameH1.classList.add('animate-update');
+            setTimeout(() => companyNameH1.classList.remove('animate-update'), 500);
+        } else {
+            // Fallback to class selector
+            const companyNameByClass = document.querySelector('h1.company-name');
+            if (companyNameByClass) {
+                console.log('Fallback: Updating company name by class:', name);
+                companyNameByClass.textContent = name;
+                companyNameByClass.classList.add('animate-update');
+                setTimeout(() => companyNameByClass.classList.remove('animate-update'), 500);
+            } else {
+                console.warn('Could not find any element to update company name');
+            }
+        }
+        
+        // Update all research titles
+        const researchTitle = document.getElementById('companyResearchTitle');
+        if (researchTitle) {
+            const parts = researchTitle.textContent.split('<>');
+            if (parts.length > 1) {
+                researchTitle.textContent = `${name} <> ${parts[1].trim()}`;
+            } else {
+                researchTitle.textContent = `${name} Research`;
+            }
+        }
+        
+        // Clear any existing research data
+        const researchSections = ['current-state', 'pain-points', 'value-props'];
+        researchSections.forEach(section => {
+            const sectionEl = document.getElementById(section);
+            if (sectionEl) {
+                sectionEl.innerHTML = '<div class="p-4 text-center"><i class="fas fa-circle-notch fa-spin me-2"></i>Loading research for ' + name + '...</div>';
+            }
+        });
+    }
+    
+    // Search for a company by name from the input field
+    async function searchCompanyByName(name) {
+        console.log('searchCompanyByName called with:', name);
+        if (!name || name.trim().length === 0) {
+            console.warn('Empty company name provided to search function');
+            return null;
+        }
+        
+        // Update last searched company reference
+        window.lastSearchedCompany = name.trim();
+        
+        // CRITICAL: Update UI immediately with company name by ID - this is the most important fix
+        forceUpdateCompanyName(name.trim());
+        
+        // Show loading indicators on company metadata sections
+        const metaValues = document.querySelectorAll('.meta-value.fw-bold');
+        metaValues.forEach(el => {
+            el.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+        });
+        
+        try {
+            console.log(`Searching for company: ${name}`);
+            const response = await fetch(`/api/accounts/search?name=${encodeURIComponent(name.trim())}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('Search results:', data);
+            
+            if (data.success && data.account) {
+                // Ensure all metadata fields exist even if not returned by the API
+                const completeAccount = {
+                    name: name.trim(),
+                    id: data.account.id || "",
+                    description: data.account.description || `${name.trim()} is a company in the ${data.account.industry || 'technology'} sector.`,
+                    headquarters: data.account.headquarters || "Unknown Location",
+                    employees: data.account.employees || "Unknown",
+                    market_cap: data.account.market_cap || "Not Available",
+                    founded: data.account.founded || "Unknown",
+                    industry: data.account.industry || "Technology",
+                    logo_url: data.account.logo_url || ""
+                };
+                
+                // Update the UI with the account information
+                updateUIWithAccountData(completeAccount);
+                
+                // CRITICAL: Update UI again with company name after updating other UI elements
+                forceUpdateCompanyName(name.trim());
+                
+                // Try to fetch and update company metadata if the function is available
+                if (window.fetchCompanyMetadata) {
+                    console.log('Fetching company metadata for:', name.trim());
+                    window.fetchCompanyMetadata(name.trim());
+                }
+                
+                // Automatically generate research when a company is found via search
+                // This fulfills the promise made in the accountSelect event listener comment
+                console.log('Company found, automatically generating research');
+                generateResearch(name.trim());
+                
+                return completeAccount;
+            } else {
+                console.warn('Company search returned no results:', data.message);
+                
+                // Create a comprehensive account with defaults for all fields
+                const basicAccount = {
+                    name: name.trim(),
+                    id: "",
+                    description: `${name.trim()} is a company that provides products or services in their industry.`,
+                    headquarters: "Information Unavailable",
+                    employees: "Unknown",
+                    market_cap: "Not Available",
+                    founded: "Unknown", 
+                    industry: "Various Industries"
+                };
+                
+                // Update UI with basic account
+                updateUIWithAccountData(basicAccount);
+                
+                // CRITICAL: Update UI again with company name after updating other UI elements
+                forceUpdateCompanyName(name.trim());
+                
+                // Even for fallback accounts, try to fetch real metadata using Perplexity
+                if (window.fetchCompanyMetadata) {
+                    console.log('Fetching company metadata for fallback account:', name.trim());
+                    window.fetchCompanyMetadata(name.trim());
+                }
+                
+                return basicAccount;
+            }
+        } catch (error) {
+            console.error('Error searching for company:', error);
+            return null;
+        }
+    }
+    
+    // Update the UI elements with the account data
+    function updateUIWithAccountData(account) {
+        console.log('Updating UI with account data:', account);
+        
+        // Store the current search value as a global reference point
+        if (account && account.name) {
+            // Set a global last searched company name for reference
+            window.lastSearchedCompany = account.name;
+            console.log('Setting last searched company:', window.lastSearchedCompany);
+        }
+        
+        // DIRECT TARGETING: Update company name in h1 element by ID
+        const companyNameH1 = document.getElementById('accountName');
+        if (companyNameH1) {
+            console.log('Updating company name h1 by ID:', account.name);
+            companyNameH1.textContent = account.name;
+            companyNameH1.classList.add('animate-update');
+            setTimeout(() => companyNameH1.classList.remove('animate-update'), 500);
+        } else {
+            console.warn('Could not find company name element with ID "accountName"');
+            // Fallback: try by class if ID not found
+            const companyNameByClass = document.querySelector('h1.company-name');
+            if (companyNameByClass) {
+                console.log('Fallback: Updating company name by class:', account.name);
+                companyNameByClass.textContent = account.name;
+                companyNameByClass.classList.add('animate-update');
+                setTimeout(() => companyNameByClass.classList.remove('animate-update'), 500);
+            } else {
+                console.error('Could not find any element to update company name');
+            }
+        }
+        
+        // Update document title
+        document.title = `SDR World - ${account.name} Research`;
+        
+        // DIRECT TARGETING: Update company description paragraph
+        const descriptionParagraph = document.querySelector('.company-meta-grid + p, .mb-0, .company-description');
+        if (descriptionParagraph) {
+            console.log('Updating company description');
+            descriptionParagraph.textContent = account.description || `${account.name} is a company operating in the ${account.industry || 'technology'} sector.`;
+            descriptionParagraph.classList.add('animate-update');
+            setTimeout(() => descriptionParagraph.classList.remove('animate-update'), 500);
+        }
+        
+        // DIRECT TARGETING: Update header with company badge
+        const researchBadge = document.querySelector('.badge.bg-success');
+        if (researchBadge) {
+            console.log('Updating research badge');
+            researchBadge.textContent = 'Active Research';
+            researchBadge.classList.add('animate-update');
+            setTimeout(() => researchBadge.classList.remove('animate-update'), 500);
+        }
+        
+        // DIRECT TARGETING FOR EACH META FIELD
+        // Force update all metadata fields by directly targeting the div elements
+        // This ensures all fields update even with dynamic company searches
+        
+        // For headquarters - direct targeting by element position if possible
+        const metaValues = document.querySelectorAll('.meta-value.fw-bold');
+        console.log('Found meta values:', metaValues.length);
+        
+        // Direct update of headquarters (first meta value)
+        if (metaValues.length >= 1) {
+            const headquartersElement = metaValues[0];
+            console.log('Updating headquarters with:', account.headquarters);
+            headquartersElement.textContent = account.headquarters || 'Unknown Location';
+            headquartersElement.classList.add('animate-update');
+            setTimeout(() => headquartersElement.classList.remove('animate-update'), 500);
+        }
+        
+        // Direct update of employees (second meta value)
+        if (metaValues.length >= 2) {
+            const employeesElement = metaValues[1];
+            console.log('Updating employees with:', account.employees);
+            employeesElement.textContent = account.employees || 'Unknown';
+            employeesElement.classList.add('animate-update');
+            setTimeout(() => employeesElement.classList.remove('animate-update'), 500);
+        }
+        
+        // Direct update of market cap (third meta value)
+        if (metaValues.length >= 3) {
+            const marketCapElement = metaValues[2];
+            console.log('Updating market cap with:', account.market_cap);
+            marketCapElement.textContent = account.market_cap || 'Not Available';
+            marketCapElement.classList.add('animate-update');
+            setTimeout(() => marketCapElement.classList.remove('animate-update'), 500);
+        }
+        
+        // Direct update of founded year (fourth meta value)
+        if (metaValues.length >= 4) {
+            const foundedElement = metaValues[3];
+            console.log('Updating founded year with:', account.founded);
+            foundedElement.textContent = account.founded || 'Unknown';
+            foundedElement.classList.add('animate-update');
+            setTimeout(() => foundedElement.classList.remove('animate-update'), 500);
+        }
+        
+        // FALLBACK: If we couldn't find specific meta labels, try updating by position
+        const allMetaValues = document.querySelectorAll('.meta-value');
+        if (allMetaValues.length >= 4 && 
+            !headquartersMetaValue && 
+            !employeesMetaValue && 
+            !marketCapMetaValue && 
+            !foundedMetaValue) {
+            console.log('Using fallback meta updating by position');
+            // Try to update them by position
+            // First, find which index corresponds to which data by looking at surrounding text
+            let metaValuesArray = Array.from(allMetaValues);
+            
+            // Look at parent elements to determine what each meta-value refers to
+            metaValuesArray.forEach((item, index) => {
+                const parentText = item.parentElement.textContent.toLowerCase();
+                
+                if (parentText.includes('headquarters')) {
+                    item.textContent = account.headquarters || 'Unknown Location';
+                } else if (parentText.includes('employees')) {
+                    item.textContent = account.employees || 'Unknown';
+                } else if (parentText.includes('market') || parentText.includes('cap')) {
+                    item.textContent = account.market_cap || 'Not Available';
+                } else if (parentText.includes('founded')) {
+                    item.textContent = account.founded || 'Unknown';
+                } else if (parentText.includes('industry')) {
+                    item.textContent = account.industry || 'Unknown Industry';
+                }
+                
+                item.classList.add('animate-update');
+                setTimeout(() => item.classList.remove('animate-update'), 500);
+            });
+        }
+        
+        // DIRECT TARGETING: Update company logo
+        console.log('Attempting to update company logo');
+        
+        // First try standard logo by ID
+        const logoImg = document.getElementById('companyLogo');
+        let logoUpdated = false;
+        
+        if (logoImg) {
+            console.log('Found logo by ID, updating');
+            logoUpdated = true;
+            // Add fade-out effect before changing
+            logoImg.classList.add('logo-transition');
+            
+            setTimeout(() => {
+                // Set new logo source
+                if (account.logo_url) {
+                    logoImg.src = account.logo_url;
+                } else {
+                    // Create a colorful placeholder with the first letter of the company name
+                    logoImg.src = `https://via.placeholder.com/150/${getRandomColor()}/ffffff?text=${encodeURIComponent(account.name.charAt(0).toUpperCase())}`;
+                }
+                
+                logoImg.alt = `${account.name} Logo`;
+                logoImg.onerror = () => {
+                    // Fallback to a colorful placeholder if the logo URL is invalid
+                    logoImg.src = `https://via.placeholder.com/150/${getRandomColor()}/ffffff?text=${encodeURIComponent(account.name.charAt(0).toUpperCase())}`;
+                };
+                
+                // Remove transition class after loading
+                logoImg.onload = () => {
+                    logoImg.classList.remove('logo-transition');
+                };
+            }, 150);
+        }
+        
+        // Look for logo container
+        const logoContainer = document.querySelector('.company-logo');
+        if (logoContainer) {
+            console.log('Found logo container, updating');
+            logoUpdated = true;
+            
+            // If there's an img tag inside the container
+            const imgInContainer = logoContainer.querySelector('img');
+            if (imgInContainer) {
+                console.log('  - Found image in container');
+                imgInContainer.classList.add('logo-transition');
+                setTimeout(() => {
+                    if (account.logo_url) {
+                        imgInContainer.src = account.logo_url;
+                    } else {
+                        imgInContainer.src = `https://via.placeholder.com/150/${getRandomColor()}/ffffff?text=${encodeURIComponent(account.name.charAt(0).toUpperCase())}`;
+                    }
+                    imgInContainer.alt = `${account.name} Logo`;
+                    imgInContainer.onload = () => imgInContainer.classList.remove('logo-transition');
+                }, 150);
+            } else {
+                // If it has a Font Awesome icon
+                console.log('  - Looking for icon in container');
+                const iconInContainer = logoContainer.querySelector('i.fa-building, i.fas.fa-building');
+                if (iconInContainer) {
+                    console.log('  - Found icon, will replace with logo if available');
+                    logoContainer.classList.add('logo-transition');
+                    
+                    // If we have a logo URL, replace the icon with an image
+                    if (account.logo_url) {
+                        console.log('  - Replacing icon with actual logo');
+                        // Check if we already replaced it before
+                        const existingImg = logoContainer.querySelector('img');
+                        if (existingImg) {
+                            existingImg.src = account.logo_url;
+                            existingImg.alt = `${account.name} Logo`;
+                        } else {
+                            // Create and insert an image
+                            const newImg = document.createElement('img');
+                            newImg.src = account.logo_url;
+                            newImg.alt = `${account.name} Logo`;
+                            newImg.style.width = '70%'; // Slightly smaller than container
+                            newImg.style.height = '70%';
+                            newImg.style.objectFit = 'contain';
+                            newImg.style.borderRadius = '50%';
+                            
+                            // Hide the icon and add the image
+                            iconInContainer.style.display = 'none';
+                            logoContainer.appendChild(newImg);
+                        }
+                    } else {
+                        // Just keep the icon but change its color to match the company
+                        console.log('  - No logo URL, adjusting icon color');
+                        iconInContainer.style.color = '#ffffff'; // Reset to white
+                    }
+                    
+                    setTimeout(() => logoContainer.classList.remove('logo-transition'), 300);
+                } else {
+                    console.log('  - No icon found in container');
+                    // Just update the background of the container itself
+                    const randomColor = getRandomColor();
+                    logoContainer.style.backgroundColor = `#${randomColor}`;
+                }
+            }
+        }
+        
+        if (!logoUpdated) {
+            console.log('Could not find any logo element to update');
+        }
+        
+        // Store the current account data for research generation
+        currentAccount = account;
+        
+        // Return the account for chaining
+        return account;
+    }
+    
+    // Helper function to generate random colors for placeholders
+    function getRandomColor() {
+        const colors = ['1abc9c', '3498db', '9b59b6', 'e74c3c', 'f39c12', '27ae60'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+    
+    // Function to select an account by name from the dropdown (legacy support)
     function selectAccountByName(name) {
         for (let i = 0; i < accountSelect.options.length; i++) {
             if (accountSelect.options[i].value === name) {
@@ -821,53 +1400,317 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    function generateResearch() {
-        const selectedAccount = accountSelect.value;
-        if (!selectedAccount) {
-            alert('Please select an account');
-            return;
+    // Add variable to store current account data
+    // Keep track of the current account being researched
+    let currentAccount = null;
+    
+    // Generate research for the selected account or specific company name
+    async function generateResearch(specificCompanyName = null) {
+        console.log('Generating research...');
+        
+        // Define companyName at the function level to ensure it's available in all code paths
+        let companyName = specificCompanyName || '';
+        
+        // If a specific company name was provided, prioritize it
+        if (specificCompanyName) {
+            console.log('Generating research for specific company:', specificCompanyName);
+            // Force update UI with this name immediately
+            forceUpdateCompanyName(specificCompanyName);
+            
+            // DIRECT UPDATE: Find and update the company description paragraph
+            const companyDescriptionParagraph = document.querySelector('p.mb-0');
+            if (companyDescriptionParagraph) {
+                console.log('DIRECT UPDATE: Updating company description paragraph for:', specificCompanyName);
+                // Set a temporary loading message
+                companyDescriptionParagraph.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Loading description for ${specificCompanyName}...`;
+                
+                // Make direct API call to get company info from Perplexity
+                try {
+                    const response = await fetch('/api/metadata/company-metadata', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ companyName: specificCompanyName })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.metadata && data.metadata.description && data.metadata.description !== 'Unknown') {
+                            // Update the paragraph with the description
+                            companyDescriptionParagraph.innerHTML = data.metadata.description;
+                            companyDescriptionParagraph.classList.add('animate-update');
+                            setTimeout(() => companyDescriptionParagraph.classList.remove('animate-update'), 500);
+                            console.log('Successfully updated company description:', data.metadata.description);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching company description:', error);
+                }
+            } else {
+                console.error('DIRECT UPDATE: Could not find company description paragraph');
+            }
+            
+            // Force search for this company to populate currentAccount
+            await searchCompanyByName(specificCompanyName);
+        }
+        // Check if an account is selected
+        else if (!currentAccount) {
+            // Try sources in priority order:  
+            // 1. Search field
+            // 2. Last searched company
+            // 3. Company name in UI
+            const searchInput = document.getElementById('companySearch') || document.getElementById('directSearchField');
+            const companyNameH1 = document.getElementById('accountName');
+            
+            // Priority 1: Search field
+            if (searchInput && searchInput.value.trim()) {
+                companyName = searchInput.value.trim();
+                console.log('Using company name from search input:', companyName);
+            }
+            // Priority 2: Last searched company
+            else if (window.lastSearchedCompany) {
+                companyName = window.lastSearchedCompany;
+                console.log('Using last searched company:', companyName);
+            }
+            // Priority 3: Company name in UI
+            else if (companyNameH1 && companyNameH1.textContent) {
+                companyName = companyNameH1.textContent.trim();
+                console.log('Using company name from UI:', companyName);
+            }
+            
+            if (companyName) {
+                console.log('No account selected, but found company name:', companyName);
+                // Set as last searched company
+                window.lastSearchedCompany = companyName;
+                // Force UI update
+                forceUpdateCompanyName(companyName);
+                // Force search for this company to populate currentAccount
+                await searchCompanyByName(companyName);
+            } else {
+                alert('Please enter a company name in the search field');
+                return;
+            }
+        }
+        // If we already have a currentAccount but no specific company name was provided
+        else if (currentAccount && currentAccount.name) {
+            companyName = currentAccount.name;
+            console.log('Using current account name for research:', companyName);
+            // Ensure UI reflects this name
+            forceUpdateCompanyName(companyName);
         }
         
-        // Show loading state
-        document.getElementById('industryInsights').innerHTML = '<div class="loading-placeholder"></div>';
-        document.getElementById('companyInsights').innerHTML = '<div class="loading-placeholder"></div>';
-        document.getElementById('visionInsights').innerHTML = '<div class="loading-placeholder"></div>';
-        document.getElementById('recommendedTalkTrack').innerHTML = '<div class="loading-placeholder"></div>';
+        // Double-check we have a company name at this point
+        if (!companyName && currentAccount && currentAccount.name) {
+            companyName = currentAccount.name;
+        } else if (!companyName) {
+            // Absolute fallback - check the UI directly as last resort
+            const nameEl = document.getElementById('accountName');
+            if (nameEl && nameEl.textContent.trim()) {
+                companyName = nameEl.textContent.trim();
+                console.log('Last resort: Using company name from UI:', companyName);
+            } else {
+                console.error('Could not determine company name for research');
+                alert('Please enter a company name in the search field');
+                return;
+            }
+        }
+        
+        // FORCE UI UPDATE: Update company name in h1 element immediately by ID
+        const companyNameH1 = document.getElementById('accountName');
+        if (companyNameH1) {
+            console.log('Final UI update with company name:', companyName);
+            companyNameH1.textContent = companyName;
+            companyNameH1.classList.add('animate-update');
+            setTimeout(() => companyNameH1.classList.remove('animate-update'), 500);
+        } else {
+            // Fallback to class selector
+            const companyNameByClass = document.querySelector('h1.company-name');
+            if (companyNameByClass) {
+                companyNameByClass.textContent = companyName;
+                companyNameByClass.classList.add('animate-update');
+                setTimeout(() => companyNameByClass.classList.remove('animate-update'), 500);
+            }
+        }
+        
+        // Show loading indicators for all metadata fields
+        const metaValues = document.querySelectorAll('.meta-value.fw-bold');
+        metaValues.forEach(el => {
+            el.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+        });
+        
+        // Reset current account to force fresh search
+        currentAccount = null;
+        
+        try {
+            console.log('Forcing fresh company search for:', companyName);
+            
+            // First ensure all UI elements show the current company name
+            // This includes the document title and any other elements
+            document.title = `SDR World - ${companyName} Research`;
+            
+            // Perform a brand new search with this company name
+            await searchCompanyByName(companyName);
+            
+            // If something went wrong with the search, create a basic account
+            if (!currentAccount) {
+                console.warn('Search did not set currentAccount, creating basic account');
+                currentAccount = {
+                    name: companyName,
+                    id: "",
+                    description: `${companyName} is a company we're researching.`,
+                    headquarters: "Information Unavailable",
+                    employees: "Unknown",
+                    market_cap: "Not Available",
+                    founded: "Unknown",
+                    industry: "Various Industries"
+                };
+                
+                // Force update UI with this company data
+                updateUIWithAccountData(currentAccount);
+            }
+        } catch (error) {
+            console.error('Error during company search:', error);
+            
+            // Create a minimal account with the exact searched name
+            currentAccount = {
+                name: companyName,
+                id: "",
+                description: `${companyName} is a company we're researching.`,
+                headquarters: "Information Unavailable",
+                employees: "Unknown",
+                market_cap: "Not Available",
+                founded: "Unknown",
+                industry: "Various Industries"
+            };
+            
+            // Force update UI with this company data
+            updateUIWithAccountData(currentAccount);
+        }
+        
+        // Show loading indicators
+        const insightContainers = [
+            'industryInsights',
+            'companyInsights',
+            'visionInsights',
+            'recommendedTalkTrack'
+        ];
+        
+        insightContainers.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.innerHTML = '<div class="loading-placeholder"><i class="fas fa-circle-notch fa-spin"></i> Generating insights...</div>';
+            }
+        });
         
         // Disable button during loading
-        generateBtn.disabled = true;
+        if (generateBtn) generateBtn.disabled = true;
+        
+        // Always use the current company name (from search field, currentAccount, or select)
+        const nameToUse = companyName;
+        console.log('Sending research request for:', nameToUse);
+        
+        // Try to update company metadata if the function is available
+        if (window.fetchCompanyMetadata) {
+            console.log('Fetching company metadata for:', nameToUse);
+            window.fetchCompanyMetadata(nameToUse);
+        }
         
         // Make API request
-        fetch('/api/generate-research', {
+        fetch('/api/research/generate-research', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': token ? `Bearer ${token}` : ''
             },
-            body: JSON.stringify({ accountName: selectedAccount })
+            body: JSON.stringify({ accountName: nameToUse })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log('Research generated successfully:', data);
+            
             // Update the insights with the data
-            document.getElementById('industryInsights').innerHTML = formatContent(data.industry_insights);
-            document.getElementById('companyInsights').innerHTML = formatContent(data.company_insights);
-            document.getElementById('visionInsights').innerHTML = formatContent(data.forward_thinking);
-            document.getElementById('recommendedTalkTrack').innerHTML = formatContent(data.talk_track);
+            insightContainers.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    const content = data[id.replace('Insights', '_insights').replace('recommendedTalkTrack', 'talk_track')];
+                    element.innerHTML = formatContent(content);
+                    element.classList.add('animate-update');
+                    setTimeout(() => element.classList.remove('animate-update'), 500);
+                }
+            });
+            
+            // Update the company overview section with the two-sentence description
+            // Try multiple selectors to find the company description paragraph
+            const companyOverview = document.getElementById('companyOverview') || 
+                                   document.querySelector('.company-description') || 
+                                   document.querySelector('p.mb-0');
+            
+            if (companyOverview) {
+                // Use company_insights for the overview since that's the most relevant section
+                const overviewContent = data.company_insights || data.industry_insights || '';
+                // Strip the markdown header if present to get just the two sentences
+                const cleanOverview = overviewContent.replace(/^### [^\n]*\n?/, '').trim();
+                companyOverview.innerHTML = formatContent(cleanOverview);
+                companyOverview.classList.add('animate-update');
+                setTimeout(() => companyOverview.classList.remove('animate-update'), 500);
+                console.log('Updated company overview with:', cleanOverview);
+                
+                // Target and update all paragraphs that might be company descriptions in ANY template
+                // This ensures both index.html and account-detail.html are handled
+                
+                // Specifically target the paragraph in index.html company description section
+                const indexCompanyDesc = document.querySelector('.company-description p.mb-0');
+                if (indexCompanyDesc) {
+                    console.log('Found and updating company description in index.html');
+                    indexCompanyDesc.innerHTML = formatContent(cleanOverview);
+                    indexCompanyDesc.classList.add('animate-update');
+                    setTimeout(() => indexCompanyDesc.classList.remove('animate-update'), 500);
+                }
+                
+                // Also update any other paragraphs with mb-0 class to catch all instances
+                const allMb0Paragraphs = document.querySelectorAll('p.mb-0');
+                allMb0Paragraphs.forEach(p => {
+                    console.log('Updating paragraph:', p);
+                    p.innerHTML = formatContent(cleanOverview);
+                    p.classList.add('animate-update');
+                    setTimeout(() => p.classList.remove('animate-update'), 500);
+                });
+                
+                // Extra update for any paragraph that might be inside a company card or overview section
+                const companyCards = document.querySelectorAll('.card-body p, #companyOverview p, .company-description p');
+                companyCards.forEach(p => {
+                    p.innerHTML = formatContent(cleanOverview);
+                    p.classList.add('animate-update');
+                    setTimeout(() => p.classList.remove('animate-update'), 500);
+                });
+            }
             
             // Re-enable the button
-            generateBtn.disabled = false;
+            if (generateBtn) generateBtn.disabled = false;
+            
+            // Show success notification
+            showNotification('Research generated successfully!', 'success');
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Error generating research:', error);
             
-            // Show error message
-            document.getElementById('industryInsights').innerHTML = 'Error generating research. Please try again.';
-            document.getElementById('companyInsights').innerHTML = 'Error generating research. Please try again.';
-            document.getElementById('visionInsights').innerHTML = 'Error generating research. Please try again.';
-            document.getElementById('recommendedTalkTrack').innerHTML = 'Error generating research. Please try again.';
+            // Show error message in insights sections
+            insightContainers.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.innerHTML = `<div class="error-message">Error generating research. Please try again.</div>`;
+                }
+            });
             
             // Re-enable the button
-            generateBtn.disabled = false;
+            if (generateBtn) generateBtn.disabled = false;
+            
+            // Show error notification
+            showNotification('Error generating research. Please try again.', 'error');
         });
     }
     

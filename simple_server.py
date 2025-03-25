@@ -2,8 +2,14 @@ from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
 import datetime
 
+# Import our metadata blueprint
+from sdr_assistant.api.metadata_routes import metadata_bp
+
 app = Flask(__name__, static_folder='sdr_assistant/static')
 CORS(app)
+
+# Register the metadata blueprint
+app.register_blueprint(metadata_bp, url_prefix='/api')
 
 @app.route('/')
 def serve_index():
@@ -100,5 +106,5 @@ def api_library():
     return jsonify(library_items)
 
 if __name__ == '__main__':
-    print("Starting simple Flask server on http://127.0.0.1:5005")
-    app.run(debug=True, port=5005)
+    print("Starting simple Flask server on http://127.0.0.1:5008")
+    app.run(debug=True, port=5008)

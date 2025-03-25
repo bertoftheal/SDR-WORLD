@@ -8,6 +8,7 @@ from .auth_routes import auth_bp
 from .account_routes import accounts_bp
 from .research_routes import research_bp
 from .library_routes import library_bp
+from .metadata_routes import metadata_bp
 
 
 # Create main API blueprint
@@ -42,6 +43,7 @@ def register_routes(app):
     app.register_blueprint(accounts_bp, url_prefix='/api')
     app.register_blueprint(research_bp, url_prefix='/api')
     app.register_blueprint(library_bp, url_prefix='/api')
+    app.register_blueprint(metadata_bp, url_prefix='/api')
     app.register_blueprint(api_bp, url_prefix='/api')
     
     # Serve HTML templates and static files
