@@ -112,14 +112,12 @@
                             <div class="search-container p-4 bg-light rounded shadow-sm">
                                 <div class="form-group mb-4">
                                     <label for="accountSelect" class="fw-bold text-uppercase small mb-2"><i class="fas fa-building me-2"></i>COMPANY NAME</label>
-                                    <select class="form-select form-select-lg account-select" id="accountSelect" onchange="updateLogoImage(this.value)">
-                                        <option selected disabled>Select a company to research</option>
-                                        <option value="nvidia">NVIDIA</option>
-                                        <option value="cisco">Cisco Systems</option>
-                                        <option value="microsoft">Microsoft</option>
-                                        <option value="google">Google</option>
-                                        <option value="amazon">Amazon</option>
-                                    </select>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control form-control-lg" id="accountSelect" placeholder="Enter company name (e.g., Microsoft, Apple)" oninput="updateLogoImage(this.value)">
+                                        <div class="input-group-text bg-light">
+                                            <i class="fas fa-search"></i>
+                                        </div>
+                                    </div>
                                 </div>
                                 <button class="btn btn-lg w-100 generate-btn" id="generateBtn" style="background-color: #06b6a2; color: white;">
                                     <i class="fas fa-search me-2"></i>GENERATE RESEARCH
@@ -960,9 +958,10 @@
             }
         }
         
-        // Function to update the logo image based on company selection
-        function updateLogoImage(companyValue) {
-            console.log('Update logo function called with:', companyValue);
+        // Function to update the logo image based on company name input
+        let logoFetchTimeout;
+        function updateLogoImage(companyName) {
+            console.log('Update logo function called with:', companyName);
             
             const logoImg = document.getElementById('companyLogo');
             if (!logoImg) {
@@ -976,31 +975,96 @@
                 console.log('Stored original image URL:', originalImageSrc);
             }
             
-            if (companyValue && companyData[companyValue]) {
-                // Update to company logo
-                const company = companyData[companyValue];
-                console.log('Changing image to:', company.logoUrl);
+            // Clear previous timeout to avoid race conditions
+            clearTimeout(logoFetchTimeout);
+            
+            // If no company name or it's too short, reset to default
+            if (!companyName || companyName.length < 2) {
+                resetLogoToDefault(logoImg);
+                return;
+            }
+            
+            // Check if we have this company in our predefined data
+            const lowerCompanyName = companyName.toLowerCase();
+            const predefinedKey = Object.keys(companyData).find(key => {
+                return key.toLowerCase() === lowerCompanyName || 
+                       companyData[key].name.toLowerCase().includes(lowerCompanyName);
+            });
+            
+            if (predefinedKey) {
+                // Use predefined company data
+                const company = companyData[predefinedKey];
+                console.log('Using predefined company data:', company.name);
                 logoImg.src = company.logoUrl;
                 logoImg.alt = company.name + ' Logo';
-                
-                // Style for logo display
-                logoImg.style.objectFit = 'contain';
-                logoImg.style.backgroundColor = '#ffffff';
-                logoImg.style.padding = '20px';
-                
-                // Update company details
-                updateCompanyDetails(companyValue);
-            } else {
-                // Reset to default image
-                console.log('Resetting to original image');
-                logoImg.src = originalImageSrc || DEFAULT_HERO_IMAGE;
-                logoImg.alt = 'Research Team Collaborating';
-                
-                // Reset styling
-                logoImg.style.objectFit = '';
-                logoImg.style.backgroundColor = '';
-                logoImg.style.padding = '';
+                styleLogoContainer(logoImg);
+                updateCompanyDetails(predefinedKey);
+                return;
             }
+            
+            // Debounce logo fetching (wait 500ms after typing stops)
+            logoFetchTimeout = setTimeout(() => {
+                fetchCompanyLogo(companyName, logoImg);
+            }, 500);
+        }
+
+        // Function to fetch company logo using Clearbit API
+        function fetchCompanyLogo(companyName, logoImg) {
+            // Format company name for domain guess
+            const domainGuess = companyName.toLowerCase()
+                .replace(/\s+/g, '')
+                .replace(/[^a-z0-9]/g, '');
+                
+            // Try Clearbit Logo API
+            const logoUrl = `https://logo.clearbit.com/${domainGuess}.com`;
+            
+            // Test if image exists
+            const testImg = new Image();
+            testImg.onload = function() {
+                console.log('Logo found for:', companyName);
+                logoImg.src = logoUrl;
+                logoImg.alt = companyName + ' Logo';
+                styleLogoContainer(logoImg);
+            };
+            
+            testImg.onerror = function() {
+                console.log('No logo found for:', companyName);
+                // Try with .co domain if .com failed
+                const altLogoUrl = `https://logo.clearbit.com/${domainGuess}.co`;
+                const altTestImg = new Image();
+                
+                altTestImg.onload = function() {
+                    logoImg.src = altLogoUrl;
+                    logoImg.alt = companyName + ' Logo';
+                    styleLogoContainer(logoImg);
+                };
+                
+                altTestImg.onerror = function() {
+                    // No logo found, reset to default
+                    resetLogoToDefault(logoImg);
+                };
+                
+                altTestImg.src = altLogoUrl;
+            };
+            
+            testImg.src = logoUrl;
+        }
+        
+        // Helper function to style logo container
+        function styleLogoContainer(logoImg) {
+            logoImg.style.objectFit = 'contain';
+            logoImg.style.backgroundColor = '#ffffff';
+            logoImg.style.padding = '20px';
+        }
+        
+        // Helper function to reset logo to default
+        function resetLogoToDefault(logoImg) {
+            console.log('Resetting to original image');
+            logoImg.src = originalImageSrc || DEFAULT_HERO_IMAGE;
+            logoImg.alt = 'Research Team Collaborating';
+            logoImg.style.objectFit = '';
+            logoImg.style.backgroundColor = '';
+            logoImg.style.padding = '';
         }
         
         // Add event listener for dropdown selection change
