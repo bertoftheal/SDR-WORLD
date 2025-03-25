@@ -17,7 +17,7 @@ def get_accounts():
     """
     API Route: Retrieve accounts
     
-    Fetches accounts from Airtable or returns mock account data.
+    Fetches accounts from Supabase (with Airtable as fallback) or returns mock account data.
     
     Returns:
         JSON array of accounts with 'id' and 'name' properties

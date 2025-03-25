@@ -7,7 +7,7 @@
  * Main Functions:
  * - Loading accounts from the backend
  * - Generating research for selected accounts
- * - Saving research to Airtable
+ * - Saving research to the database (Supabase)
  * - Updating the UI based on application state
  */
 
@@ -199,11 +199,11 @@ async function generateResearch() {
 }
 
 /**
- * Saves the current research to Airtable
+ * Saves the current research to the database
  * Collects insights from the DOM and sends to backend
  * Displays alert upon success or failure
  */
-async function saveToAirtable() {
+async function saveResearch() {
     const accountName = accountSelect.value;
     if (!accountName) {
         alert('Please select an account');
@@ -220,7 +220,7 @@ async function saveToAirtable() {
     };
     
     try {
-        const response = await fetch('/api/save-to-airtable', {
+        const response = await fetch('/api/save-research', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -231,13 +231,13 @@ async function saveToAirtable() {
         const result = await response.json();
         
         if (result.success) {
-            alert('Research saved successfully to Airtable!');
+            alert('Research saved successfully to the database!');
         } else {
             alert(`Error saving research: ${result.message}`);
         }
     } catch (error) {
-        console.error('Error saving to Airtable:', error);
-        alert('An error occurred while saving to Airtable');
+        console.error('Error saving research:', error);
+        alert('An error occurred while saving the research');
     }
 }
 

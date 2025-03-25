@@ -2,15 +2,21 @@
 Core functionality for research generation and management.
 Handles operations related to generating and storing research insights.
 """
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional, Tuple, List
 from datetime import datetime
+import logging
 
 from ..models.research import Research
 from ..models.account import Account
+from ..services.supabase_service import SupabaseService
 from ..services.airtable_service import AirtableService
 from ..services.perplexity_service import PerplexityService
 from ..services.openai_service import OpenAIService
 from ..core.accounts import account_manager
+from ..config.settings import settings
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 class ResearchManager:
@@ -18,9 +24,22 @@ class ResearchManager:
     
     def __init__(self):
         """Initialize the research manager."""
+        # Primary data source is Supabase
+        self.supabase_service = SupabaseService()
+        
+        # Keep Airtable as fallback for legacy support
         self.airtable_service = AirtableService()
+        
+        # AI services
         self.perplexity_service = PerplexityService()
         self.openai_service = OpenAIService()
+        
+        # Use Supabase if configured, otherwise fall back to Airtable
+        self.use_supabase = settings.is_supabase_configured()
+        if self.use_supabase:
+            logger.info("Research Manager using Supabase as primary data source")
+        else:
+            logger.info("Research Manager using Airtable as data source")
     
     def generate_research(self, account_name: str) -> Dict[str, Any]:
         """
@@ -87,7 +106,7 @@ class ResearchManager:
     
     def save_research(self, research_data: Dict[str, Any], user_id: Optional[str] = None) -> Dict[str, Any]:
         """
-        Save research data to Airtable.
+        Save research data to the database.
         
         Args:
             research_data: Dictionary containing research data
@@ -106,7 +125,13 @@ class ResearchManager:
             created_by=user_id
         )
         
-        return self.airtable_service.save_research(research)
+        # Save to Supabase if configured, otherwise fall back to Airtable
+        if self.use_supabase:
+            logger.info(f"Saving research for {research.account_name} to Supabase")
+            return self.supabase_service.save_research(research)
+        else:
+            logger.info(f"Saving research for {research.account_name} to Airtable")
+            return self.airtable_service.save_research(research)
 
 
 # Singleton instance for easy import
