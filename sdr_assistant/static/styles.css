@@ -1268,6 +1268,33 @@ input:focus, select:focus, textarea:focus {
     100% { color: var(--text-color); }
 }
 
+/* Animation for company description when updated */
+.company-description {
+    transition: background-color 0.3s ease;
+}
+
+.company-description.loading {
+    background-color: rgba(9, 182, 162, 0.05);
+    position: relative;
+}
+
+.company-description.loading::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    background-color: var(--primary-color);
+    animation: loadingBar 2s infinite ease-in-out;
+}
+
+@keyframes loadingBar {
+    0% { width: 0; left: 0; }
+    50% { width: 100%; left: 0; }
+    100% { width: 0; left: 100%; }
+}
+
 .company-meta-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

@@ -27,6 +27,13 @@ function fetchCompanyMetadata(companyName) {
         el.classList.add('updating');
     });
     
+    // Show loading state for company description
+    const companyDescription = document.querySelector('.company-description');
+    if (companyDescription) {
+        companyDescription.classList.add('loading');
+        companyDescription.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Loading information about ${companyName}...`;
+    }
+    
     // Update company name in the header
     const companyNameHeader = document.querySelector('.company-name');
     if (companyNameHeader) {
@@ -138,6 +145,12 @@ function updateCompanyMetadataUI(metadata) {
         el.classList.remove('updating');
     });
     
+    // Remove loading state from company description
+    const descriptionElement = document.querySelector('.company-description');
+    if (descriptionElement) {
+        descriptionElement.classList.remove('loading');
+    }
+    
     // Update company description/overview if available
     if (metadata.description && metadata.description !== 'Unknown') {
         // Try multiple selectors to find the company description paragraph
@@ -149,7 +162,12 @@ function updateCompanyMetadataUI(metadata) {
             console.log('Updating company overview with:', metadata.description);
             companyOverview.innerHTML = metadata.description;
             companyOverview.classList.add('animate-update');
-            setTimeout(() => companyOverview.classList.remove('animate-update'), 500);
+            // Apply and then remove the loading animation for visual feedback
+            companyOverview.classList.add('loading');
+            setTimeout(() => {
+                companyOverview.classList.remove('animate-update');
+                companyOverview.classList.remove('loading');
+            }, 1000);
             
             // Also update any other paragraphs that might be company descriptions
             const companyDescriptions = document.querySelectorAll('.company-description p, .card-body p');
