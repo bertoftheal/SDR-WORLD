@@ -378,70 +378,34 @@ function updateCompanyMetadataUI(metadata) {
     
     // Update industry trends information if available
     if (metadata.industry_trends && metadata.industry_trends !== 'Unknown') {
-        console.log('Industry trends data available:', metadata.industry_trends);
-        console.log('Industry header available:', metadata.industry_header);
+        // Find the industry paragraph
+        const industryParagraphs = document.querySelectorAll('.insight-body-text');
+        let industryPara = null;
         
-        // Find the industry trends paragraph more specifically
-        const allInsightParagraphs = document.querySelectorAll('.insight-body-text');
-        let industryTrendsPara = null;
-        
-        // Log all paragraphs for debugging
-        console.log('All insight paragraphs found:', allInsightParagraphs.length);
-        
-        // Look for the paragraph that's specifically in the industry trends card
-        allInsightParagraphs.forEach((para, index) => {
+        // Find the industry paragraph
+        industryParagraphs.forEach(para => {
             const parentCard = para.closest('.card');
-            if (parentCard) {
-                const cardTitle = parentCard.querySelector('.insight-header h6');
-                if (cardTitle && cardTitle.textContent.includes('Industry')) {
-                    console.log(`Found industry trends paragraph at index ${index}`);
-                    industryTrendsPara = para;
-                    para.classList.add('industry-trends'); // Explicitly add the class
-                }
+            if (parentCard && parentCard.querySelector('.insight-header h6') && 
+                parentCard.querySelector('.insight-header h6').textContent.includes('Industry')) {
+                industryPara = para;
+                para.classList.add('industry-trends');
             }
         });
         
-        if (industryTrendsPara) {
-            console.log('Updating industry trends with:', metadata.industry_trends);
-            industryTrendsPara.innerHTML = metadata.industry_trends;
-            industryTrendsPara.classList.add('animate-update');
-            industryTrendsPara.classList.remove('loading');
-            setTimeout(() => industryTrendsPara.classList.remove('animate-update'), 500);
-            
-            // Update the industry trends header if available
-            if (metadata.industry_header && metadata.industry_header !== 'Unknown') {
-                // Find the card containing the industry trends paragraph
-                const industryCard = industryTrendsPara.closest('.card');
-                if (industryCard) {
-                    // Find all headers in this card and log them
-                    const allCardHeaders = industryCard.querySelectorAll('h5, .insight-header-text');
-                    console.log(`Found ${allCardHeaders.length} headers in industry card:`);
-                    allCardHeaders.forEach((header, i) => {
-                        console.log(`- Header ${i}:`, header.tagName, header.className, header.textContent);
-                    });
-                    
-                    // Try to find the header explicitly with a more specific selector
-                    const industryHeader = industryCard.querySelector('h5.insight-header-text');
-                    if (industryHeader) {
-                        console.log('Updating industry header with:', metadata.industry_header);
-                        // Use innerText instead of textContent to ensure rendering
-                        industryHeader.innerText = metadata.industry_header;
-                        industryHeader.classList.add('animate-update');
-                        setTimeout(() => industryHeader.classList.remove('animate-update'), 500);
-                    } else {
-                        console.error('Industry header not found with specific selector');
-                    }
-                } else {
-                    console.error('Industry card not found');
-                }
-            } else {
-                console.log('No industry header data available in metadata');
-            }
-        } else {
-            console.error('Industry trends paragraph not found');
+        // Update the paragraph content if found
+        if (industryPara) {
+            console.log('Updating industry trends paragraph');
+            industryPara.innerHTML = metadata.industry_trends;
+            industryPara.classList.remove('loading');
+            industryPara.classList.add('animate-update');
+            setTimeout(() => industryPara.classList.remove('animate-update'), 500);
         }
-    } else {
-        console.log('No industry trends data available in metadata');
+        
+        // Update the industry header if available
+        if (metadata.industry_header && metadata.industry_header !== 'Unknown') {
+            // Try different methods to find the header
+            updateIndustryHeader(metadata.industry_header);
+        }
     }
     
     // Update the industry impact badge if available
@@ -497,9 +461,92 @@ function updateCompanyMetadataUI(metadata) {
     }
 }
 
+/**
+ * Initialize insight headers with IDs for easier targeting
+ */
+function initializeInsightHeaders() {
+    console.log('Initializing insight headers with IDs');
+    
+    setTimeout(() => {
+        const allHeaders = document.querySelectorAll('h5.insight-header-text');
+        console.log(`Found ${allHeaders.length} insight headers`);
+        
+        allHeaders.forEach((header, index) => {
+            console.log(`Header ${index}:`, header.textContent);
+            
+            // Set ID for industry insights header
+            if (header.textContent.includes('Explosive growth in AI compute demand')) {
+                header.id = 'industry-insights-header';
+                console.log('Set ID for industry insights header');
+            }
+        });
+    }, 500); // 500ms delay to ensure DOM is loaded
+}
+
+// Run header initialization when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM fully loaded - initializing headers');
+    initializeInsightHeaders();
+});
+
+/**
+ * Direct function to update the industry insights header
+ * This uses multiple methods to find and update the header
+ */
+function updateIndustryHeader(headerText) {
+    console.log('Attempting to update industry header with:', headerText);
+    
+    // Method 1: Try by ID
+    let header = document.getElementById('industry-insights-header');
+    
+    // Method 2: Try by exact content match
+    if (!header) {
+        const headers = document.querySelectorAll('h5.insight-header-text');
+        headers.forEach(h => {
+            if (h.textContent.includes('Explosive growth') || 
+                h.textContent.includes('AI compute demand')) {
+                header = h;
+                console.log('Found header by content:', h.textContent);
+            }
+        });
+    }
+    
+    // Method 3: Find header in the industry card
+    if (!header) {
+        const industryPara = document.querySelector('.industry-trends');
+        if (industryPara) {
+            const card = industryPara.closest('.card');
+            if (card) {
+                header = card.querySelector('h5.insight-header-text');
+                console.log('Found header in industry card');
+            }
+        }
+    }
+    
+    // If we found the header, update it
+    if (header) {
+        console.log('Updating header with:', headerText);
+        header.innerText = headerText;
+        header.classList.add('animate-update');
+        setTimeout(() => header.classList.remove('animate-update'), 500);
+        return true;
+    } else {
+        console.error('Could not find industry header by any method');
+        return false;
+    }
+}
+
+// Run on page load to set IDs
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded - initializing headers');
+    initializeInsightHeaders();
+});
+
 // Export functions for use in other scripts
 window.fetchCompanyMetadata = fetchCompanyMetadata;
 window.updateCompanyMetadataUI = updateCompanyMetadataUI;
+window.initializeInsightHeaders = initializeInsightHeaders;
+window.updateIndustryHeader = updateIndustryHeader;
 
 // Update company name header when input field changes
 document.addEventListener('DOMContentLoaded', () => {
