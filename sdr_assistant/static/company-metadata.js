@@ -298,6 +298,21 @@ function updateCompanyMetadataUI(metadata) {
             productPortfolioPara.classList.add('animate-update');
             productPortfolioPara.classList.remove('loading');
             setTimeout(() => productPortfolioPara.classList.remove('animate-update'), 500);
+            
+            // Update the product portfolio header if available
+            if (metadata.portfolio_header && metadata.portfolio_header !== 'Unknown') {
+                // Find the h5 header in the same card as the product portfolio paragraph
+                const portfolioCard = productPortfolioPara.closest('.card');
+                if (portfolioCard) {
+                    const portfolioHeader = portfolioCard.querySelector('.insight-header-text');
+                    if (portfolioHeader) {
+                        console.log('Updating portfolio header with:', metadata.portfolio_header);
+                        portfolioHeader.textContent = metadata.portfolio_header;
+                        portfolioHeader.classList.add('animate-update');
+                        setTimeout(() => portfolioHeader.classList.remove('animate-update'), 500);
+                    }
+                }
+            }
         }
     }
     
