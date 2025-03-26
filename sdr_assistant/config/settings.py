@@ -50,6 +50,10 @@ class Settings:
         self.SUPABASE_URL = os.getenv('SUPABASE_URL')
         self.SUPABASE_KEY = os.getenv('SUPABASE_KEY')
         
+        # Supabase configuration
+        self.SUPABASE_URL = os.getenv('SUPABASE_URL')
+        self.SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+        
         # JWT settings
         self.JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'default-secret-key-replace-in-production')
         self.JWT_EXPIRATION = int(os.getenv('JWT_EXPIRATION', '86400'))  # Default: 24 hours
