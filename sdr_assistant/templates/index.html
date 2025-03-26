@@ -17,24 +17,6 @@
             border-color: #06b6a2 !important;
             color: white !important;
         }
-        
-        /* Animation for highlighting updated elements */
-        .highlight-update {
-            animation: highlightFade 2s ease;
-        }
-        
-        @keyframes highlightFade {
-            0% { background-color: rgba(6, 182, 162, 0.3); }
-            100% { background-color: transparent; }
-        }
-        
-        /* Make sure the company description paragraph is easily visible */
-        p.mb-0 {
-            min-height: 60px;
-            padding: 10px;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
     </style>
     <link rel="stylesheet" href="/static/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -42,6 +24,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Add Marked.js for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Company Metadata JS -->
+    <script src="/static/company-metadata.js"></script>
 </head>
 <body>
     <div id="app">
@@ -137,7 +121,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button class="btn btn-lg w-100 generate-btn" id="generateBtn" style="background-color: #06b6a2; color: white;" onclick="updateCompanyDescription()">
+                                <button class="btn btn-lg w-100 generate-btn" id="generateBtn" style="background-color: #06b6a2; color: white;">
                                     <i class="fas fa-search me-2"></i>GENERATE RESEARCH
                                 </button>
                             </div>
@@ -619,127 +603,6 @@
     </script>
     <!-- Simple inline script for updating company logo -->
     <script>
-        // Function to directly update company description when Generate Research button is clicked
-        async function updateCompanyDescription() {
-            // Get the company name from the input field
-            const companyName = document.getElementById('accountSelect').value.trim();
-            
-            if (!companyName) {
-                alert('Please enter a company name first');
-                return;
-            }
-            
-            console.log('Updating company description for:', companyName);
-            
-            // Get the paragraph element
-            const companyDescriptionParagraph = document.querySelector('p.mb-0');
-            
-            if (!companyDescriptionParagraph) {
-                console.error('Company description paragraph not found');
-                return;
-            }
-            
-            // Show loading message
-            companyDescriptionParagraph.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Loading description for ${companyName}...`;
-            
-            try {
-                // Direct API call to get company metadata
-                const response = await fetch('/api/company-metadata', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ companyName: companyName })
-                });
-                console.log('API request sent to correct endpoint: /api/company-metadata');
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('API response:', data);
-                    
-                    if (data.success && data.metadata && data.metadata.description && data.metadata.description !== 'Unknown') {
-                        // Update the paragraph with the description
-                        companyDescriptionParagraph.innerHTML = data.metadata.description;
-                        companyDescriptionParagraph.classList.add('highlight-update');
-                        setTimeout(() => companyDescriptionParagraph.classList.remove('highlight-update'), 2000);
-                        console.log('Successfully updated company description:', data.metadata.description);
-                    } else {
-                        // Try to get a description from our hardcoded company data
-                        const lowerCompanyName = companyName.toLowerCase();
-                        let description = null;
-                        
-                        // Check for common companies
-                        if (lowerCompanyName.includes('uber')) {
-                            description = 'Uber Technologies, Inc. is an American technology company that offers ride-hailing, food delivery, package delivery, couriers, and freight transportation. Its platforms include Uber, Uber Eats, and Uber Freight.';
-                        } else if (lowerCompanyName.includes('starbucks')) {
-                            description = 'Starbucks Corporation is an American multinational chain of coffeehouses and roastery reserves. It is the world\'s largest coffeehouse chain, operating over 33,000 stores in 80 countries, offering a variety of coffee drinks, tea, and food items.';
-                        } else if (lowerCompanyName.includes('pinterest')) {
-                            description = 'Pinterest is an image sharing and social media service designed to enable saving and discovery of information on the internet using images and GIFs. The site allows users to create and manage theme-based image collections called "boards".';
-                        } else if (lowerCompanyName.includes('amazon')) {
-                            description = 'Amazon.com, Inc. is an American multinational technology company focusing on e-commerce, cloud computing, digital streaming, and artificial intelligence. It is one of the Big Five companies in the U.S. information technology industry.';
-                        } else if (lowerCompanyName.includes('netflix')) {
-                            description = 'Netflix, Inc. is an American subscription streaming service and production company. It offers a library of films, television series and games through distribution deals and its own productions, Netflix Originals.';
-                        } else if (lowerCompanyName.includes('google') || lowerCompanyName.includes('alphabet')) {
-                            description = 'Google LLC is an American multinational technology company focusing on search engine technology, online advertising, cloud computing, computer software, quantum computing, e-commerce, and artificial intelligence.';
-                        } else {
-                            description = `${companyName} is a company that provides products or services in their industry.`;
-                        }
-                        
-                        // Update the paragraph with our description
-                        companyDescriptionParagraph.innerHTML = description;
-                        companyDescriptionParagraph.classList.add('highlight-update');
-                        setTimeout(() => companyDescriptionParagraph.classList.remove('highlight-update'), 2000);
-                        console.warn('Using hardcoded description as fallback: ' + description);
-                    }
-                } else {
-                    // Try the hardcoded fallbacks
-                    const lowerCompanyName = companyName.toLowerCase();
-                    let description = null;
-                    
-                    // Check for common companies
-                    if (lowerCompanyName.includes('uber')) {
-                        description = 'Uber Technologies, Inc. is an American technology company that offers ride-hailing, food delivery, package delivery, couriers, and freight transportation. Its platforms include Uber, Uber Eats, and Uber Freight.';
-                    } else if (lowerCompanyName.includes('starbucks')) {
-                        description = 'Starbucks Corporation is an American multinational chain of coffeehouses and roastery reserves. It is the world\'s largest coffeehouse chain, operating over 33,000 stores in 80 countries, offering a variety of coffee drinks, tea, and food items.';
-                    } else if (lowerCompanyName.includes('pinterest')) {
-                        description = 'Pinterest is an image sharing and social media service designed to enable saving and discovery of information on the internet using images and GIFs. The site allows users to create and manage theme-based image collections called "boards".';
-                    } else {
-                        description = `${companyName} is a company that provides products or services in their industry.`;
-                    }
-                    
-                    companyDescriptionParagraph.innerHTML = description;
-                    companyDescriptionParagraph.classList.add('highlight-update');
-                    setTimeout(() => companyDescriptionParagraph.classList.remove('highlight-update'), 2000);
-                    console.error('Error fetching company metadata:', response.statusText);
-                    console.warn('Using hardcoded description as fallback');
-                }
-            } catch (error) {
-                // Try the hardcoded fallbacks
-                const lowerCompanyName = companyName.toLowerCase();
-                let description = null;
-                
-                // Check for common companies
-                if (lowerCompanyName.includes('uber')) {
-                    description = 'Uber Technologies, Inc. is an American technology company that offers ride-hailing, food delivery, package delivery, couriers, and freight transportation. Its platforms include Uber, Uber Eats, and Uber Freight.';
-                } else if (lowerCompanyName.includes('starbucks')) {
-                    description = 'Starbucks Corporation is an American multinational chain of coffeehouses and roastery reserves. It is the world\'s largest coffeehouse chain, operating over 33,000 stores in 80 countries, offering a variety of coffee drinks, tea, and food items.';
-                } else if (lowerCompanyName.includes('pinterest')) {
-                    description = 'Pinterest is an image sharing and social media service designed to enable saving and discovery of information on the internet using images and GIFs. The site allows users to create and manage theme-based image collections called "boards".';
-                } else {
-                    description = `${companyName} is a company that provides products or services in their industry.`;
-                }
-                
-                companyDescriptionParagraph.innerHTML = description;
-                companyDescriptionParagraph.classList.add('highlight-update');
-                setTimeout(() => companyDescriptionParagraph.classList.remove('highlight-update'), 2000);
-                console.error('Error updating company description:', error);
-                console.warn('Using hardcoded description as fallback');
-            }
-            
-            // Also trigger the regular research generation if available
-            if (typeof generateResearch === 'function') {
-                generateResearch(companyName);
-            }
-        }
-        
         // Default hero image URL
         const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80';
         
@@ -1234,7 +1097,5 @@
             }
         });
     </script>
-    <!-- Company Metadata JS - Moved to end of body for proper DOM loading -->
-    <script src="/static/company-metadata.js"></script>
 </body>
 </html>

@@ -172,6 +172,36 @@ function updateCompanyMetadataUI(metadata) {
 window.fetchCompanyMetadata = fetchCompanyMetadata;
 window.updateCompanyMetadataUI = updateCompanyMetadataUI;
 
+// Update company name header when input field changes
+document.addEventListener('DOMContentLoaded', () => {
+    const accountInput = document.getElementById('accountSelect');
+    const companyNameHeader = document.querySelector('.company-name');
+    
+    if (accountInput && companyNameHeader) {
+        // Update company name header on input
+        accountInput.addEventListener('input', () => {
+            const companyName = accountInput.value.trim();
+            if (companyName) {
+                companyNameHeader.textContent = companyName;
+                // Optional: Add a subtle animation
+                companyNameHeader.classList.add('animate-update');
+                setTimeout(() => companyNameHeader.classList.remove('animate-update'), 500);
+            }
+        });
+        
+        // Also update when generateBtn is clicked for complete metadata fetch
+        const generateBtn = document.getElementById('generateBtn');
+        if (generateBtn) {
+            generateBtn.addEventListener('click', () => {
+                const companyName = accountInput.value.trim();
+                if (companyName) {
+                    fetchCompanyMetadata(companyName);
+                }
+            });
+        }
+    }
+});
+
 // Add event listener to ensure DOM is loaded before attempting to find elements
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM fully loaded - company-metadata.js initialized');
