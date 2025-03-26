@@ -1314,6 +1314,35 @@ input:focus, select:focus, textarea:focus {
     100% { background-color: transparent; }
 }
 
+/* Loading animations for all insight paragraphs */
+.insight-body-text.loading {
+    background-color: rgba(9, 182, 162, 0.05);
+    position: relative;
+    min-height: 50px;
+}
+
+.insight-body-text.loading::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    background-color: var(--primary-color);
+    animation: loadingBar 2s infinite ease-in-out;
+}
+
+/* Insight container loading state */
+.card.loading {
+    animation: cardPulse 2s infinite ease-in-out;
+}
+
+@keyframes cardPulse {
+    0% { box-shadow: 0 0 0 rgba(9, 182, 162, 0.1); }
+    50% { box-shadow: 0 0 10px rgba(9, 182, 162, 0.2); }
+    100% { box-shadow: 0 0 0 rgba(9, 182, 162, 0.1); }
+}
+
 .company-meta-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

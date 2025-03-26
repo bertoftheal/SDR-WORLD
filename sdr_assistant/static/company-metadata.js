@@ -34,6 +34,19 @@ function fetchCompanyMetadata(companyName) {
         companyDescription.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Loading information about ${companyName}...`;
     }
     
+    // Show loading state for all insight paragraphs
+    const insightParagraphs = document.querySelectorAll('.insight-body-text');
+    insightParagraphs.forEach(paragraph => {
+        paragraph.classList.add('loading');
+        paragraph.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Loading insights...`;
+    });
+    
+    // Add loading animation to insight cards
+    const insightCards = document.querySelectorAll('.insight-box.card');
+    insightCards.forEach(card => {
+        card.classList.add('loading');
+    });
+    
     // Update company name in the header
     const companyNameHeader = document.querySelector('.company-name');
     if (companyNameHeader) {
@@ -151,6 +164,23 @@ function updateCompanyMetadataUI(metadata) {
         descriptionElement.classList.remove('loading');
     }
     
+    // Remove loading state from all insight cards
+    const insightCards = document.querySelectorAll('.insight-box.card');
+    insightCards.forEach(card => {
+        card.classList.remove('loading');
+    });
+    
+    // Remove loading state from all insight paragraphs that aren't explicitly updated elsewhere
+    // We don't remove it from financial performance paragraph as that's handled separately
+    const otherInsightParagraphs = document.querySelectorAll('.insight-body-text:not(.financial-performance)');
+    otherInsightParagraphs.forEach(paragraph => {
+        paragraph.classList.remove('loading');
+        // If the paragraph doesn't have any content at this point, add a placeholder
+        if (paragraph.innerHTML.includes('Loading insights')) {
+            paragraph.innerHTML = 'This information will be updated when insights are generated.';
+        }
+    });
+    
     // Update company description/overview if available
     if (metadata.description && metadata.description !== 'Unknown') {
         // Try multiple selectors to find the company description paragraph
@@ -187,12 +217,15 @@ function updateCompanyMetadataUI(metadata) {
     
     // Update financial performance insight if available
     if (metadata.financial_performance && metadata.financial_performance !== 'Unknown') {
-        // Find the financial performance paragraph
+        // Find the financial performance paragraph and add a specific class to it for identification
         const financialPerformanceParagraph = document.querySelector('.insight-body-text.mb-0');
         if (financialPerformanceParagraph) {
             console.log('Updating financial performance with:', metadata.financial_performance);
+            // Add the financial-performance class for easier targeting
+            financialPerformanceParagraph.classList.add('financial-performance');
             financialPerformanceParagraph.innerHTML = metadata.financial_performance;
             financialPerformanceParagraph.classList.add('animate-update');
+            financialPerformanceParagraph.classList.remove('loading');
             setTimeout(() => financialPerformanceParagraph.classList.remove('animate-update'), 500);
         }
     }
