@@ -42,9 +42,12 @@ class MetadataService:
         - product_portfolio: In one clear paragraph, describe the main products/services that generate the most revenue for the company.
         - portfolio_header: Provide a concise 5-7 word title that summarizes the company's product portfolio strategy or focus.
         - portfolio_status: Categorize the company's product portfolio as one of: 'innovation' (new cutting-edge products), 'growth' (expanding existing product lines), 'transition' (shifting focus between products), or 'established' (stable, mature product lines) based on their current product strategy.
+        - industry_trends: In one clear paragraph, describe the key industry trends that impact {company_name}'s business and market position.
+        - industry_header: Provide a concise 5-7 word title that captures the most significant industry trend affecting the company.
+        - industry_impact: Categorize the impact of current industry trends on the company as one of: 'positive' (beneficial), 'challenging' (requires adaptation), 'disruptive' (transformative), or 'competitive' (intensifying rivalry).
         
         Format your response as valid JSON only, with NO explanations, citations, or other text.
-        Just return the JSON object with these 10 properties. If any information is unknown, use 'Unknown' as the value.
+        Just return the JSON object with these 13 properties. If any information is unknown, use 'Unknown' as the value.
         """
         
         try:

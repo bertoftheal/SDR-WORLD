@@ -48,6 +48,8 @@ function fetchCompanyMetadata(companyName) {
                 paragraph.classList.add('financial-performance');
             } else if (cardHeader && cardHeader.textContent.includes('Product Portfolio')) {
                 paragraph.classList.add('product-portfolio');
+            } else if (cardHeader && cardHeader.textContent.includes('Industry')) {
+                paragraph.classList.add('industry-trends');
             }
         }
     });
@@ -365,6 +367,86 @@ function updateCompanyMetadataUI(metadata) {
             // Add animation
             portfolioBadge.classList.add('animate-update');
             setTimeout(() => portfolioBadge.classList.remove('animate-update'), 500);
+        }
+    }
+    
+    // Update industry trends information if available
+    if (metadata.industry_trends && metadata.industry_trends !== 'Unknown') {
+        // Find the industry trends paragraph
+        const industryTrendsPara = document.querySelector('.industry-trends');
+        if (industryTrendsPara) {
+            console.log('Updating industry trends with:', metadata.industry_trends);
+            industryTrendsPara.innerHTML = metadata.industry_trends;
+            industryTrendsPara.classList.add('animate-update');
+            industryTrendsPara.classList.remove('loading');
+            setTimeout(() => industryTrendsPara.classList.remove('animate-update'), 500);
+            
+            // Update the industry trends header if available
+            if (metadata.industry_header && metadata.industry_header !== 'Unknown') {
+                // Find the h5 header in the same card as the industry trends paragraph
+                const industryCard = industryTrendsPara.closest('.card');
+                if (industryCard) {
+                    const industryHeader = industryCard.querySelector('.insight-header-text');
+                    if (industryHeader) {
+                        console.log('Updating industry header with:', metadata.industry_header);
+                        industryHeader.textContent = metadata.industry_header;
+                        industryHeader.classList.add('animate-update');
+                        setTimeout(() => industryHeader.classList.remove('animate-update'), 500);
+                    }
+                }
+            }
+        }
+    }
+    
+    // Update the industry impact badge if available
+    if (metadata.industry_impact && metadata.industry_impact !== 'Unknown') {
+        // Find the industry trends badge specifically
+        const industryCard = document.querySelector('.industry-trends')?.closest('.card');
+        const industryBadge = industryCard ? industryCard.querySelector('.badge.rounded-pill') : null;
+        
+        if (industryBadge) {
+            console.log('Updating industry impact badge with:', metadata.industry_impact);
+            
+            // Remove existing color classes
+            industryBadge.classList.remove('bg-success', 'bg-warning', 'bg-danger', 'bg-info', 'bg-primary', 'bg-secondary');
+            
+            let badgeIcon = '';
+            let badgeText = '';
+            
+            // Set appropriate color and icon based on industry impact
+            switch(metadata.industry_impact.toLowerCase()) {
+                case 'positive':
+                    industryBadge.classList.add('bg-success');
+                    badgeIcon = '<i class="fas fa-thumbs-up me-1"></i>';
+                    badgeText = 'Positive Impact';
+                    break;
+                case 'challenging':
+                    industryBadge.classList.add('bg-warning');
+                    badgeIcon = '<i class="fas fa-exclamation-triangle me-1"></i>';
+                    badgeText = 'Challenging';
+                    break;
+                case 'disruptive':
+                    industryBadge.classList.add('bg-danger');
+                    badgeIcon = '<i class="fas fa-bolt me-1"></i>';
+                    badgeText = 'Disruptive Change';
+                    break;
+                case 'competitive':
+                    industryBadge.classList.add('bg-info');
+                    badgeIcon = '<i class="fas fa-users me-1"></i>';
+                    badgeText = 'Competitive';
+                    break;
+                default:
+                    industryBadge.classList.add('bg-secondary');
+                    badgeIcon = '<i class="fas fa-question-circle me-1"></i>';
+                    badgeText = 'Unknown Impact';
+            }
+            
+            // Update the badge
+            industryBadge.innerHTML = `${badgeIcon}${badgeText}`;
+            
+            // Add animation
+            industryBadge.classList.add('animate-update');
+            setTimeout(() => industryBadge.classList.remove('animate-update'), 500);
         }
     }
 }
