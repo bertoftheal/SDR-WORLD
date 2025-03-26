@@ -39,9 +39,11 @@ class MetadataService:
         - description: In 2-3 sentences, what does the company do and what products/services does it offer?
         - financial_performance: In one clear sentence, summarize the current financial performance or outlook of the company.
         - performance_trend: Categorize the company's overall financial performance as one of: 'positive', 'neutral', or 'negative' based on recent financial results, stock performance, or financial outlook.
+        - product_portfolio: In one clear paragraph, describe the main products/services that generate the most revenue for the company.
+        - portfolio_status: Categorize the company's product portfolio as one of: 'innovation' (new cutting-edge products), 'growth' (expanding existing product lines), 'transition' (shifting focus between products), or 'established' (stable, mature product lines) based on their current product strategy.
         
         Format your response as valid JSON only, with NO explanations, citations, or other text.
-        Just return the JSON object with these 7 properties. If any information is unknown, use 'Unknown' as the value.
+        Just return the JSON object with these 9 properties. If any information is unknown, use 'Unknown' as the value.
         """
         
         try:

@@ -39,6 +39,17 @@ function fetchCompanyMetadata(companyName) {
     insightParagraphs.forEach(paragraph => {
         paragraph.classList.add('loading');
         paragraph.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Loading insights...`;
+        
+        // Add specific classes to identify different insight paragraphs
+        const parentCard = paragraph.closest('.card');
+        if (parentCard) {
+            const cardHeader = parentCard.querySelector('.insight-header');
+            if (cardHeader && cardHeader.textContent.includes('Financial Performance')) {
+                paragraph.classList.add('financial-performance');
+            } else if (cardHeader && cardHeader.textContent.includes('Product Portfolio')) {
+                paragraph.classList.add('product-portfolio');
+            }
+        }
     });
     
     // Add loading animation to insight cards
@@ -232,7 +243,10 @@ function updateCompanyMetadataUI(metadata) {
     
     // Update the performance trend badge if available
     if (metadata.performance_trend && metadata.performance_trend !== 'Unknown') {
-        const trendBadge = document.querySelector('.badge.rounded-pill');
+        // Find the financial performance badge specifically
+        const financialCard = document.querySelector('.financial-performance')?.closest('.card');
+        const trendBadge = financialCard ? financialCard.querySelector('.badge.rounded-pill') : null;
+        
         if (trendBadge) {
             console.log('Updating performance trend badge with:', metadata.performance_trend);
             
@@ -271,6 +285,71 @@ function updateCompanyMetadataUI(metadata) {
             // Add animation
             trendBadge.classList.add('animate-update');
             setTimeout(() => trendBadge.classList.remove('animate-update'), 500);
+        }
+    }
+    
+    // Update product portfolio information if available
+    if (metadata.product_portfolio && metadata.product_portfolio !== 'Unknown') {
+        // Find the product portfolio paragraph
+        const productPortfolioPara = document.querySelector('.product-portfolio');
+        if (productPortfolioPara) {
+            console.log('Updating product portfolio with:', metadata.product_portfolio);
+            productPortfolioPara.innerHTML = metadata.product_portfolio;
+            productPortfolioPara.classList.add('animate-update');
+            productPortfolioPara.classList.remove('loading');
+            setTimeout(() => productPortfolioPara.classList.remove('animate-update'), 500);
+        }
+    }
+    
+    // Update the portfolio status badge if available
+    if (metadata.portfolio_status && metadata.portfolio_status !== 'Unknown') {
+        // Find the product portfolio badge specifically
+        const portfolioCard = document.querySelector('.product-portfolio')?.closest('.card');
+        const portfolioBadge = portfolioCard ? portfolioCard.querySelector('.badge.rounded-pill') : null;
+        
+        if (portfolioBadge) {
+            console.log('Updating portfolio status badge with:', metadata.portfolio_status);
+            
+            // Remove existing color classes
+            portfolioBadge.classList.remove('bg-success', 'bg-info', 'bg-primary', 'bg-secondary');
+            
+            let badgeIcon = '';
+            let badgeText = '';
+            
+            // Set appropriate color and icon based on portfolio status
+            switch(metadata.portfolio_status.toLowerCase()) {
+                case 'innovation':
+                    portfolioBadge.classList.add('bg-primary');
+                    badgeIcon = '<i class="fas fa-lightbulb me-1"></i>';
+                    badgeText = 'Innovation';
+                    break;
+                case 'growth':
+                    portfolioBadge.classList.add('bg-success');
+                    badgeIcon = '<i class="fas fa-chart-line me-1"></i>';
+                    badgeText = 'Growth';
+                    break;
+                case 'transition':
+                    portfolioBadge.classList.add('bg-info');
+                    badgeIcon = '<i class="fas fa-sync-alt me-1"></i>';
+                    badgeText = 'Transition';
+                    break;
+                case 'established':
+                    portfolioBadge.classList.add('bg-secondary');
+                    badgeIcon = '<i class="fas fa-check-circle me-1"></i>';
+                    badgeText = 'Established';
+                    break;
+                default:
+                    portfolioBadge.classList.add('bg-secondary');
+                    badgeIcon = '<i class="fas fa-question-circle me-1"></i>';
+                    badgeText = 'Unknown Status';
+            }
+            
+            // Update the badge
+            portfolioBadge.innerHTML = `${badgeIcon}${badgeText}`;
+            
+            // Add animation
+            portfolioBadge.classList.add('animate-update');
+            setTimeout(() => portfolioBadge.classList.remove('animate-update'), 500);
         }
     }
 }
