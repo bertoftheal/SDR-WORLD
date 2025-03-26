@@ -370,10 +370,37 @@ function updateCompanyMetadataUI(metadata) {
         }
     }
     
+    // Directly identify all insight headers for debugging
+    console.log('All insight headers in the DOM:');
+    document.querySelectorAll('.insight-header-text').forEach((header, index) => {
+        console.log(`Header ${index}:`, header.textContent);
+    });
+    
     // Update industry trends information if available
     if (metadata.industry_trends && metadata.industry_trends !== 'Unknown') {
-        // Find the industry trends paragraph
-        const industryTrendsPara = document.querySelector('.industry-trends');
+        console.log('Industry trends data available:', metadata.industry_trends);
+        console.log('Industry header available:', metadata.industry_header);
+        
+        // Find the industry trends paragraph more specifically
+        const allInsightParagraphs = document.querySelectorAll('.insight-body-text');
+        let industryTrendsPara = null;
+        
+        // Log all paragraphs for debugging
+        console.log('All insight paragraphs found:', allInsightParagraphs.length);
+        
+        // Look for the paragraph that's specifically in the industry trends card
+        allInsightParagraphs.forEach((para, index) => {
+            const parentCard = para.closest('.card');
+            if (parentCard) {
+                const cardTitle = parentCard.querySelector('.insight-header h6');
+                if (cardTitle && cardTitle.textContent.includes('Industry')) {
+                    console.log(`Found industry trends paragraph at index ${index}`);
+                    industryTrendsPara = para;
+                    para.classList.add('industry-trends'); // Explicitly add the class
+                }
+            }
+        });
+        
         if (industryTrendsPara) {
             console.log('Updating industry trends with:', metadata.industry_trends);
             industryTrendsPara.innerHTML = metadata.industry_trends;
@@ -383,19 +410,38 @@ function updateCompanyMetadataUI(metadata) {
             
             // Update the industry trends header if available
             if (metadata.industry_header && metadata.industry_header !== 'Unknown') {
-                // Find the h5 header in the same card as the industry trends paragraph
+                // Find the card containing the industry trends paragraph
                 const industryCard = industryTrendsPara.closest('.card');
                 if (industryCard) {
-                    const industryHeader = industryCard.querySelector('.insight-header-text');
+                    // Find all headers in this card and log them
+                    const allCardHeaders = industryCard.querySelectorAll('h5, .insight-header-text');
+                    console.log(`Found ${allCardHeaders.length} headers in industry card:`);
+                    allCardHeaders.forEach((header, i) => {
+                        console.log(`- Header ${i}:`, header.tagName, header.className, header.textContent);
+                    });
+                    
+                    // Try to find the header explicitly with a more specific selector
+                    const industryHeader = industryCard.querySelector('h5.insight-header-text');
                     if (industryHeader) {
                         console.log('Updating industry header with:', metadata.industry_header);
-                        industryHeader.textContent = metadata.industry_header;
+                        // Use innerText instead of textContent to ensure rendering
+                        industryHeader.innerText = metadata.industry_header;
                         industryHeader.classList.add('animate-update');
                         setTimeout(() => industryHeader.classList.remove('animate-update'), 500);
+                    } else {
+                        console.error('Industry header not found with specific selector');
                     }
+                } else {
+                    console.error('Industry card not found');
                 }
+            } else {
+                console.log('No industry header data available in metadata');
             }
+        } else {
+            console.error('Industry trends paragraph not found');
         }
+    } else {
+        console.log('No industry trends data available in metadata');
     }
     
     // Update the industry impact badge if available
