@@ -37,9 +37,11 @@ class MetadataService:
         - founded: What year was the company founded?
         - market_cap: What is the company's market cap? (for public companies, use T for trillion, B for billion)
         - description: In 2-3 sentences, what does the company do and what products/services does it offer?
+        - financial_performance: In one clear sentence, summarize the current financial performance or outlook of the company.
+        - performance_trend: Categorize the company's overall financial performance as one of: 'positive', 'neutral', or 'negative' based on recent financial results, stock performance, or financial outlook.
         
         Format your response as valid JSON only, with NO explanations, citations, or other text.
-        Just return the JSON object with these 5 properties. If any information is unknown, use 'Unknown' as the value.
+        Just return the JSON object with these 7 properties. If any information is unknown, use 'Unknown' as the value.
         """
         
         try:

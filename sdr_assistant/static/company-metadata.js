@@ -184,6 +184,62 @@ function updateCompanyMetadataUI(metadata) {
     } else {
         console.warn('No valid description in metadata:', metadata.description);
     }
+    
+    // Update financial performance insight if available
+    if (metadata.financial_performance && metadata.financial_performance !== 'Unknown') {
+        // Find the financial performance paragraph
+        const financialPerformanceParagraph = document.querySelector('.insight-body-text.mb-0');
+        if (financialPerformanceParagraph) {
+            console.log('Updating financial performance with:', metadata.financial_performance);
+            financialPerformanceParagraph.innerHTML = metadata.financial_performance;
+            financialPerformanceParagraph.classList.add('animate-update');
+            setTimeout(() => financialPerformanceParagraph.classList.remove('animate-update'), 500);
+        }
+    }
+    
+    // Update the performance trend badge if available
+    if (metadata.performance_trend && metadata.performance_trend !== 'Unknown') {
+        const trendBadge = document.querySelector('.badge.rounded-pill');
+        if (trendBadge) {
+            console.log('Updating performance trend badge with:', metadata.performance_trend);
+            
+            // Remove existing color classes
+            trendBadge.classList.remove('bg-success', 'bg-warning', 'bg-danger', 'bg-secondary');
+            
+            let badgeIcon = '';
+            let badgeText = '';
+            
+            // Set appropriate color and icon based on trend
+            switch(metadata.performance_trend.toLowerCase()) {
+                case 'positive':
+                    trendBadge.classList.add('bg-success');
+                    badgeIcon = '<i class="fas fa-arrow-up me-1"></i>';
+                    badgeText = 'Positive Trend';
+                    break;
+                case 'neutral':
+                    trendBadge.classList.add('bg-warning');
+                    badgeIcon = '<i class="fas fa-equals me-1"></i>';
+                    badgeText = 'Neutral Performance';
+                    break;
+                case 'negative':
+                    trendBadge.classList.add('bg-danger');
+                    badgeIcon = '<i class="fas fa-arrow-down me-1"></i>';
+                    badgeText = 'Negative Trend';
+                    break;
+                default:
+                    trendBadge.classList.add('bg-secondary');
+                    badgeIcon = '<i class="fas fa-question-circle me-1"></i>';
+                    badgeText = 'Unknown Trend';
+            }
+            
+            // Update the badge
+            trendBadge.innerHTML = `${badgeIcon}${badgeText}`;
+            
+            // Add animation
+            trendBadge.classList.add('animate-update');
+            setTimeout(() => trendBadge.classList.remove('animate-update'), 500);
+        }
+    }
 }
 
 // Export functions for use in other scripts
