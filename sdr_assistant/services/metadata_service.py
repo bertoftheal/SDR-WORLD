@@ -45,9 +45,12 @@ class MetadataService:
         - industry_trends: In one clear paragraph, describe the key industry trends that impact {company_name}'s business and market position.
         - industry_header: Provide a concise 5-7 word title that captures the most significant industry trend affecting the company.
         - industry_impact: Categorize the impact of current industry trends on the company as one of: 'positive' (beneficial), 'challenging' (requires adaptation), 'disruptive' (transformative), or 'competitive' (intensifying rivalry).
+        - executive_insights: In one paragraph, summarize key insights or statements shared by C-Suite executives (CEO, CFO, CTO, etc.) regarding the company's strategy, vision, or performance. Include recent notable quotes or viewpoints if available.
+        - executive_header: Provide a concise 5-7 word title that captures the essence of the company's executive leadership approach or vision.
+        - leadership_style: Categorize the company's leadership style as one of: 'visionary' (future-focused), 'analytical' (data-driven), 'transformative' (change-oriented), or 'operational' (execution-focused) based on executive communications and strategy.
         
         Format your response as valid JSON only, with NO explanations, citations, or other text.
-        Just return the JSON object with these 13 properties. If any information is unknown, use 'Unknown' as the value.
+        Just return the JSON object with these 16 properties. If any information is unknown, use 'Unknown' as the value.
         """
         
         try:

@@ -50,6 +50,8 @@ function fetchCompanyMetadata(companyName) {
                 paragraph.classList.add('product-portfolio');
             } else if (cardHeader && cardHeader.textContent.includes('Industry')) {
                 paragraph.classList.add('industry-trends');
+            } else if (cardHeader && cardHeader.textContent.includes('Leadership')) {
+                paragraph.classList.add('executive-insights');
             }
         }
     });
@@ -408,6 +410,38 @@ function updateCompanyMetadataUI(metadata) {
         }
     }
     
+    // Update executive insights information if available
+    if (metadata.executive_insights && metadata.executive_insights !== 'Unknown') {
+        // Find the executive paragraph
+        const executiveParagraphs = document.querySelectorAll('.insight-body-text');
+        let executivePara = null;
+        
+        // Find the executive paragraph
+        executiveParagraphs.forEach(para => {
+            const parentCard = para.closest('.card');
+            if (parentCard && parentCard.querySelector('.insight-header h6') && 
+                parentCard.querySelector('.insight-header h6').textContent.includes('Leadership')) {
+                executivePara = para;
+                para.classList.add('executive-insights');
+            }
+        });
+        
+        // Update the paragraph content if found
+        if (executivePara) {
+            console.log('Updating executive insights paragraph');
+            executivePara.innerHTML = metadata.executive_insights;
+            executivePara.classList.remove('loading');
+            executivePara.classList.add('animate-update');
+            setTimeout(() => executivePara.classList.remove('animate-update'), 500);
+        }
+        
+        // Update the executive header if available
+        if (metadata.executive_header && metadata.executive_header !== 'Unknown') {
+            // Try different methods to find the header
+            updateExecutiveHeader(metadata.executive_header);
+        }
+    }
+    
     // Update the industry impact badge if available
     if (metadata.industry_impact && metadata.industry_impact !== 'Unknown') {
         // Find the industry trends badge specifically
@@ -536,6 +570,49 @@ function updateIndustryHeader(headerText) {
     }
 }
 
+/**
+ * Direct function to update the executive insights header
+ * This uses multiple methods to find and update the header
+ */
+function updateExecutiveHeader(headerText) {
+    console.log('Attempting to update executive header with:', headerText);
+    
+    // Method 1: Try by content matching
+    let header = null;
+    const headers = document.querySelectorAll('h5.insight-header-text');
+    headers.forEach(h => {
+        if (h.textContent.includes('Visionary leadership') || 
+            h.textContent.includes('leadership')) {
+            header = h;
+            console.log('Found executive header by content:', h.textContent);
+        }
+    });
+    
+    // Method 2: Find header in the executive insights card
+    if (!header) {
+        const executivePara = document.querySelector('.executive-insights');
+        if (executivePara) {
+            const card = executivePara.closest('.card');
+            if (card) {
+                header = card.querySelector('h5.insight-header-text');
+                console.log('Found header in executive card');
+            }
+        }
+    }
+    
+    // If we found the header, update it
+    if (header) {
+        console.log('Updating executive header with:', headerText);
+        header.innerText = headerText;
+        header.classList.add('animate-update');
+        setTimeout(() => header.classList.remove('animate-update'), 500);
+        return true;
+    } else {
+        console.error('Could not find executive header by any method');
+        return false;
+    }
+}
+
 // Run on page load to set IDs
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded - initializing headers');
@@ -547,6 +624,7 @@ window.fetchCompanyMetadata = fetchCompanyMetadata;
 window.updateCompanyMetadataUI = updateCompanyMetadataUI;
 window.initializeInsightHeaders = initializeInsightHeaders;
 window.updateIndustryHeader = updateIndustryHeader;
+window.updateExecutiveHeader = updateExecutiveHeader;
 
 // Update company name header when input field changes
 document.addEventListener('DOMContentLoaded', () => {
