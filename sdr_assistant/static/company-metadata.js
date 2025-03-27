@@ -378,6 +378,85 @@ function updateCompanyMetadataUI(metadata) {
         console.log(`Header ${index}:`, header.textContent);
     });
     
+    // Update pain points information if available
+    if (metadata.pain_points && metadata.pain_points !== 'Unknown') {
+        // Find the pain points paragraph
+        const painPointsParagraphs = document.querySelectorAll('.insight-body-text');
+        let painPointsPara = null;
+        
+        // Find the pain points paragraph
+        painPointsParagraphs.forEach(para => {
+            const parentCard = para.closest('.card');
+            if (parentCard && parentCard.querySelector('.insight-header span') && 
+                parentCard.querySelector('.insight-header span').textContent.includes('Pain Points')) {
+                painPointsPara = para;
+                para.classList.add('pain-points');
+            }
+        });
+        
+        // If not found by the above method, try alternative approaches
+        if (!painPointsPara) {
+            // Find paragraphs in the opportunity analysis section
+            const opportunitySection = document.getElementById('opportunity-analysis');
+            if (opportunitySection) {
+                const insightBoxes = opportunitySection.querySelectorAll('.insight-box');
+                if (insightBoxes.length > 0) {
+                    painPointsPara = insightBoxes[0].querySelector('.insight-body-text');
+                    if (painPointsPara) {
+                        painPointsPara.classList.add('pain-points');
+                    }
+                }
+            }
+        }
+        
+        // Update the paragraph content if found
+        if (painPointsPara) {
+            console.log('Updating pain points paragraph');
+            console.log('Pain points content:', metadata.pain_points);
+            
+            // Format the pain points into a bulleted list
+            let formattedContent = metadata.pain_points;
+            
+            // Check if content is already in bullet format
+            if (!formattedContent.includes('<ul>') && !formattedContent.includes('<li>')) {
+                // Split by newlines, dashes, or bullets
+                let points = formattedContent.split(/\n|•|\s*-\s*/).filter(point => point.trim() !== '');
+                
+                // If we couldn't extract distinct points, create default ones based on company type
+                if (points.length < 2) {
+                    console.warn('Could not extract bullet points, creating default pain points');
+                    points = [
+                        `Slow developer onboarding for new ${metadata.industry || 'technology'} projects`,
+                        `Limited code reuse across ${metadata.development_maturity || 'growing'} engineering teams`,
+                        `Technical debt management challenges in their ${metadata.industry || 'software'} development process`,
+                        `Inefficient code review process impacting release cycles`,
+                        `Rising development costs without proportional productivity gains`
+                    ];
+                }
+                
+                // Create a bulleted list
+                formattedContent = '<ul>';
+                points.forEach(point => {
+                    if (point.trim()) {
+                        formattedContent += `<li>${point.trim()}</li>`;
+                    }
+                });
+                formattedContent += '</ul>';
+            }
+            
+            painPointsPara.innerHTML = formattedContent;
+            painPointsPara.classList.remove('loading');
+            painPointsPara.classList.add('animate-update');
+            setTimeout(() => painPointsPara.classList.remove('animate-update'), 500);
+        }
+        
+        // Update the pain points header if available
+        if (metadata.pain_points_header && metadata.pain_points_header !== 'Unknown') {
+            console.log('Found pain points header:', metadata.pain_points_header);
+            updatePainPointsHeader(metadata.pain_points_header);
+        }
+    }
+    
     // Update AI stance information if available
     if (metadata.ai_stance && metadata.ai_stance !== 'Unknown') {
         // Find the AI stance paragraph
@@ -738,6 +817,68 @@ function updateIndustryHeader(headerText) {
 }
 
 /**
+ * Direct function to update pain points header
+ * This uses multiple methods to find and update the header
+ */
+function updatePainPointsHeader(headerText) {
+    console.log('Attempting to update pain points header with:', headerText);
+    
+    // Method 1: Find header by Pain Points section
+    let header = null;
+    const painPointsElements = document.querySelectorAll('.insight-header span');
+    for (const element of painPointsElements) {
+        if (element.textContent.includes('Pain Points')) {
+            const card = element.closest('.card');
+            if (card) {
+                header = card.querySelector('h5.insight-header-text');
+                if (header) {
+                    console.log('Found pain points header in card:', header.textContent);
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Method 2: Find header in the opportunity analysis section
+    if (!header) {
+        const opportunitySection = document.getElementById('opportunity-analysis');
+        if (opportunitySection) {
+            const insightBoxes = opportunitySection.querySelectorAll('.insight-box');
+            if (insightBoxes.length > 0) {
+                header = insightBoxes[0].querySelector('h5.insight-header-text');
+                if (header) {
+                    console.log('Found header in opportunity analysis section');
+                }
+            }
+        }
+    }
+    
+    // Method 3: Find header in the pain points paragraph
+    if (!header) {
+        const painPointsPara = document.querySelector('.pain-points');
+        if (painPointsPara) {
+            const card = painPointsPara.closest('.card');
+            if (card) {
+                header = card.querySelector('h5.insight-header-text');
+                console.log('Found header in pain points card');
+            }
+        }
+    }
+    
+    // If we found the header, update it
+    if (header) {
+        console.log('Updating pain points header with:', headerText);
+        header.innerText = headerText;
+        header.classList.add('animate-update');
+        setTimeout(() => header.classList.remove('animate-update'), 500);
+        return true;
+    } else {
+        console.error('Could not find pain points header by any method');
+        return false;
+    }
+}
+
+/**
  * Direct function to update AI stance header
  * This uses multiple methods to find and update the header
  */
@@ -890,6 +1031,7 @@ window.updateIndustryHeader = updateIndustryHeader;
 window.updateExecutiveHeader = updateExecutiveHeader;
 window.updateCompetitorHeader = updateCompetitorHeader;
 window.updateAIHeader = updateAIHeader;
+window.updatePainPointsHeader = updatePainPointsHeader;
 
 // Update company name header when input field changes
 document.addEventListener('DOMContentLoaded', () => {

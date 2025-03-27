@@ -55,7 +55,10 @@ class MetadataService:
   "competitive_position": "leader/challenger/disruptor/niche",
   "ai_stance": "Comprehensive overview of recent AI adoption trends, common AI use cases, public attitudes, and strategic investments",
   "ai_header": "5-7 word title for AI strategy",
-  "ai_adoption_level": "advanced/moderate/early/minimal"
+  "ai_adoption_level": "advanced/moderate/early/minimal",
+  "pain_points": "Bullet-pointed list of 3-5 developer challenges and inefficiencies that Codeium's AI code assistant could solve",
+  "pain_points_header": "5-7 word title summarizing the development challenges",
+  "development_maturity": "advanced/scaling/early-stage"
 }}
 
 Format your response as EXACTLY one valid JSON object. If any information is unknown, use "Unknown" as the value. Do NOT include any text outside the JSON object. Do NOT include markdown code formatting, just return the raw JSON.
