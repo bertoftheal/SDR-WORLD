@@ -58,11 +58,11 @@ class MetadataService:
                 return self._get_default_metadata()
                 
             # Try to extract JSON from the response
-            json_match = re.search(r'\{[\s\S]*?\}', response_text)
-            if json_match:
-                json_str = json_match.group(0)
+            try:
+                # First, try direct JSON loading (in case it's already valid JSON)
                 try:
-                    data = json.loads(json_str)
+                    data = json.loads(response_text)
+                    print("Successfully parsed direct JSON response")
                     
                     # Ensure all required fields exist
                     required_fields = ["headquarters", "employees", "founded", "market_cap", "description"]
@@ -72,7 +72,37 @@ class MetadataService:
                             
                     return data
                 except json.JSONDecodeError:
-                    print(f"Failed to parse JSON from Perplexity response")
+                    # If direct loading fails, try to extract JSON using regex
+                    print("Direct JSON parsing failed, trying regex extraction")
+                
+                # Try to find JSON within the response using regex
+                json_match = re.search(r'\{[\s\S]*?\}', response_text)
+                if json_match:
+                    json_str = json_match.group(0)
+                    try:
+                        # Print the extracted JSON for debugging
+                        print(f"Extracted JSON string (first 100 chars): {json_str[:100]}...")
+                        
+                        # Clean up common JSON formatting issues
+                        json_str = json_str.replace("''", "'")
+                        json_str = re.sub(r'([{,])\s*([\w_]+):', r'\1"\2":', json_str)  # Ensure keys are quoted
+                        json_str = re.sub(r':([^\s",{}\[\]]+)([,}])', r':"\1"\2', json_str)  # Quote unquoted values
+                        
+                        data = json.loads(json_str)
+                        print("Successfully parsed JSON after cleanup")
+                        
+                        # Ensure all required fields exist
+                        required_fields = ["headquarters", "employees", "founded", "market_cap", "description"]
+                        for field in required_fields:
+                            if field not in data:
+                                data[field] = "Unknown"
+                                
+                        return data
+                    except json.JSONDecodeError as e:
+                        print(f"Failed to parse JSON from Perplexity response: {str(e)}")
+                        print(f"Problematic JSON (first 100 chars): {json_str[:100]}...")
+            except Exception as e:
+                print(f"Error processing Perplexity response: {str(e)}")
                     
             # If we couldn't extract JSON, use regex to extract individual fields
             data = {}
@@ -133,9 +163,11 @@ class MetadataService:
                 return None
                 
             response_data = response.json()
+            print(f"DEBUG: API response structure: {list(response_data.keys())}")
             
             # Extract the content from the response
             content = response_data.get('choices', [{}])[0].get('message', {}).get('content', '')
+            print(f"DEBUG: Raw API content (first 150 chars): {content[:150]}...")
             
             # Log a snippet of the content for debugging
             print(f"DEBUG: Retrieved content from API: {content[:200]}...")
