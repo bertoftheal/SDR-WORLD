@@ -49,7 +49,10 @@ class MetadataService:
   "industry_impact": "positive/challenging/disruptive/competitive",
   "executive_insights": "Comprehensive overview of leadership priorities, recent executive quotes, and strategic focus areas",
   "executive_header": "5-7 word title for leadership approach",
-  "leadership_style": "visionary/analytical/transformative/operational"
+  "leadership_style": "visionary/analytical/transformative/operational",
+  "competitor_landscape": "Comprehensive overview of top competitors, differentiating factors, and competitive risks",
+  "competitor_header": "5-7 word title for competitive positioning",
+  "competitive_position": "leader/challenger/disruptor/niche"
 }}
 
 Format your response as EXACTLY one valid JSON object. If any information is unknown, use "Unknown" as the value. Do NOT include any text outside the JSON object. Do NOT include markdown code formatting, just return the raw JSON.

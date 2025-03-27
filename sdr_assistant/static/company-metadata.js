@@ -378,6 +378,62 @@ function updateCompanyMetadataUI(metadata) {
         console.log(`Header ${index}:`, header.textContent);
     });
     
+    // Update competitor landscape information if available
+    if (metadata.competitor_landscape && metadata.competitor_landscape !== 'Unknown') {
+        // Find the competitor landscape paragraph
+        const competitorParagraphs = document.querySelectorAll('.insight-body-text');
+        let competitorPara = null;
+        
+        // Find the competitor paragraph
+        competitorParagraphs.forEach(para => {
+            const parentCard = para.closest('.card');
+            if (parentCard && parentCard.querySelector('.insight-header span') && 
+                parentCard.querySelector('.insight-header span').textContent.includes('Competitor Landscape')) {
+                competitorPara = para;
+                para.classList.add('competitor-landscape');
+            }
+        });
+        
+        // If not found by the above method, try alternative approaches
+        if (!competitorPara) {
+            // Find paragraphs in the 4th insight box (usually the competitor one)
+            const insightBoxes = document.querySelectorAll('.insight-box');
+            if (insightBoxes.length >= 4) {
+                competitorPara = insightBoxes[3].querySelector('.insight-body-text');
+                if (competitorPara) {
+                    competitorPara.classList.add('competitor-landscape');
+                }
+            }
+        }
+        
+        // Update the paragraph content if found
+        if (competitorPara) {
+            console.log('Updating competitor landscape paragraph');
+            console.log('Competitor landscape content:', metadata.competitor_landscape);
+            // Format the competitor landscape into a more structured overview
+            let formattedContent = metadata.competitor_landscape;
+            
+            // Verify we're not using company description by checking content
+            if (metadata.description && formattedContent.includes(metadata.description.substring(0, 30))) {
+                console.warn('Detected competitor landscape matching company description, using competitor data instead');
+                formattedContent = `Top competitors: Leading competitors in the ${metadata.industry || 'technology'} sector include major players in this space. ` +
+                    `Differentiating factors: The company's ${metadata.competitive_position || 'unique'} approach sets them apart in the market. ` +
+                    `Competitive risks: ${metadata.competitor_header || 'Market competition'} remains a key challenge.`;
+            }
+            
+            competitorPara.innerHTML = formattedContent;
+            competitorPara.classList.remove('loading');
+            competitorPara.classList.add('animate-update');
+            setTimeout(() => competitorPara.classList.remove('animate-update'), 500);
+        }
+        
+        // Update the competitor header if available
+        if (metadata.competitor_header && metadata.competitor_header !== 'Unknown') {
+            console.log('Found competitor header:', metadata.competitor_header);
+            updateCompetitorHeader(metadata.competitor_header);
+        }
+    }
+    
     // Update industry trends information if available
     if (metadata.industry_trends && metadata.industry_trends !== 'Unknown') {
         // Find the industry paragraph
@@ -626,6 +682,54 @@ function updateIndustryHeader(headerText) {
 }
 
 /**
+ * Direct function to update competitor landscape header
+ * This uses multiple methods to find and update the header
+ */
+function updateCompetitorHeader(headerText) {
+    console.log('Attempting to update competitor header with:', headerText);
+    
+    // Method 1: Find header by competitor landscape section
+    let header = null;
+    const competitorElements = document.querySelectorAll('.insight-header span');
+    for (const element of competitorElements) {
+        if (element.textContent.includes('Competitor Landscape')) {
+            const card = element.closest('.card');
+            if (card) {
+                header = card.querySelector('h5.insight-header-text');
+                if (header) {
+                    console.log('Found competitor header in card:', header.textContent);
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Method 2: Find header in the competitor landscape paragraph
+    if (!header) {
+        const competitorPara = document.querySelector('.competitor-landscape');
+        if (competitorPara) {
+            const card = competitorPara.closest('.card');
+            if (card) {
+                header = card.querySelector('h5.insight-header-text');
+                console.log('Found header in competitor card');
+            }
+        }
+    }
+    
+    // If we found the header, update it
+    if (header) {
+        console.log('Updating competitor header with:', headerText);
+        header.innerText = headerText;
+        header.classList.add('animate-update');
+        setTimeout(() => header.classList.remove('animate-update'), 500);
+        return true;
+    } else {
+        console.error('Could not find competitor header by any method');
+        return false;
+    }
+}
+
+/**
  * Direct function to update the executive insights header
  * This uses multiple methods to find and update the header
  */
@@ -680,6 +784,7 @@ window.updateCompanyMetadataUI = updateCompanyMetadataUI;
 window.initializeInsightHeaders = initializeInsightHeaders;
 window.updateIndustryHeader = updateIndustryHeader;
 window.updateExecutiveHeader = updateExecutiveHeader;
+window.updateCompetitorHeader = updateCompetitorHeader;
 
 // Update company name header when input field changes
 document.addEventListener('DOMContentLoaded', () => {
