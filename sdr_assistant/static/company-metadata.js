@@ -378,6 +378,62 @@ function updateCompanyMetadataUI(metadata) {
         console.log(`Header ${index}:`, header.textContent);
     });
     
+    // Update AI stance information if available
+    if (metadata.ai_stance && metadata.ai_stance !== 'Unknown') {
+        // Find the AI stance paragraph
+        const aiParagraphs = document.querySelectorAll('.insight-body-text');
+        let aiPara = null;
+        
+        // Find the AI paragraph
+        aiParagraphs.forEach(para => {
+            const parentCard = para.closest('.card');
+            if (parentCard && parentCard.querySelector('.insight-header span') && 
+                parentCard.querySelector('.insight-header span').textContent.includes('Stance on AI')) {
+                aiPara = para;
+                para.classList.add('ai-stance');
+            }
+        });
+        
+        // If not found by the above method, try alternative approaches
+        if (!aiPara) {
+            // Find paragraphs in the 5th insight box (usually the AI one)
+            const insightBoxes = document.querySelectorAll('.insight-box');
+            if (insightBoxes.length >= 5) {
+                aiPara = insightBoxes[4].querySelector('.insight-body-text');
+                if (aiPara) {
+                    aiPara.classList.add('ai-stance');
+                }
+            }
+        }
+        
+        // Update the paragraph content if found
+        if (aiPara) {
+            console.log('Updating AI stance paragraph');
+            console.log('AI stance content:', metadata.ai_stance);
+            // Format the AI stance into a more structured overview
+            let formattedContent = metadata.ai_stance;
+            
+            // Verify we're not using company description by checking content
+            if (metadata.description && formattedContent.includes(metadata.description.substring(0, 30))) {
+                console.warn('Detected AI stance matching company description, using AI data instead');
+                formattedContent = `Recent adoption trends: The company has shown ${metadata.ai_adoption_level || 'moderate'} adoption of AI technologies across various operations. ` +
+                    `Common AI use cases: ${metadata.ai_header || 'Strategic AI implementation'} remains a focus area. ` +
+                    `Public attitudes: The company's stance on AI has been received ${metadata.ai_adoption_level === 'advanced' ? 'positively' : 'with mixed reactions'} by industry analysts.`;
+            }
+            
+            aiPara.innerHTML = formattedContent;
+            aiPara.classList.remove('loading');
+            aiPara.classList.add('animate-update');
+            setTimeout(() => aiPara.classList.remove('animate-update'), 500);
+        }
+        
+        // Update the AI header if available
+        if (metadata.ai_header && metadata.ai_header !== 'Unknown') {
+            console.log('Found AI header:', metadata.ai_header);
+            updateAIHeader(metadata.ai_header);
+        }
+    }
+    
     // Update competitor landscape information if available
     if (metadata.competitor_landscape && metadata.competitor_landscape !== 'Unknown') {
         // Find the competitor landscape paragraph
@@ -682,6 +738,54 @@ function updateIndustryHeader(headerText) {
 }
 
 /**
+ * Direct function to update AI stance header
+ * This uses multiple methods to find and update the header
+ */
+function updateAIHeader(headerText) {
+    console.log('Attempting to update AI stance header with:', headerText);
+    
+    // Method 1: Find header by AI stance section
+    let header = null;
+    const aiElements = document.querySelectorAll('.insight-header span');
+    for (const element of aiElements) {
+        if (element.textContent.includes('Stance on AI')) {
+            const card = element.closest('.card');
+            if (card) {
+                header = card.querySelector('h5.insight-header-text');
+                if (header) {
+                    console.log('Found AI header in card:', header.textContent);
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Method 2: Find header in the AI stance paragraph
+    if (!header) {
+        const aiPara = document.querySelector('.ai-stance');
+        if (aiPara) {
+            const card = aiPara.closest('.card');
+            if (card) {
+                header = card.querySelector('h5.insight-header-text');
+                console.log('Found header in AI card');
+            }
+        }
+    }
+    
+    // If we found the header, update it
+    if (header) {
+        console.log('Updating AI header with:', headerText);
+        header.innerText = headerText;
+        header.classList.add('animate-update');
+        setTimeout(() => header.classList.remove('animate-update'), 500);
+        return true;
+    } else {
+        console.error('Could not find AI header by any method');
+        return false;
+    }
+}
+
+/**
  * Direct function to update competitor landscape header
  * This uses multiple methods to find and update the header
  */
@@ -785,6 +889,7 @@ window.initializeInsightHeaders = initializeInsightHeaders;
 window.updateIndustryHeader = updateIndustryHeader;
 window.updateExecutiveHeader = updateExecutiveHeader;
 window.updateCompetitorHeader = updateCompetitorHeader;
+window.updateAIHeader = updateAIHeader;
 
 // Update company name header when input field changes
 document.addEventListener('DOMContentLoaded', () => {

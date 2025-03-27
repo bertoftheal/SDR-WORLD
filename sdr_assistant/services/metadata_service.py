@@ -52,7 +52,10 @@ class MetadataService:
   "leadership_style": "visionary/analytical/transformative/operational",
   "competitor_landscape": "Comprehensive overview of top competitors, differentiating factors, and competitive risks",
   "competitor_header": "5-7 word title for competitive positioning",
-  "competitive_position": "leader/challenger/disruptor/niche"
+  "competitive_position": "leader/challenger/disruptor/niche",
+  "ai_stance": "Comprehensive overview of recent AI adoption trends, common AI use cases, public attitudes, and strategic investments",
+  "ai_header": "5-7 word title for AI strategy",
+  "ai_adoption_level": "advanced/moderate/early/minimal"
 }}
 
 Format your response as EXACTLY one valid JSON object. If any information is unknown, use "Unknown" as the value. Do NOT include any text outside the JSON object. Do NOT include markdown code formatting, just return the raw JSON.
