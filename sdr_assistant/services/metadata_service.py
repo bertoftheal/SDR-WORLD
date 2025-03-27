@@ -31,26 +31,28 @@ class MetadataService:
             return self._get_default_metadata()
         
         # Make Perplexity API request for structured metadata
-        prompt = f"""Provide ONLY the following factual information about {company_name} in JSON format:
-        - headquarters: Where is the company headquartered? (city, state/province, country)
-        - employees: How many employees does the company have? (use + if approximate)
-        - founded: What year was the company founded?
-        - market_cap: What is the company's market cap? (for public companies, use T for trillion, B for billion)
-        - description: In 2-3 sentences, what does the company do and what products/services does it offer?
-        - financial_performance: In one clear sentence, summarize the current financial performance or outlook of the company.
-        - performance_trend: Categorize the company's overall financial performance as one of: 'positive', 'neutral', or 'negative' based on recent financial results, stock performance, or financial outlook.
-        - product_portfolio: In one clear paragraph, describe the main products/services that generate the most revenue for the company.
-        - portfolio_header: Provide a concise 5-7 word title that summarizes the company's product portfolio strategy or focus.
-        - portfolio_status: Categorize the company's product portfolio as one of: 'innovation' (new cutting-edge products), 'growth' (expanding existing product lines), 'transition' (shifting focus between products), or 'established' (stable, mature product lines) based on their current product strategy.
-        - industry_trends: In one clear paragraph, describe the key industry trends that impact {company_name}'s business and market position.
-        - industry_header: Provide a concise 5-7 word title that captures the most significant industry trend affecting the company.
-        - industry_impact: Categorize the impact of current industry trends on the company as one of: 'positive' (beneficial), 'challenging' (requires adaptation), 'disruptive' (transformative), or 'competitive' (intensifying rivalry).
-        - executive_insights: In one paragraph, summarize key insights or statements shared by C-Suite executives (CEO, CFO, CTO, etc.) regarding the company's strategy, vision, or performance. Include recent notable quotes or viewpoints if available.
-        - executive_header: Provide a concise 5-7 word title that captures the essence of the company's executive leadership approach or vision.
-        - leadership_style: Categorize the company's leadership style as one of: 'visionary' (future-focused), 'analytical' (data-driven), 'transformative' (change-oriented), or 'operational' (execution-focused) based on executive communications and strategy.
-        
-        Format your response as valid JSON only, with NO explanations, citations, or other text.
-        Just return the JSON object with these 16 properties. If any information is unknown, use 'Unknown' as the value.
+        prompt = f"""Return the following information about {company_name} in STRICTLY VALID JSON format only:
+
+{{
+  "headquarters": "Where company is headquartered (city, state/province, country)",
+  "employees": "Number of employees (use + if approximate)",
+  "founded": "Year founded",
+  "market_cap": "Market cap (use T for trillion, B for billion)",
+  "description": "2-3 sentences on what company does",
+  "financial_performance": "One sentence on financial performance",
+  "performance_trend": "positive/neutral/negative",
+  "product_portfolio": "Main revenue-generating products/services",
+  "portfolio_header": "5-7 word title for product strategy",
+  "portfolio_status": "innovation/growth/transition/established",
+  "industry_trends": "Key industry trends affecting company",
+  "industry_header": "5-7 word title for main industry trend",
+  "industry_impact": "positive/challenging/disruptive/competitive",
+  "executive_insights": "C-Suite executives' views on strategy/vision",
+  "executive_header": "5-7 word title for leadership approach",
+  "leadership_style": "visionary/analytical/transformative/operational"
+}}
+
+Format your response as EXACTLY one valid JSON object. If any information is unknown, use "Unknown" as the value. Do NOT include any text outside the JSON object. Do NOT include markdown code formatting, just return the raw JSON.
         """
         
         try:
@@ -121,25 +123,125 @@ class MetadataService:
                         # Last resort: Try to manually fix common issues
                         try:
                             print("Attempting manual JSON repair...")
-                            # Try to fix the specific issue with missing commas at line 6
+                            json_lines = json_str.split('\n')
+                            
+                            # Get more debugging info
+                            if len(json_lines) >= 6:
+                                print(f"Line 5: {json_lines[5]}")
+                                if len(json_lines) > 6:
+                                    print(f"Line 6: {json_lines[6]}")
+                            
+                            # Apply multiple fixes
                             if e.lineno == 6 and e.colno <= 10:
-                                json_lines = json_str.split('\n')
                                 if len(json_lines) >= 6:
-                                    # Add missing comma at the end of line 5
+                                    # Fix 1: Add missing comma at the end of line 5
                                     json_lines[5] = json_lines[5].rstrip() + ','
-                                    fixed_json = '\n'.join(json_lines)
-                                    print(f"Manually fixed line 5, adding comma")
-                                    data = json.loads(fixed_json)
-                                    print("Successfully parsed JSON after manual fix")
+                                    print(f"Fixed line 5, adding comma: {json_lines[5]}")
                                     
-                                    # Ensure all required fields exist
-                                    for field in required_fields:
-                                        if field not in data:
-                                            data[field] = "Unknown"
-                                            
-                                    return data
+                                    # Fix 2: Ensure line 6 has proper property name format
+                                    if len(json_lines) > 6 and json_lines[6].strip() and not json_lines[6].strip().startswith('"'):
+                                        # Extract property name and add quotes
+                                        line6_parts = json_lines[6].strip().split(':',1)
+                                        if len(line6_parts) > 0:
+                                            property_name = line6_parts[0].strip()
+                                            remaining = ':' + line6_parts[1] if len(line6_parts) > 1 else ''
+                                            # Add quotes around property name
+                                            json_lines[6] = json_lines[6].replace(property_name, f'"{property_name}"', 1)
+                                            print(f"Fixed line 6, adding quotes: {json_lines[6]}")
+                                    
+                                    # Apply fixes and try parsing
+                                    fixed_json = '\n'.join(json_lines)
+                                    try:
+                                        data = json.loads(fixed_json)
+                                        print("Successfully parsed JSON after manual fixes")
+                                        
+                                        # Ensure all required fields exist
+                                        for field in required_fields:
+                                            if field not in data:
+                                                data[field] = "Unknown"
+                                                
+                                        return data
+                                    except json.JSONDecodeError as nested_error:
+                                        print(f"First manual fix failed: {str(nested_error)}")
+                                        
+                                        # More aggressive fix - create valid JSON with cleaned fields
+                                        print("Attempting more aggressive JSON repair...")
+                                        # Try to create clean JSON manually
+                                        clean_json = "{"
+                                        for line in json_lines[1:]:  # Skip first line opening brace
+                                            line = line.strip()
+                                            if line and not line.startswith('{') and not line.endswith('}'):
+                                                # Extract property and value
+                                                parts = line.split(':', 1)
+                                                if len(parts) == 2:
+                                                    prop = parts[0].strip().strip('"').strip()
+                                                    val = parts[1].strip().rstrip(',').strip()
+                                                    # Format as proper JSON
+                                                    clean_json += f'"{prop}": {val},'
+                                        # Remove last comma and close
+                                        clean_json = clean_json.rstrip(',') + "}"
+                                        print(f"Created clean JSON: {clean_json[:100]}...")
+                                        
+                                        try:
+                                            data = json.loads(clean_json)
+                                            print("Successfully parsed clean JSON")
+                                            return data
+                                        except Exception as e2:
+                                            print(f"Clean JSON failed: {str(e2)}")
                         except Exception as manual_fix_error:
                             print(f"Manual JSON fix failed: {str(manual_fix_error)}")
+                            
+                        # Ultimate fallback - use regex to extract fields one by one
+                        print("Using field-by-field extraction as last resort")
+                        # Create a default object with all required fields
+                        data = {
+                            "headquarters": "Unknown",
+                            "employees": "Unknown",
+                            "founded": "Unknown",
+                            "market_cap": "Unknown",
+                            "description": "Unknown",
+                            "financial_performance": "Unknown",
+                            "performance_trend": "neutral",
+                            "product_portfolio": "Unknown",
+                            "portfolio_header": "Diverse product and service offerings",
+                            "portfolio_status": "established",
+                            "industry_trends": "Unknown",
+                            "industry_header": "Evolving industry landscape and trends",
+                            "industry_impact": "challenging",
+                            "executive_insights": "Unknown",
+                            "executive_header": "Strategic leadership and vision", 
+                            "leadership_style": "visionary"
+                        }
+                        
+                        # Try to extract each field from the response text
+                        field_patterns = {
+                            "headquarters": r'"headquarters"\s*:\s*"([^"]+)"',
+                            "employees": r'"employees"\s*:\s*"([^"]+)"',
+                            "founded": r'"founded"\s*:\s*"([^"]+)"',
+                            "market_cap": r'"market[_\s]cap"\s*:\s*"([^"]+)"',
+                            "description": r'"description"\s*:\s*"([^"]+)"',
+                            "financial_performance": r'"financial[_\s]performance"\s*:\s*"([^"]+)"',
+                            "performance_trend": r'"performance[_\s]trend"\s*:\s*"([^"]+)"',
+                            "product_portfolio": r'"product[_\s]portfolio"\s*:\s*"([^"]+)"',
+                            "portfolio_header": r'"portfolio[_\s]header"\s*:\s*"([^"]+)"',
+                            "portfolio_status": r'"portfolio[_\s]status"\s*:\s*"([^"]+)"',
+                            "industry_trends": r'"industry[_\s]trends"\s*:\s*"([^"]+)"',
+                            "industry_header": r'"industry[_\s]header"\s*:\s*"([^"]+)"',
+                            "industry_impact": r'"industry[_\s]impact"\s*:\s*"([^"]+)"',
+                            "executive_insights": r'"executive[_\s]insights"\s*:\s*"([^"]+)"',
+                            "executive_header": r'"executive[_\s]header"\s*:\s*"([^"]+)"',
+                            "leadership_style": r'"leadership[_\s]style"\s*:\s*"([^"]+)"'
+                        }
+                        
+                        # For each field, try to find it in the response
+                        for field, pattern in field_patterns.items():
+                            match = re.search(pattern, response_text)
+                            if match:
+                                data[field] = match.group(1)
+                                print(f"Extracted {field}: {data[field][:30]}...")
+                        
+                        print("Field-by-field extraction complete")
+                        return data
             except Exception as e:
                 print(f"Error processing Perplexity response: {str(e)}")
                     
@@ -179,7 +281,7 @@ class MetadataService:
         data = {
             "model": "sonar",
             "messages": [
-                {"role": "system", "content": "You are a helpful assistant that provides accurate, structured data in JSON format."},
+                {"role": "system", "content": "You are a helpful assistant that provides EXACTLY formatted JSON. Always structure your ENTIRE response as a VALID JSON object. NEVER add explanations or markdown formatting. Use double quotes for ALL keys and string values. Include commas between ALL key-value pairs, but NO trailing commas. Proper JSON formatting is CRITICAL."},
                 {"role": "user", "content": prompt}
             ]
         }
