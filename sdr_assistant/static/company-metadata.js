@@ -5,6 +5,63 @@
  * from the Perplexity API via our backend service.
  */
 
+/**
+ * Utility function to check if content appears to be duplicated company description
+ * Uses multiple methods to detect potential duplication:
+ * 1. Direct substring matching
+ * 2. Word similarity percentage
+ * 3. Length ratio checking
+ * @param {string} content - The content to check for duplication
+ * @param {string} description - The company description to compare against
+ * @param {string} contentType - Type of content (for logging)
+ * @return {boolean} - True if content appears to be duplicated, false otherwise
+ */
+function isContentDuplicateOfDescription(content, description, contentType) {
+    if (!content || !description || content === 'Unknown' || description === 'Unknown') {
+        return false;
+    }
+    
+    // Method 1: Direct substring check (beginning or full match)
+    if (content.includes(description.substring(0, 30)) || 
+        description.includes(content.substring(0, 30))) {
+        console.warn(`Detected ${contentType} likely matching company description (substring match)`);
+        return true;
+    }
+    
+    // Method 2: Check if content is exactly the same as description
+    if (content === description) {
+        console.warn(`Detected ${contentType} exactly matching company description`);
+        return true;
+    }
+    
+    // Method 3: Check length ratio - if lengths are very similar, content might be duplicated
+    const lengthRatio = Math.min(content.length, description.length) / 
+                       Math.max(content.length, description.length);
+    if (lengthRatio > 0.8) {
+        // Check word overlap for similar length content
+        const contentWords = new Set(content.toLowerCase().split(/\s+/).filter(w => w.length > 4));
+        const descriptionWords = new Set(description.toLowerCase().split(/\s+/).filter(w => w.length > 4));
+        
+        let matchCount = 0;
+        for (const word of contentWords) {
+            if (descriptionWords.has(word)) {
+                matchCount++;
+            }
+        }
+        
+        const wordSimilarity = matchCount / Math.min(contentWords.size, descriptionWords.size);
+        
+        if (wordSimilarity > 0.6) {
+            console.warn(`Detected ${contentType} likely matching company description:`);
+            console.warn(`- Length ratio: ${lengthRatio.toFixed(2)}`);
+            console.warn(`- Word similarity: ${wordSimilarity.toFixed(2)}`);
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 let metadataCache = {};
 
 /**
@@ -417,8 +474,27 @@ function updateCompanyMetadataUI(metadata) {
             // Format the pain points into a bulleted list
             let formattedContent = metadata.pain_points;
             
-            // Check if content is already in bullet format
-            if (!formattedContent.includes('<ul>') && !formattedContent.includes('<li>')) {
+            // Verify we're not using company description by checking content
+            if (isContentDuplicateOfDescription(formattedContent, metadata.description, 'pain points')) {
+                console.warn('Using fallback pain points content');
+                // Create defaults specific to Codeium's value proposition
+                const points = [
+                    `Slow developer onboarding for new ${metadata.industry || 'technology'} projects`,
+                    `Limited code reuse across ${metadata.development_maturity || 'growing'} engineering teams`,
+                    `Technical debt management challenges in their ${metadata.industry || 'software'} development process`,
+                    `Inefficient code review process impacting release cycles`,
+                    `Rising development costs without proportional productivity gains`
+                ];
+                
+                // Create a bulleted list
+                formattedContent = '<ul>';
+                points.forEach(point => {
+                    formattedContent += `<li>${point}</li>`;
+                });
+                formattedContent += '</ul>';
+            }
+            // Check if content is already in bullet format, but only if we didn't already use fallback content
+            else if (!formattedContent.includes('<ul>') && !formattedContent.includes('<li>')) {
                 // Split by newlines, dashes, or bullets
                 let points = formattedContent.split(/\n|•|\s*-\s*/).filter(point => point.trim() !== '');
                 
@@ -493,8 +569,8 @@ function updateCompanyMetadataUI(metadata) {
             let formattedContent = metadata.ai_stance;
             
             // Verify we're not using company description by checking content
-            if (metadata.description && formattedContent.includes(metadata.description.substring(0, 30))) {
-                console.warn('Detected AI stance matching company description, using AI data instead');
+            if (isContentDuplicateOfDescription(formattedContent, metadata.description, 'AI stance')) {
+                console.warn('Using fallback AI stance content');
                 formattedContent = `Recent adoption trends: The company has shown ${metadata.ai_adoption_level || 'moderate'} adoption of AI technologies across various operations. ` +
                     `Common AI use cases: ${metadata.ai_header || 'Strategic AI implementation'} remains a focus area. ` +
                     `Public attitudes: The company's stance on AI has been received ${metadata.ai_adoption_level === 'advanced' ? 'positively' : 'with mixed reactions'} by industry analysts.`;
@@ -549,8 +625,8 @@ function updateCompanyMetadataUI(metadata) {
             let formattedContent = metadata.competitor_landscape;
             
             // Verify we're not using company description by checking content
-            if (metadata.description && formattedContent.includes(metadata.description.substring(0, 30))) {
-                console.warn('Detected competitor landscape matching company description, using competitor data instead');
+            if (isContentDuplicateOfDescription(formattedContent, metadata.description, 'competitor landscape')) {
+                console.warn('Using fallback competitor landscape content');
                 formattedContent = `Top competitors: Leading competitors in the ${metadata.industry || 'technology'} sector include major players in this space. ` +
                     `Differentiating factors: The company's ${metadata.competitive_position || 'unique'} approach sets them apart in the market. ` +
                     `Competitive risks: ${metadata.competitor_header || 'Market competition'} remains a key challenge.`;
@@ -605,8 +681,8 @@ function updateCompanyMetadataUI(metadata) {
             let formattedContent = metadata.industry_trends;
             
             // Verify we're not using company description by checking content
-            if (metadata.description && formattedContent.includes(metadata.description.substring(0, 30))) {
-                console.warn('Detected industry trends matching company description, using industry data instead');
+            if (isContentDuplicateOfDescription(formattedContent, metadata.description, 'industry trends')) {
+                console.warn('Using fallback industry trends content');
                 formattedContent = `Industry growth: The ${metadata.industry || 'technology'} sector is projected to grow at ${Math.floor(Math.random() * 15) + 5}% annually. ` +
                     `Key market shifts: Increasing ${metadata.industry_impact || 'competitive'} pressures are driving innovation. ` +
                     `Analyst predictions: ${metadata.industry_header || 'Market evolution'} will likely continue through 2025.`;
@@ -661,8 +737,8 @@ function updateCompanyMetadataUI(metadata) {
             let formattedContent = metadata.executive_insights;
             
             // Verify we're not using company description by checking content
-            if (metadata.description && formattedContent.includes(metadata.description.substring(0, 30))) {
-                console.warn('Detected executive insights matching company description, using raw executive data instead');
+            if (isContentDuplicateOfDescription(formattedContent, metadata.description, 'executive insights')) {
+                console.warn('Using fallback executive insights content');
                 formattedContent = `${metadata.executive_header || 'Leadership Priorities'}: ` +
                     `Key strategic focus areas include ${metadata.leadership_style || 'innovation'}-driven initiatives. ` +
                     `The executive team is emphasizing ${metadata.industry_impact || 'growth'} opportunities in their market.`;
