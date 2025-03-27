@@ -106,5 +106,5 @@ def api_library():
     return jsonify(library_items)
 
 if __name__ == '__main__':
-    print("Starting simple Flask server on http://127.0.0.1:5008")
-    app.run(debug=True, port=5008)
+    print("Starting simple Flask server on http://127.0.0.1:5005")
+    app.run(debug=True, port=5005)

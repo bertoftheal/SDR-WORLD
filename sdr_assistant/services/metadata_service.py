@@ -39,7 +39,7 @@ class MetadataService:
   "founded": "Year founded",
   "market_cap": "Market cap (use T for trillion, B for billion)",
   "description": "2-3 sentences on what company does",
-  "financial_performance": "One sentence on financial performance",
+  "financial_performance": "Comprehensive overview including Revenue, growth rate, funding rounds, and market valuation",
   "performance_trend": "positive/neutral/negative",
   "product_portfolio": "Main revenue-generating products/services",
   "portfolio_header": "5-7 word title for product strategy",
@@ -47,7 +47,7 @@ class MetadataService:
   "industry_trends": "Key industry trends affecting company",
   "industry_header": "5-7 word title for main industry trend",
   "industry_impact": "positive/challenging/disruptive/competitive",
-  "executive_insights": "C-Suite executives' views on strategy/vision",
+  "executive_insights": "Comprehensive overview of leadership priorities, recent executive quotes, and strategic focus areas",
   "executive_header": "5-7 word title for leadership approach",
   "leadership_style": "visionary/analytical/transformative/operational"
 }}
