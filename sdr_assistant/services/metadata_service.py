@@ -74,23 +74,35 @@ class MetadataService:
                             data[field] = "Unknown"
                             
                     return data
-                except json.JSONDecodeError:
+                except json.JSONDecodeError as e:
                     # If direct loading fails, try to extract JSON using regex
-                    print("Direct JSON parsing failed, trying regex extraction")
+                    print(f"Direct JSON parsing failed: {str(e)}, trying regex extraction")
                 
                 # Try to find JSON within the response using regex
                 json_match = re.search(r'\{[\s\S]*?\}', response_text)
                 if json_match:
                     json_str = json_match.group(0)
+                    
+                    # Print the extracted JSON for debugging
+                    print(f"Extracted JSON string (first 100 chars): {json_str[:100]}...")
+                    
                     try:
-                        # Print the extracted JSON for debugging
-                        print(f"Extracted JSON string (first 100 chars): {json_str[:100]}...")
+                        # Advanced JSON cleaning
+                        # 1. Fix missing commas between key-value pairs
+                        json_str = re.sub(r'("[^"]+":\s*"[^"]+")\s*("[^"]+":)', r'\1,\2', json_str)
                         
-                        # Clean up common JSON formatting issues
-                        json_str = json_str.replace("''", "'")
-                        json_str = re.sub(r'([{,])\s*([\w_]+):', r'\1"\2":', json_str)  # Ensure keys are quoted
-                        json_str = re.sub(r':([^\s",{}\[\]]+)([,}])', r':"\1"\2', json_str)  # Quote unquoted values
+                        # 2. Fix missing quotes around keys
+                        json_str = re.sub(r'([{,])\s*([\w_]+):', r'\1"\2":', json_str)
                         
+                        # 3. Fix missing quotes around string values
+                        json_str = re.sub(r':\s*([^\s",{}\[\]0-9][^,}]*?)([,}])', r':"\1"\2', json_str)
+                        
+                        # 4. Replace any single quotes with double quotes
+                        json_str = json_str.replace("'", "\"")
+                        
+                        print(f"Cleaned JSON (first 100 chars): {json_str[:100]}...")
+                        
+                        # Try to parse the cleaned JSON
                         data = json.loads(json_str)
                         print("Successfully parsed JSON after cleanup")
                         
@@ -102,8 +114,32 @@ class MetadataService:
                                 
                         return data
                     except json.JSONDecodeError as e:
-                        print(f"Failed to parse JSON from Perplexity response: {str(e)}")
-                        print(f"Problematic JSON (first 100 chars): {json_str[:100]}...")
+                        print(f"Failed to parse JSON after cleanup: {str(e)}")
+                        print(f"Problematic JSON position: {e.pos}, line: {e.lineno}, col: {e.colno}")
+                        print(f"JSON substring at error: {json_str[max(0, e.pos-20):min(len(json_str), e.pos+20)]}")
+                        
+                        # Last resort: Try to manually fix common issues
+                        try:
+                            print("Attempting manual JSON repair...")
+                            # Try to fix the specific issue with missing commas at line 6
+                            if e.lineno == 6 and e.colno <= 10:
+                                json_lines = json_str.split('\n')
+                                if len(json_lines) >= 6:
+                                    # Add missing comma at the end of line 5
+                                    json_lines[5] = json_lines[5].rstrip() + ','
+                                    fixed_json = '\n'.join(json_lines)
+                                    print(f"Manually fixed line 5, adding comma")
+                                    data = json.loads(fixed_json)
+                                    print("Successfully parsed JSON after manual fix")
+                                    
+                                    # Ensure all required fields exist
+                                    for field in required_fields:
+                                        if field not in data:
+                                            data[field] = "Unknown"
+                                            
+                                    return data
+                        except Exception as manual_fix_error:
+                            print(f"Manual JSON fix failed: {str(manual_fix_error)}")
             except Exception as e:
                 print(f"Error processing Perplexity response: {str(e)}")
                     
