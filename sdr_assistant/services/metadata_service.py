@@ -44,7 +44,7 @@ class MetadataService:
   "product_portfolio": "Main revenue-generating products/services",
   "portfolio_header": "5-7 word title for product strategy",
   "portfolio_status": "innovation/growth/transition/established",
-  "industry_trends": "Key industry trends affecting company",
+  "industry_trends": "Comprehensive industry overview including growth statistics, key market shifts, and analyst predictions",
   "industry_header": "5-7 word title for main industry trend",
   "industry_impact": "positive/challenging/disruptive/competitive",
   "executive_insights": "Comprehensive overview of leadership priorities, recent executive quotes, and strategic focus areas",
