@@ -1,0 +1,237 @@
+/* Sidebar Navigation Styles */
+:root {
+    --sidebar-collapsed-width: 70px;
+    --sidebar-expanded-width: 240px;
+    --sidebar-transition: 0.3s ease-in-out;
+    --sidebar-bg-gradient-start: #F1F2F4;
+    --sidebar-bg-gradient-end: #E4E8F1;
+    --sidebar-active-color: #B8BFCE;
+    --sidebar-text-color: #333;
+    --sidebar-icon-color: #555;
+    --sidebar-shadow: 0 10px 30px rgba(162, 168, 191, 0.2);
+    --sidebar-border-radius: 20px;
+}
+
+.sidebar-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    display: flex;
+}
+
+.sidebar {
+    width: var(--sidebar-collapsed-width);
+    height: 100%;
+    background: linear-gradient(to bottom, var(--sidebar-bg-gradient-start), var(--sidebar-bg-gradient-end));
+    border-radius: 0 var(--sidebar-border-radius) var(--sidebar-border-radius) 0;
+    box-shadow: var(--sidebar-shadow);
+    transition: width var(--sidebar-transition);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.sidebar:hover {
+    width: var(--sidebar-expanded-width);
+}
+
+/* User Profile Section */
+.sidebar-profile {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    margin-bottom: 30px;
+}
+
+.sidebar-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #06b6a2;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.sidebar-user-info {
+    margin-left: 15px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--sidebar-transition);
+}
+
+.sidebar:hover .sidebar-user-info {
+    opacity: 1;
+}
+
+.sidebar-username {
+    font-family: 'Campton', 'Avenir Next', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--sidebar-text-color);
+}
+
+.sidebar-role {
+    font-family: 'Campton', 'Avenir Next', sans-serif;
+    font-weight: 300;
+    font-size: 12px;
+    color: #777;
+}
+
+/* Navigation Menu */
+.sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: var(--sidebar-icon-color);
+    text-decoration: none;
+}
+
+.nav-item:hover {
+    background-color: rgba(184, 191, 206, 0.1);
+}
+
+.nav-item.active {
+    background-color: var(--sidebar-active-color);
+    color: white;
+}
+
+.nav-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.nav-label {
+    margin-left: 15px;
+    font-family: 'Campton', 'Avenir Next', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--sidebar-transition);
+}
+
+.sidebar:hover .nav-label {
+    opacity: 1;
+}
+
+.nav-item.active .nav-label {
+    font-family: 'Avenir Next', 'Campton', sans-serif;
+    font-weight: 500;
+}
+
+/* Create Task Button */
+.create-task-container {
+    padding: 0 10px;
+    margin-top: auto;
+    margin-bottom: 20px;
+}
+
+.create-task-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #06b6a2;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.create-task-btn:hover {
+    background-color: #059283;
+}
+
+.create-task-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.create-task-label {
+    margin-left: 15px;
+    font-family: 'Avenir Next', 'Campton', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--sidebar-transition);
+}
+
+.sidebar:hover .create-task-label {
+    opacity: 1;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+    }
+    
+    .sidebar.open {
+        width: var(--sidebar-expanded-width);
+    }
+    
+    .sidebar-toggle {
+        display: flex;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1001;
+        background-color: white;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+    }
+}
+
+/* Animation for menu items */
+.nav-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-item::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 0;
+    background-color: var(--sidebar-active-color);
+    transition: width 0.3s ease;
+}
+
+.nav-item:hover::after {
+    width: 100%;
+}
+
+.nav-item.active::after {
+    width: 100%;
+    background-color: white;
+}
