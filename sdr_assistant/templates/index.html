@@ -19,6 +19,7 @@
         }
     </style>
     <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/elegant-ui.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -107,7 +108,7 @@
                     <div class="col-lg-6">
                         <div class="contact-section">
                             <div class="section-label badge mb-3 px-3 py-2" style="background-color: #06b6a2;">SALES RESEARCH</div>
-                            <h1 class="display-4 fw-bold mb-4">Discover insights for meaningful conversations</h1>
+                            <h1 class="display-4 fw-bold mb-4">Research with the Click of a Button</h1>
                             <p class="lead mb-4 text-muted">Generate AI-powered company research to engage prospects with personalized, data-driven talk tracks.</p>
                             
                             <!-- Account Search Area -->
@@ -115,14 +116,14 @@
                                 <div class="form-group mb-4">
                                     <label for="accountSelect" class="fw-bold text-uppercase small mb-2"><i class="fas fa-building me-2"></i>COMPANY NAME</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control form-control-lg" id="accountSelect" placeholder="Enter company name (e.g., Microsoft, Apple)" oninput="updateLogoImage(this.value)">
+                                        <input type="text" class="form-control form-control-lg" id="accountSelect" placeholder="Enter company name" oninput="updateLogoImage(this.value)">
                                         <div class="input-group-text bg-light">
                                             <i class="fas fa-search"></i>
                                         </div>
                                     </div>
                                 </div>
-                                <button class="btn btn-lg w-100 generate-btn" id="generateBtn" style="background-color: #06b6a2; color: white;">
-                                    <i class="fas fa-search me-2"></i>GENERATE RESEARCH
+                                <button class="btn btn-lg generate-btn" id="generateBtn" style="background-color: #06b6a2; color: white;">
+                                    <i class="fas fa-search me-2"></i>GENERATE
                                 </button>
                             </div>
                         </div>
@@ -132,7 +133,7 @@
                             <div class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger p-3 fw-bold" style="z-index: 1">
                                 <i class="fas fa-bolt me-1"></i> AI POWERED
                             </div>
-                            <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" alt="Research Team Collaborating" class="img-fluid rounded shadow" id="companyLogo">
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" alt="Business Analytics Dashboard" class="img-fluid rounded shadow" id="companyLogo">
                             <div class="image-caption badge bg-dark bg-opacity-75 text-white py-2 px-3 position-absolute bottom-0 end-0 m-3 rounded-pill">
                                 <i class="fas fa-robot me-2"></i> DIGITAL RESEARCH BASED AI BUILT-IN
                             </div>
@@ -604,7 +605,7 @@
     <!-- Simple inline script for updating company logo -->
     <script>
         // Default hero image URL
-        const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80';
+        const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80';
         
         // Store original image URL once
         let originalImageSrc = null;
