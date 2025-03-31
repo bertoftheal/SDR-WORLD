@@ -1,0 +1,387 @@
+/* Sidebar Navigation Styles */
+:root {
+    --sidebar-width: 250px;
+    --sidebar-collapsed-width: 60px;
+    --sidebar-transition: 0.3s ease;
+    --sidebar-bg: linear-gradient(180deg, #F2F4F8 0%, #E8ECF4 100%);
+    --sidebar-hover-bg: rgba(6, 182, 162, 0.1);
+    --sidebar-active-bg: rgba(6, 182, 162, 0.1);
+    --sidebar-active-border: #06b6a2;
+    --sidebar-text: #495057;
+    --sidebar-active-text: #06b6a2;
+    --sidebar-icon-size: 18px;
+    --sidebar-profile-size: 36px;
+    --main-content-margin: 250px;
+    --main-content-collapsed-margin: 40px;
+}
+
+/* Sidebar Container */
+.sidebar-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    width: 40px;
+    height: 40px;
+    background-color: #FFFFFF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.3s ease;
+}
+
+/* Desktop Toggle Button */
+.sidebar-collapse-btn {
+    display: none; /* Hide the collapse button */
+}
+
+.sidebar-toggle:hover {
+    background-color: #F8F9FA;
+}
+
+.sidebar-toggle i {
+    color: #495057;
+    font-size: 18px;
+}
+
+/* Sidebar */
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100%;
+    background: var(--sidebar-bg);
+    transition: width var(--sidebar-transition);
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Collapsed Sidebar */
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+/* User Profile Section */
+.sidebar-profile {
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 30px;
+}
+
+.collapsed .sidebar-profile {
+    padding: 0 10px;
+    justify-content: center;
+}
+
+.sidebar-avatar {
+    min-width: var(--sidebar-profile-size);
+    height: var(--sidebar-profile-size);
+    background-color: #06b6a2;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+}
+
+.sidebar-avatar i {
+    font-size: 18px;
+}
+
+.sidebar-user-info {
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+.collapsed .sidebar-user-info {
+    opacity: 0;
+    width: 0;
+    margin: 0;
+}
+
+.sidebar-username {
+    font-family: 'Campton', 'Avenir Next', 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: #333;
+}
+
+.sidebar-role {
+    font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+    font-size: 11px;
+    color: #6c757d;
+}
+
+/* Navigation Menu */
+.sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+}
+
+.collapsed .sidebar-nav {
+    align-items: center;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: var(--sidebar-text);
+    position: relative;
+    margin-bottom: 4px;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+}
+
+.collapsed .nav-item {
+    padding: 12px 0;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+}
+
+.nav-item:hover {
+    background-color: var(--sidebar-hover-bg);
+}
+
+.nav-item.active {
+    background-color: rgba(6, 182, 162, 0.1);
+    color: var(--sidebar-active-text);
+    border-left: 3px solid var(--sidebar-active-border);
+    border-radius: 8px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.collapsed .nav-item.active {
+    border-left: none;
+    border-radius: 0;
+    margin-left: 0;
+    margin-right: 0;
+    background-color: rgba(6, 182, 162, 0.2);
+    position: relative;
+}
+
+.collapsed .nav-item.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background-color: var(--sidebar-active-border);
+}
+
+.nav-icon {
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin-right: 12px;
+}
+
+.collapsed .nav-icon {
+    margin-right: 0;
+}
+
+.nav-icon i {
+    font-size: var(--sidebar-icon-size);
+}
+
+.nav-label {
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+    font-family: 'Campton', 'Avenir Next', 'Segoe UI', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.collapsed .nav-label {
+    opacity: 0;
+    width: 0;
+    margin: 0;
+}
+
+/* Create Task Button */
+.create-task-container {
+    padding: 0 20px;
+}
+
+.collapsed .create-task-container {
+    padding: 0 10px;
+}
+
+.create-task-btn {
+    display: flex;
+    align-items: center;
+    background-color: #06b6a2;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 90%;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.collapsed .create-task-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 10px;
+    margin: 10px auto;
+}
+
+.create-task-btn:hover {
+    background-color: #059283;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(6, 182, 162, 0.3);
+}
+
+.create-task-icon {
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+}
+
+.create-task-label {
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+    font-weight: 500;
+    margin-left: 8px;
+    font-size: 13px;
+}
+
+.collapsed .create-task-label {
+    opacity: 0;
+    width: 0;
+    margin: 0;
+}
+
+/* Main Content Styles */
+.main-content {
+    margin-left: var(--main-content-margin);
+    transition: margin-left var(--sidebar-transition);
+    width: calc(100% - var(--main-content-margin));
+    position: relative;
+    padding-left: 0;
+    padding-right: 0;
+    max-width: 100%;
+}
+
+/* Header Styles */
+.main-content header {
+    margin-left: calc(-1 * var(--main-content-margin));
+    width: 100vw;
+    padding-left: calc(var(--main-content-margin) + 15px);
+    box-sizing: border-box;
+}
+
+.sidebar.collapsed ~ .main-content header {
+    margin-left: calc(-1 * var(--main-content-collapsed-margin));
+    padding-left: calc(var(--main-content-collapsed-margin) + 15px);
+}
+
+.sidebar.collapsed ~ .main-content {
+    margin-left: var(--main-content-collapsed-margin);
+    width: calc(100% - var(--main-content-collapsed-margin));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* When sidebar is collapsed, center the content better */
+.sidebar.collapsed ~ .main-content {
+    margin-left: var(--sidebar-collapsed-width);
+    width: calc(100% - var(--sidebar-collapsed-width));
+    display: flex;
+    justify-content: center;
+}
+
+.sidebar.collapsed ~ .main-content .container-fluid {
+    max-width: 1200px;
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+}
+
+/* Reduce container padding to use more space */
+.main-content .container-fluid {
+    padding-left: 15px;
+    padding-right: 15px;
+    max-width: 1200px;
+    width: 100%;
+}
+
+/* Adjust content to use more horizontal space */
+.main-content .row {
+    margin-left: -5px;
+    margin-right: -5px;
+    width: 100%;
+}
+
+/* Adjust column spacing */
+.main-content .col-lg-6,
+.main-content .col-md-6,
+.main-content .col-sm-12 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* Responsive Styles */
+@media (min-width: 768px) {
+    .sidebar-toggle {
+        display: none;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .sidebar {
+        width: 0;
+        padding: 20px 0;
+    }
+    
+    .sidebar.active {
+        width: var(--sidebar-width);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+}
