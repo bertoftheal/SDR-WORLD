@@ -179,44 +179,44 @@ function updateCompanyDetails() {
                 financial: {
                     title: 'Explosive growth in AI compute demand',
                     content: 'NVIDIA has seen unprecedented revenue growth driven by demand for AI accelerators, with data center revenue quadrupling year-over-year as enterprises and cloud providers race to build AI infrastructure.',
-                    trend: 'positive'
+                    trend: 'positive',
                 },
                 product: {
                     title: 'Expanding beyond GPUs to full-stack AI solutions',
                     content: 'NVIDIA has successfully transformed from a GPU manufacturer to a comprehensive AI platform company with hardware, software frameworks like CUDA and TensorRT, and enterprise solutions through NVIDIA AI Enterprise.',
-                    trend: 'positive'
+                    trend: 'positive',
                 },
                 leadership: {
                     title: 'Visionary leadership in AI acceleration',
-                    content: 'Under CEO Jensen Huang's direction, NVIDIA anticipated the AI revolution and positioned its technology at the center of the AI ecosystem years before competitors, creating substantial competitive advantages.',
-                    trend: 'positive'
+                    content: 'Under CEO Jensen Huang\'s direction, NVIDIA anticipated the AI revolution and positioned its technology at the center of the AI ecosystem years before competitors, creating substantial competitive advantages.',
+                    trend: 'positive',
                 }
             },
             industryInsights: [
                 {
                     title: 'Generative AI Infrastructure Boom',
                     content: 'The market for specialized AI infrastructure is experiencing exponential growth, with enterprises expected to increase AI infrastructure spending by over 35% annually through 2027.',
-                    type: 'Market Shift'
+                    type: 'Market Shift',
                 },
                 {
                     title: 'AI Sovereignty Investments',
                     content: 'Countries and large enterprises are investing in sovereign AI capabilities, driving demand for on-premises AI infrastructure that can deliver cloud-like capabilities with greater control and security.',
-                    type: 'Trend'
+                    type: 'Trend',
                 }
             ],
             futureInsights: [
                 {
                     title: 'AI PC Revolution',
                     content: 'The emergence of AI PCs with dedicated neural processing units will create a new computing paradigm, with NVIDIA positioned to provide both consumer and workstation solutions for this transition.',
-                    type: 'Innovation'
+                    type: 'Innovation',
                 },
                 {
                     title: 'Autonomous Systems Integration',
-                    content: 'NVIDIA's end-to-end autonomous vehicle and robotics platforms are positioned to accelerate the adoption of autonomous systems across multiple industries beyond automotive, including logistics, manufacturing, and healthcare.',
-                    type: 'Opportunity'
+                    content: 'NVIDIA\'s end-to-end autonomous vehicle and robotics platforms are positioned to accelerate the adoption of autonomous systems across multiple industries beyond automotive, including logistics, manufacturing, and healthcare.',
+                    type: 'Opportunity',
                 }
             ],
-            talkTrack: "I've been following NVIDIA's remarkable growth as the AI revolution accelerates, and I'm impressed by how you've positioned yourselves at the center of the AI ecosystem. Many of our clients are implementing NVIDIA-powered AI infrastructure but facing challenges in optimizing these investments while ensuring proper governance and security controls.\n\nWe've developed solutions that complement NVIDIA's technology stack by providing enhanced visibility, cost optimization, and security for AI workloads. Our platform helps enterprises maximize their GPU utilization while ensuring that sensitive data used in AI model training remains protected.\n\nWould it make sense to connect with your enterprise AI team to explore how we might help you accelerate AI adoption among your customers while addressing their governance and operational challenges?"
+            talkTrack: "I've been following NVIDIA\'s remarkable growth as the AI revolution accelerates, and I'm impressed by how you've positioned yourselves at the center of the AI ecosystem. Many of our clients are implementing NVIDIA-powered AI infrastructure but facing challenges in optimizing these investments while ensuring proper governance and security controls.\n\nWe've developed solutions that complement NVIDIA\'s technology stack by providing enhanced visibility, cost optimization, and security for AI workloads. Our platform helps enterprises maximize their GPU utilization while ensuring that sensitive data used in AI model training remains protected.\n\nWould it make sense to connect with your enterprise AI team to explore how we might help you accelerate AI adoption among your customers while addressing their governance and operational challenges?"
         },
         'cisco': {
             name: 'Cisco Systems',
@@ -230,41 +230,41 @@ function updateCompanyDetails() {
                 financial: {
                     title: 'Strong recurring revenue growth',
                     content: 'Cisco has been successfully transitioning to a subscription-based model, with software and services now representing over 50% of their revenue, providing more stable and predictable income streams.',
-                    trend: 'positive'
+                    trend: 'positive',
                 },
                 product: {
                     title: 'Focus on cloud security and networking',
                     content: 'Cisco has been expanding its portfolio beyond hardware to include cloud security, SD-WAN, and network management software, aligning with enterprise digital transformation initiatives.',
-                    trend: 'positive'
+                    trend: 'positive',
                 },
                 leadership: {
                     title: 'Strong leadership in network transformation',
                     content: 'Under CEO Chuck Robbins, Cisco has accelerated its shift to software and services while maintaining leadership in core networking hardware markets.',
-                    trend: 'positive'
+                    trend: 'positive',
                 }
             },
             industryInsights: [
                 {
                     title: 'Network Security Consolidation',
                     content: 'The industry is moving toward unified security platforms that integrate networking and security functions, reducing complexity and improving threat response times.',
-                    type: 'Market Shift'
+                    type: 'Market Shift',
                 },
                 {
                     title: 'Software-Defined Networking Growth',
                     content: 'SDN and intent-based networking are replacing traditional hardware-centric approaches, with IDC predicting that 60% of enterprises will implement fully software-defined networks by 2025.',
-                    type: 'Trend'
+                    type: 'Trend',
                 }
             ],
             futureInsights: [
                 {
                     title: 'AI Network Management',
                     content: 'AI-driven network management and automation will reduce manual configuration by 70%, decreasing deployment time and human error while improving security response.',
-                    type: 'Innovation'
+                    type: 'Innovation',
                 },
                 {
                     title: 'Edge Computing Integration',
                     content: 'By 2026, over 75% of enterprise data will be processed at the edge, creating demand for secure, high-performance networking solutions that extend beyond traditional data centers.',
-                    type: 'Trend'
+                    type: 'Trend',
                 }
             ],
             talkTrack: "I noticed Cisco is making significant investments in transitioning from hardware to subscription-based services. Many of our customers in similar positions have found that this transition creates unique challenges around maintaining network performance while implementing new security architectures, especially in hybrid environments.\n\nWe've developed specialized solutions that help companies like Cisco manage this transition smoothly, ensuring that your network performance and security posture remain strong while you focus on growing your subscription business. Our platform integrates directly with Cisco's security and networking tools, creating a seamless experience for your team.\n\nWould it make sense to schedule a brief call with your network operations team to explore how we might help you accelerate this transition while maintaining enterprise-grade performance?"
@@ -280,45 +280,45 @@ function updateCompanyDetails() {
             insights: {
                 financial: {
                     title: 'Cloud revenue dominance',
-                    content: 'Microsoft Azure continues to show exceptional growth, with cloud services now representing over 40% of total revenue and growing at 25% annually, solidifying Microsoft's position as a leader in enterprise cloud services.',
-                    trend: 'positive'
+                    content: 'Microsoft Azure continues to show exceptional growth, with cloud services now representing over 40% of total revenue and growing at 25% annually, solidifying Microsoft\'s position as a leader in enterprise cloud services.',
+                    trend: 'positive',
                 },
                 product: {
                     title: 'AI integration across product lines',
                     content: 'Microsoft is heavily investing in AI capabilities across its entire product portfolio, from GitHub Copilot and Microsoft 365 Copilot to Azure OpenAI Service, creating a comprehensive AI ecosystem.',
-                    trend: 'positive'
+                    trend: 'positive',
                 },
                 leadership: {
                     title: 'Strategic acquisitions strengthening position',
-                    content: 'Under Satya Nadella's leadership, Microsoft has made strategic acquisitions like GitHub, Nuance, and Activision Blizzard to expand its reach into developer tools, healthcare AI, and gaming markets.',
-                    trend: 'positive'
+                    content: 'Under Satya Nadella\'s leadership, Microsoft has made strategic acquisitions like GitHub, Nuance, and Activision Blizzard to expand its reach into developer tools, healthcare AI, and gaming markets.',
+                    trend: 'positive',
                 }
             },
             industryInsights: [
                 {
                     title: 'AI Development Democratization',
                     content: 'Enterprise AI adoption is accelerating with easier-to-use development tools, with Gartner predicting that 75% of enterprises will shift from piloting to operationalizing AI by 2026.',
-                    type: 'Market Shift'
+                    type: 'Market Shift',
                 },
                 {
                     title: 'Low-Code/No-Code Growth',
                     content: 'The low-code development platform market is growing at over 25% annually, enabling business users to create applications with minimal traditional coding knowledge.',
-                    type: 'Trend'
+                    type: 'Trend',
                 }
             ],
             futureInsights: [
                 {
                     title: 'Quantum Computing Commercialization',
-                    content: 'Microsoft's Azure Quantum is positioning the company to be a leader as quantum computing becomes commercially viable for specific use cases over the next decade.',
-                    type: 'Innovation'
+                    content: 'Microsoft\'s Azure Quantum is positioning the company to be a leader as quantum computing becomes commercially viable for specific use cases over the next decade.',
+                    type: 'Innovation',
                 },
                 {
                     title: 'Metaverse Enterprise Applications',
                     content: 'Microsoft Mesh and mixed reality tools are creating new enterprise collaboration models that will redefine remote work and training capabilities by 2027.',
-                    type: 'Opportunity'
+                    type: 'Opportunity',
                 }
             ],
-            talkTrack: "I've been following Microsoft's impressive cloud growth and AI integration strategy, and I noticed your organization is heavily invested in the Microsoft ecosystem. Many of our clients are looking to maximize their Microsoft investments while ensuring they have the right governance and security controls in place.\n\nWe've developed a platform that enhances Microsoft's native tools by providing additional visibility and control across hybrid environments, which is especially valuable as you adopt more AI and cloud services. Our solution seamlessly integrates with Azure, Microsoft 365, and your existing security stack.\n\nWould it be valuable to schedule a brief discussion with your cloud strategy team to explore how we might help you accelerate your Microsoft-focused initiatives while ensuring proper governance?"
+            talkTrack: "I've been following Microsoft\'s impressive cloud growth and AI integration strategy, and I noticed your organization is heavily invested in the Microsoft ecosystem. Many of our clients are looking to maximize their Microsoft investments while ensuring they have the right governance and security controls in place.\n\nWe've developed a platform that enhances Microsoft\'s native tools by providing additional visibility and control across hybrid environments, which is especially valuable as you adopt more AI and cloud services. Our solution seamlessly integrates with Azure, Microsoft 365, and your existing security stack.\n\nWould it be valuable to schedule a brief discussion with your cloud strategy team to explore how we might help you accelerate your Microsoft-focused initiatives while ensuring proper governance?",
         },
         'google': {
             name: 'Google (Alphabet Inc.)',
@@ -331,13 +331,13 @@ function updateCompanyDetails() {
             insights: {
                 financial: {
                     title: 'Advertising dominance with cloud growth',
-                    content: 'While advertising still accounts for over 75% of Google's revenue, Google Cloud is becoming a significant contributor with 45% year-over-year growth and approaching profitability.',
-                    trend: 'positive'
+                    content: 'While advertising still accounts for over 75% of Google\'s revenue, Google Cloud is becoming a significant contributor with 45% year-over-year growth and approaching profitability.',
+                    trend: 'positive',
                 },
                 product: {
                     title: 'AI leadership and product integration',
-                    content: 'Google's AI capabilities, especially through DeepMind and Gemini models, are being systematically deployed across all major products, from Search to Workspace, enhancing user capabilities.',
-                    trend: 'positive'
+                    content: 'Google\'s AI capabilities, especially through DeepMind and Gemini models, are being systematically deployed across all major products, from Search to Workspace, enhancing user capabilities.',
+                    trend: 'positive',
                 },
                 leadership: {
                     title: 'Focused restructuring under pressure',
@@ -349,27 +349,27 @@ function updateCompanyDetails() {
                 {
                     title: 'Privacy-Centered Advertising Evolution',
                     content: 'The digital advertising industry is fundamentally changing with the deprecation of third-party cookies and increased privacy regulations, forcing new approaches to audience targeting.',
-                    type: 'Market Shift'
+                    type: 'Market Shift',
                 },
                 {
                     title: 'Multi-cloud Strategy Adoption',
                     content: 'Over 85% of enterprises are now adopting multi-cloud strategies to avoid vendor lock-in and leverage best-of-breed services across providers.',
-                    type: 'Trend'
+                    type: 'Trend',
                 }
             ],
             futureInsights: [
                 {
                     title: 'Generative AI Search Revolution',
-                    content: 'Google's search business is transforming with AI-generated responses, potentially disrupting the traditional search and advertising model that has driven Google's growth for decades.',
-                    type: 'Disruption'
+                    content: 'Google\'s search business is transforming with AI-generated responses, potentially disrupting the traditional search and advertising model that has driven Google\'s growth for decades.',
+                    type: 'Disruption',
                 },
                 {
                     title: 'Quantum Computing Applications',
-                    content: 'Google's quantum computing research may deliver commercial applications in optimization and materials science by 2027, creating new revenue streams beyond advertising.',
-                    type: 'Innovation'
+                    content: 'Google\'s quantum computing research may deliver commercial applications in optimization and materials science by 2027, creating new revenue streams beyond advertising.',
+                    type: 'Innovation',
                 }
             ],
-            talkTrack: "I've been following Google's strategic shift toward cloud and AI services while managing the transformation of its core advertising business. Many of our clients use Google Cloud alongside other providers and face challenges with consistent security controls and cost management across these environments.\n\nWe've built a solution that provides unified visibility and governance across Google Cloud, other cloud platforms, and on-premises infrastructure, which has helped similar organizations reduce cloud spend by 24% while strengthening their security posture.\n\nGiven Google's recent focus on operational efficiency, would it be valuable to connect with your cloud architecture team to discuss how our platform could help optimize your multi-cloud environment while supporting your AI and data initiatives?"
+            talkTrack: "I've been following Google\'s strategic shift toward cloud and AI services while managing the transformation of its core advertising business. Many of our clients use Google Cloud alongside other providers and face challenges with consistent security controls and cost management across these environments.\n\nWe've built a solution that provides unified visibility and governance across Google Cloud, other cloud platforms, and on-premises infrastructure, which has helped similar organizations reduce cloud spend by 24% while strengthening their security posture.\n\nGiven Google\'s recent focus on operational efficiency, would it be valuable to connect with your cloud architecture team to discuss how our platform could help optimize your multi-cloud environment while supporting your AI and data initiatives?",
         },
         'amazon': {
             name: 'Amazon.com, Inc.',
@@ -382,45 +382,45 @@ function updateCompanyDetails() {
             insights: {
                 financial: {
                     title: 'AWS profit engine with retail margin improvement',
-                    content: 'While AWS contributes approximately 16% of Amazon's revenue, it generates over 70% of operating income, while the retail business is showing improved margins through logistics optimization.',
-                    trend: 'positive'
+                    content: 'While AWS contributes approximately 16% of Amazon\'s revenue, it generates over 70% of operating income, while the retail business is showing improved margins through logistics optimization.',
+                    trend: 'positive',
                 },
                 product: {
                     title: 'Expanding beyond AWS to comprehensive enterprise services',
                     content: 'Amazon is broadening its B2B presence beyond AWS to include Amazon Business, supply chain services, and healthcare solutions, creating an integrated enterprise offering.',
-                    trend: 'positive'
+                    trend: 'positive',
                 },
                 leadership: {
                     title: 'Post-Bezos transformation under Andy Jassy',
                     content: 'CEO Andy Jassy has focused on operational efficiency with significant cost-cutting measures while maintaining investment in strategic growth areas like healthcare and AI.',
-                    trend: 'positive'
+                    trend: 'positive',
                 }
             },
             industryInsights: [
                 {
                     title: 'Supply Chain Technology Integration',
                     content: 'Advanced logistics technologies including AI-driven inventory management and autonomous fulfillment are transforming retail supply chains, with 65% of retailers planning major technology investments by 2026.',
-                    type: 'Market Shift'
+                    type: 'Market Shift',
                 },
                 {
                     title: 'Hybrid Cloud Architectures',
                     content: 'Enterprise adoption of hybrid cloud architectures is accelerating, with 80% of organizations implementing workload-specific deployment strategies across public cloud, private cloud, and on-premises.',
-                    type: 'Trend'
+                    type: 'Trend',
                 }
             ],
             futureInsights: [
                 {
                     title: 'Healthcare Ecosystem Development',
-                    content: 'Amazon's strategic acquisitions in healthcare, including One Medical and PillPack, position the company to create an integrated healthcare service model that could disrupt traditional providers.',
-                    type: 'Disruption'
+                    content: 'Amazon\'s strategic acquisitions in healthcare, including One Medical and PillPack, position the company to create an integrated healthcare service model that could disrupt traditional providers.',
+                    type: 'Disruption',
                 },
                 {
                     title: 'Ambient Computing Experience',
-                    content: 'Amazon's vast device ecosystem and AI capabilities are converging toward an ambient computing experience that will redefine how consumers interact with technology in their daily lives.',
-                    type: 'Innovation'
+                    content: 'Amazon\'s vast device ecosystem and AI capabilities are converging toward an ambient computing experience that will redefine how consumers interact with technology in their daily lives.',
+                    type: 'Innovation',
                 }
             ],
-            talkTrack: "I've been following Amazon's evolution, particularly how AWS continues to drive profitability while you're expanding into new enterprise services. Many of our clients are heavy AWS users who are looking to optimize their cloud architecture and costs while maintaining the agility that attracted them to AWS initially.\n\nWe've developed a platform that enhances AWS's native capabilities by providing additional cost optimization, security controls, and operational insights. Our customers typically see a 22% reduction in cloud spend within the first six months while improving their security posture and governance.\n\nWould it make sense to connect with your cloud architecture team to explore how we might help you maximize your AWS investment while supporting your broader digital transformation initiatives?"
+            talkTrack: "I've been following Amazon\'s evolution, particularly how AWS continues to drive profitability while you're expanding into new enterprise services. Many of our clients are heavy AWS users who are looking to optimize their cloud architecture and costs while maintaining the agility that attracted them to AWS initially.\n\nWe've developed a platform that enhances AWS\'s native capabilities by providing additional cost optimization, security controls, and operational insights. Our customers typically see a 22% reduction in cloud spend within the first six months while improving their security posture and governance.\n\nWould it make sense to connect with your cloud architecture team to explore how we might help you maximize your AWS investment while supporting your broader digital transformation initiatives?"
         }
     };
     
@@ -434,7 +434,9 @@ function updateCompanyDetails() {
         // Get reference to the hero image element - directly in the DOM
         // This approach bypasses potential stale references
         const heroImageElement = document.querySelector('.hero-image img');
+        const companyLogoElement = document.getElementById('companyLogo');
         console.log("Found hero image element:", heroImageElement);
+        console.log("Found company logo element:", companyLogoElement);
         
         if (heroImageElement && company.logoUrl) {
             // Store the original image source for later if needed
@@ -454,6 +456,16 @@ function updateCompanyDetails() {
             console.log("Updated hero image to:", company.logoUrl);
         } else {
             console.error("Could not update hero image - Element:", !!heroImageElement, "Logo URL:", !!company.logoUrl);
+        }
+        
+        // Also update the companyLogo element if it exists
+        if (companyLogoElement && company.logoUrl) {
+            companyLogoElement.src = company.logoUrl;
+            companyLogoElement.alt = company.name + ' Logo';
+            companyLogoElement.style.objectFit = 'contain';
+            companyLogoElement.style.backgroundColor = '#ffffff';
+            companyLogoElement.style.padding = '10px';
+            console.log("Updated company logo to:", company.logoUrl);
         }
     } else if (document.querySelector('.hero-image img')) {
         // If no company is selected, restore the original image
@@ -760,7 +772,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateTalkTrackById(companyData[selectedCompany]);
             }
             
-            // Update the hero image with the company logo
+            // Update the company logo element
             const companyLogos = {
                 'nvidia': 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Nvidia_logo.svg/1200px-Nvidia_logo.svg.png',
                 'cisco': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Cisco_logo_blue_2016.svg/1200px-Cisco_logo_blue_2016.svg.png',
@@ -769,7 +781,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 'amazon': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1200px-Amazon_logo.svg.png'
             };
             
+            // Update both the hero image and the company logo element
             const heroImg = document.querySelector('.hero-image img');
+            const companyLogoImg = document.getElementById('companyLogo');
+            
+            // First handle the hero image
             if (heroImg) {
                 // Store the original image URL if we haven't already
                 if (!heroImg.dataset.originalSrc) {
@@ -796,6 +812,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     heroImg.style.objectFit = '';
                     heroImg.style.backgroundColor = '';
                     heroImg.style.padding = '';
+                }
+            }
+            
+            // Then handle the company logo element
+            if (companyLogoImg) {
+                if (selectedCompany && companyLogos[selectedCompany]) {
+                    console.log('Updating company logo element:', companyLogos[selectedCompany]);
+                    companyLogoImg.src = companyLogos[selectedCompany];
+                    companyLogoImg.alt = selectedCompany + ' Logo';
+                    
+                    // Add styling to make the logo look better
+                    companyLogoImg.style.objectFit = 'contain';
+                    companyLogoImg.style.backgroundColor = '#ffffff';
+                    companyLogoImg.style.padding = '10px';
+                } else {
+                    // Reset to default if no company selected
+                    console.log('Resetting company logo to default');
                 }
             }
         });

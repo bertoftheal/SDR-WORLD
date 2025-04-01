@@ -876,7 +876,7 @@
                             
                             // Update the leadership insight (third box)
                             headerText = insightBoxes[2].querySelector('.insight-header-text');
-                            bodyText = insightBoxes[2].querySelector('.insight-body-text');
+                            bodyText = insightBoxes[2].querySelector('.insight-body-text:not(.executive-insights)');
                             badge = insightBoxes[2].querySelector('.badge');
                             
                             if (headerText && bodyText) {
@@ -971,6 +971,7 @@
             const companyNameElement = document.querySelector('.company-name');
             const companyDescriptionElement = document.querySelector('.company-description p');
             const metaValues = document.querySelectorAll('.meta-value');
+            const executiveInsightsElement = document.querySelector('.executive-insights');
             
             // Don't proceed if elements aren't found
             if (!companyNameElement || metaValues.length < 4) {
@@ -989,6 +990,13 @@
                 // Update company description
                 if (companyDescriptionElement && company.description) {
                     companyDescriptionElement.textContent = company.description;
+                }
+                
+                // Update executive insights paragraph with Perplexity's output
+                if (executiveInsightsElement && company.insights && company.insights.company && company.insights.company.leadership) {
+                    executiveInsightsElement.textContent = company.insights.company.leadership.content;
+                } else if (executiveInsightsElement) {
+                    executiveInsightsElement.textContent = "Leadership information not available for this company.";
                 }
                 
                 // Update metadata values (headquarters, employees, market cap, founded)
@@ -1116,6 +1124,8 @@
             console.log('DOM fully loaded');
             
             const selectElement = document.getElementById('accountSelect');
+            const generateBtn = document.getElementById('generateBtn');
+            
             if (selectElement) {
                 console.log('Found account select dropdown');
                 
@@ -1136,6 +1146,42 @@
                 updateLogoImage(initialCompany);
             } else {
                 console.error('Could not find account select dropdown');
+            }
+            
+            // Add event listener for generate button
+            if (generateBtn) {
+                generateBtn.addEventListener('click', function() {
+                    const companyInput = document.getElementById('accountSelect');
+                    if (companyInput && companyInput.value) {
+                        const companyName = companyInput.value;
+                        console.log('Generate button clicked for company:', companyName);
+                        
+                        // Show loading state
+                        generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>GENERATING...';
+                        generateBtn.disabled = true;
+                        
+                        // Simulate API call (replace with actual API call in production)
+                        setTimeout(function() {
+                            // Update the executive insights paragraph with Perplexity's output
+                            const executiveInsightsElement = document.querySelector('.executive-insights');
+                            if (executiveInsightsElement) {
+                                if (companyData[companyName.toLowerCase()] && 
+                                    companyData[companyName.toLowerCase()].insights && 
+                                    companyData[companyName.toLowerCase()].insights.company && 
+                                    companyData[companyName.toLowerCase()].insights.company.leadership) {
+                                    
+                                    executiveInsightsElement.textContent = companyData[companyName.toLowerCase()].insights.company.leadership.content;
+                                } else {
+                                    executiveInsightsElement.textContent = `Under ${companyName}'s leadership, the company has made strategic executive appointments focused on accelerating innovation and digital transformation, signaling their commitment to growth and market leadership.`;
+                                }
+                            }
+                            
+                            // Reset button state
+                            generateBtn.innerHTML = '<i class="fas fa-search me-2"></i>GENERATE';
+                            generateBtn.disabled = false;
+                        }, 1500);
+                    }
+                });
             }
         });
     </script>
